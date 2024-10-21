@@ -1,4 +1,4 @@
-package com.github.Ramble21.commands;
+package com.github.Ramble21.classes;
 
 import net.dv8tion.jda.api.entities.User;
 
