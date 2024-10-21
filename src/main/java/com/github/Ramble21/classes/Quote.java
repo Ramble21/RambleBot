@@ -1,4 +1,4 @@
-package com.github.Ramble21.commands;
+package com.github.Ramble21.classes;
 
 public class Quote {
 

@@ -1,4 +1,4 @@
-package com.github.Ramble21.commands;
+package com.github.Ramble21.classes;
 
 import java.util.ArrayList;
 import java.util.List;

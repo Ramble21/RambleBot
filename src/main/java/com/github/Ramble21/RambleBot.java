@@ -1,17 +1,17 @@
 package com.github.Ramble21;
 
-import com.github.Ramble21.commands.CommandManager;
+import com.github.Ramble21.command.CommandListener;
+import com.github.Ramble21.command.CommandManager;
 import com.github.Ramble21.listeners.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
-
 import javax.security.auth.login.LoginException;
 
 public class RambleBot {
@@ -36,10 +36,11 @@ public class RambleBot {
         builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
 
+        // Register listeners
+        builder.addEventListeners(new EventListener(), new CommandListener());
+
         shardManager = builder.build();
 
-        // Register listeners
-        shardManager.addEventListener(new EventListener(), new CommandManager());
     }
 
     public ShardManager getShardManager() {
@@ -48,10 +49,12 @@ public class RambleBot {
     public Dotenv getConfig(){
         return config;
     }
+
     public static void main(String[] args) {
         try {
             RambleBot bot = new RambleBot();
-        } catch (LoginException e) {
+        }
+        catch (LoginException e) {
             System.out.println("ERROR: Provided bot token is invalid");
         }
     }
