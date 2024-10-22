@@ -15,7 +15,7 @@ public class Ramble21 {
             case 2:
                 return "rizz count is 2/10. Maybe they should stop watching so much anime and touch some grass";
             case 3:
-                return "rizz count is 3/10. It would've been higher if they didn't piss their pants every time they see their crush";\
+                return "rizz count is 3/10. It would've been higher if they didn't piss their pants every time they see their crush";
             case 4:
                 return "rizz count is 4/10. Womp womp";
             case 5:
