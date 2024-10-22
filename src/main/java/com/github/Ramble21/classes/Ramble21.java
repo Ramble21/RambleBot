@@ -3,6 +3,9 @@ package com.github.Ramble21.classes;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
 
+import java.time.LocalDate;
+import java.util.Random;
+
 public class Ramble21 {
 
     public static String rateRizz(int rizz){
@@ -46,5 +49,25 @@ public class Ramble21 {
             return true;
         }
         return false;
+    }
+    public static int generateSeed(String userId) {
+        return Integer.parseInt(userId.substring(14)) * LocalDate.now().getMonthValue();
+    }
+
+    public static int generateRizz(int seed) {
+        Random random = new Random(seed);
+        return random.nextInt(10) + 1; // Generates a number between 1 and 10
+    }
+
+    public static String generateIp(int seed) {
+        Random random1 = new Random(seed);
+        Random random2 = new Random(seed);
+        Random random3 = new Random(seed);
+        Random random4 = new Random(seed);
+        String rand1 = Integer.toString(random1.nextInt(255)+1);
+        String rand2 = Integer.toString(random1.nextInt(255)+1);
+        String rand3 = Integer.toString(random1.nextInt(255)+1);
+        String rand4 = Integer.toString(random1.nextInt(255)+1);
+        return rand1 + "." + rand2 + "." + rand3 + "." + rand4;
     }
 }
