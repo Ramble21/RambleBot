@@ -29,7 +29,7 @@ public class Ramble21 {
             case 9:
                 return "rizz count is 9/10. Maybe this is a result of them finally not playing geometry dash anymore";
             case 10:
-                return "rizz count is 10/10. Holy shit. We have found the skibidi ohio rizzler themself. Maybe even the future CEO of Ohio";
+                return "rizz count is 10/10. Holy shit. We have found the skibidi sigma rizzler themself. Maybe even the future CEO of Ohio";
             default:
                 return "rizz count is -1/12 because there's a bug in ur code";
         }
