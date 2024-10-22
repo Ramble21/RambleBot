@@ -13,9 +13,6 @@ public class CommandManager{
     public CommandManager(){
         commands.put("grab-ip", new GrabIp());
         commands.put("rizz-rater", new RizzRater());
-        commands.put("add-quote", new AddQuote());
-        commands.put("delete-quote", new DeleteQuote());
-        commands.put("random-quote", new RandomQuote());
     }
 
     public Command getCommand(String name){

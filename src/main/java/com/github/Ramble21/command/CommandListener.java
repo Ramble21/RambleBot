@@ -22,15 +22,6 @@ public class CommandListener extends ListenerAdapter {
         commandData.add(Commands.slash("rizz-rater", "Rate's a server member's rizz on a scale of 1 to 10")
                 .addOption(OptionType.USER, "member", "Member to get rizz level of", true));
 
-        commandData.add(Commands.slash("add-quote", "Add a server quote")
-                .addOption(OptionType.STRING, "quote", "Quote that is being added", true)
-                .addOption(OptionType.USER, "author", "Person who is being quoted", true));
-
-        commandData.add(Commands.slash("random-quote", "Show a random server quote"));
-
-        commandData.add(Commands.slash("delete-quote", "Deletes a server quote")
-                .addOption(OptionType.INTEGER, "id", "ID of quote that is being deleted", true));
-
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
     @Override
