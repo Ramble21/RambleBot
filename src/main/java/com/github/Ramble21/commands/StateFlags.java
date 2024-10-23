@@ -92,6 +92,7 @@ public class StateFlags implements Command {
                         currentChannel = null;
 
                         event.getJDA().removeEventListener(this);
+                        return;
                     }
                 }, 15, TimeUnit.SECONDS);
 
@@ -114,8 +115,10 @@ public class StateFlags implements Command {
                     EmbedBuilder embed3 = new EmbedBuilder();
                     if (lastUser == event.getAuthor()) {
                         streak++;
+                        System.out.println(streak);
                         embed3.setTitle("Congrats! You guessed correctly! x" + streak);
                     } else {
+                        streak = 1;
                         embed3.setTitle("Congrats! You guessed correctly!");
                         lastUser = event.getAuthor();
                     }

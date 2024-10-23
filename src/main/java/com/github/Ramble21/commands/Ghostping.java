@@ -16,6 +16,7 @@ public class Ghostping {
     }
 
     public void ghostping(){
+
         String message = event.getMessage().getContentRaw();
         String[] parts = event.getMessage().getContentDisplay().split(" ");
         if (parts.length < 2) {
