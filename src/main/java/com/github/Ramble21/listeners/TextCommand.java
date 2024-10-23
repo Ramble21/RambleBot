@@ -20,7 +20,9 @@ public class TextCommand extends ListenerAdapter {
             Ghostping ghostping = new Ghostping(event);
             ghostping.ghostping();
         }
-
+        if (message.equalsIgnoreCase("sigma sigma on the wall")){
+            event.getChannel().sendMessage("who's the skibidiest of them all").queue();
+        }
         // Needed in order to make ghostping messages deleted successfully
         if (message.contains("ㅤㅤ") && isRambleBot(user)){
             event.getMessage().delete().queue();
