@@ -2,6 +2,7 @@ package com.github.Ramble21.classes;
 
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
+import net.dv8tion.jda.api.entities.User;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -62,5 +63,10 @@ public class Ramble21 {
         String rand3 = Integer.toString(random1.nextInt(255)+1);
         String rand4 = Integer.toString(random1.nextInt(255)+1);
         return rand1 + "." + rand2 + "." + rand3 + "." + rand4;
+    }
+
+    public static boolean isRambleBot(User user){
+        String id = user.getId();
+        return id.equalsIgnoreCase("1295872060341616640");
     }
 }

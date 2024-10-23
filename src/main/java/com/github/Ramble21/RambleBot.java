@@ -3,6 +3,7 @@ package com.github.Ramble21;
 import com.github.Ramble21.command.CommandListener;
 import com.github.Ramble21.command.CommandManager;
 import com.github.Ramble21.listeners.EventListener;
+import com.github.Ramble21.listeners.TextCommand;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -37,7 +38,7 @@ public class RambleBot {
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
 
         // Register listeners
-        builder.addEventListeners(new EventListener(), new CommandListener());
+        builder.addEventListeners(new EventListener(), new CommandListener(), new TextCommand());
 
         shardManager = builder.build();
 
