@@ -82,7 +82,7 @@ public class StateFlags implements Command {
                         EmbedBuilder timeoutEmbed = new EmbedBuilder();
                         timeoutEmbed.setTitle("What US state flag is this?");
                         timeoutEmbed.setDescription("Nobody answered correctly during the time limit, losers");
-                        streak = 0;
+                        streak = 1;
                         lastUser = null;
                         timeoutEmbed.setColor(red);
                         timeoutEmbed.setImage("attachment://mystery.png");
@@ -93,7 +93,7 @@ public class StateFlags implements Command {
 
                         event.getJDA().removeEventListener(this);
                     }
-                }, 10, TimeUnit.SECONDS);
+                }, 15, TimeUnit.SECONDS);
 
                 if (guess.equalsIgnoreCase(state.getName())) {
                     LocalDateTime end = LocalDateTime.now();
