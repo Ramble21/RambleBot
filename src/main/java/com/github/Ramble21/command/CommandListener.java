@@ -22,6 +22,8 @@ public class CommandListener extends ListenerAdapter {
         commandData.add(Commands.slash("rizz-rater", "Rate's a server member's rizz on a scale of 1 to 10")
                 .addOption(OptionType.USER, "member", "Member to get rizz level of", true));
 
+        commandData.add(Commands.slash("state-flags", "Test your US state flag knowledge by guessing a random flag"));
+
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }
     @Override

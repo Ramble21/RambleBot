@@ -13,6 +13,7 @@ public class CommandManager{
     public CommandManager(){
         commands.put("grab-ip", new GrabIp());
         commands.put("rizz-rater", new RizzRater());
+        commands.put("state-flags", new StateFlags());
     }
 
     public Command getCommand(String name){
