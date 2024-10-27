@@ -74,4 +74,21 @@ public class Ramble21 {
     public static void bugOccured(MessageChannel channel){
         channel.sendMessage("<@739978476651544607> theres a bug in your code lol").queue();
     }
+    public static double getMatchingPercentage(String str1, String str2) {
+        if (str1.isEmpty()) {
+            return 0.0;
+        }
+        int totalChars = str1.length();
+        int matchingChars = 0;
+        boolean[] charPresent = new boolean[256];
+        for (char c : str2.toCharArray()) {
+            charPresent[c] = true;
+        }
+        for (char c : str1.toCharArray()) {
+            if (charPresent[c]) {
+                matchingChars++;
+            }
+        }
+        return (double) matchingChars / totalChars * 100;
+    }
 }

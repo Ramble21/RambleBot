@@ -1,6 +1,7 @@
 package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.classes.Anticheat;
+import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.classes.Sentence;
 import com.github.Ramble21.commands.TypeRacer;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,13 +33,10 @@ public class TypeRacerMessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getMessage().getAuthor().isBot()){
+        if (event.getMessage().getAuthor().isBot() || hasReplied){
             return;
         }
-        if (hasReplied){
-            return;
-        }
-        if (!(event.getAuthor().equals(user1) || event.getAuthor().equals(user2))){
+        else if (!(event.getAuthor().equals(user1) || event.getAuthor().equals(user2))){
             return;
         }
         else if (event.getMessage().getContentRaw().equalsIgnoreCase(sentence.getTextRaw())){
@@ -81,6 +79,11 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
             games.remove(typeRacer);
             hasReplied = true;
+        }
+        else if ((event.getMessage().getContentRaw().length() >= sentence.getTextRaw().length()-10) &&
+                ((event.getMessage().getContentRaw().length() <= sentence.getTextRaw().length()+10) &&
+                (Ramble21.getMatchingPercentage(sentence.getTextRaw(), event.getMessage().getContentRaw()) >= 90))){
+            event.getMessage().reply("Close, double check for typos!").queue();
         }
     }
 }
