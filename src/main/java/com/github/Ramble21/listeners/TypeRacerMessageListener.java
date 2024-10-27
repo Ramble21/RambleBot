@@ -1,5 +1,6 @@
 package com.github.Ramble21.listeners;
 
+import com.github.Ramble21.classes.Anticheat;
 import com.github.Ramble21.classes.Sentence;
 import com.github.Ramble21.commands.TypeRacer;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,7 +30,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
         if (event.getMessage().getAuthor().isBot()){
             return;
         }
-        else if (event.getMessage().getContentRaw().equalsIgnoreCase(sentence.getTextRaw())){
+        else if (Anticheat.isCheated(event.getMessage().getContentRaw())){
             User winner = event.getMessage().getAuthor();
             if (!((winner.equals(typeRacer.getPlayer1()) || winner.equals(typeRacer.getPlayer2())))){
                 return;
