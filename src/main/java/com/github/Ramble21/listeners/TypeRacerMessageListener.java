@@ -26,7 +26,10 @@ public class TypeRacerMessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getMessage().getContentRaw().equalsIgnoreCase(sentence.getTextRaw())){
+        if (event.getMessage().getAuthor().isBot()){
+            return;
+        }
+        else if (event.getMessage().getContentRaw().equalsIgnoreCase(sentence.getTextRaw())){
             User winner = event.getMessage().getAuthor();
             if (!((winner.equals(typeRacer.getPlayer1()) || winner.equals(typeRacer.getPlayer2())))){
                 return;
@@ -46,6 +49,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
             games.remove(typeRacer);
         }
+
         else if (event.getMessage().getContentRaw().contains("\u200B")){
             User loser = event.getMessage().getAuthor();
 
