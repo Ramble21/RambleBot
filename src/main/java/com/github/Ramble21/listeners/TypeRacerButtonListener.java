@@ -32,6 +32,9 @@ public class TypeRacerButtonListener extends ListenerAdapter {
                 if (!messageId.equals(typeRacer.getOriginalMessageId())){
                     return;
                 }
+                if (buttonUser.equals(originalUser)){
+                    return;
+                }
                 try {
                     typeRacer.startGame(originalUser, buttonUser);
                 }
