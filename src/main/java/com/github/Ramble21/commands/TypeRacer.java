@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands;
 
 import com.github.Ramble21.classes.Sentence;
+import com.github.Ramble21.classes.Stopwatch;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.TypeRacerButtonListener;
 import com.github.Ramble21.listeners.TypeRacerMessageListener;
@@ -27,6 +28,7 @@ public class TypeRacer implements Command  {
 
     private String originalMessageId;
     private TextChannel originalTextChannel;
+    private final Stopwatch stopwatch = new Stopwatch();
 
     public static List<TypeRacer> games = new ArrayList<>();
 
@@ -55,6 +57,9 @@ public class TypeRacer implements Command  {
     }
     public TextChannel getOriginalTextChannel(){
         return originalTextChannel;
+    }
+    public Stopwatch getStopwatch(){
+        return stopwatch;
     }
 
     @Override
@@ -152,6 +157,7 @@ public class TypeRacer implements Command  {
             throw new RuntimeException(e);
         }
 
+        stopwatch.start();
         Sentence sentence = new Sentence();
         EmbedBuilder sentenceEmbed = new EmbedBuilder();
         sentenceEmbed.setTitle("TypeRacer");

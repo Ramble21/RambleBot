@@ -32,9 +32,15 @@ public class TypeRacerMessageListener extends ListenerAdapter {
                 return;
             }
 
+            int charCount = sentence.getCharacterCount();
+            typeRacer.getStopwatch().stop();
+            int timeInMs = typeRacer.getStopwatch().getElapsedTime();
+            double timeInM = ((double)timeInMs) / 60000;
+            int wpm = (int)(Math.round(((double)charCount/5)/(timeInM)));
+
             EmbedBuilder winEmbed = new EmbedBuilder();
             winEmbed.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
-            winEmbed.setDescription("You typed the sentence faster than your opponent! Congratulations!");
+            winEmbed.setDescription("You typed the sentence faster than your opponent, at a speed of " + wpm + " WPM! Congratulations!");
             winEmbed.setColor(Color.green);
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
@@ -42,6 +48,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
         }
         else if (event.getMessage().getContentRaw().contains("\u200B")){
             User loser = event.getMessage().getAuthor();
+
             if (!((loser.equals(typeRacer.getPlayer1()) || loser.equals(typeRacer.getPlayer2())))){
                 return;
             }
@@ -52,6 +59,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             else{
                 winner = typeRacer.getPlayer2();
             }
+            typeRacer.getStopwatch().stop();
             EmbedBuilder winEmbed = new EmbedBuilder();
             winEmbed.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
             winEmbed.setDescription("Your dirty opponent " + loser.getAsMention() + " tried to use copy and paste to cheat the contest, so you won for free!");
