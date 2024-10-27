@@ -2,8 +2,10 @@ package com.github.Ramble21;
 
 import com.github.Ramble21.command.CommandListener;
 import com.github.Ramble21.command.CommandManager;
+import com.github.Ramble21.commands.TypeRacer;
 import com.github.Ramble21.listeners.EventListener;
 import com.github.Ramble21.listeners.TextCommand;
+import com.github.Ramble21.listeners.TypeRacerButtonListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;

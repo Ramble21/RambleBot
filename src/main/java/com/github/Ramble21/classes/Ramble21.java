@@ -3,6 +3,8 @@ package com.github.Ramble21.classes;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -68,5 +70,8 @@ public class Ramble21 {
     public static boolean isRambleBot(User user){
         String id = user.getId();
         return id.equalsIgnoreCase("1295872060341616640");
+    }
+    public static void bugOccured(MessageChannel channel){
+        channel.sendMessage("<@739978476651544607> theres a bug in your code lol").queue();
     }
 }
