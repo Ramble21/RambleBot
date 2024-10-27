@@ -28,7 +28,7 @@ public class TypeRacer implements Command  {
 
     private String originalMessageId;
     private TextChannel originalTextChannel;
-    private final Stopwatch stopwatch = new Stopwatch();
+    private Stopwatch stopwatch = new Stopwatch();
 
     public static List<TypeRacer> games = new ArrayList<>();
 

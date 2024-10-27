@@ -18,11 +18,16 @@ public class TypeRacerMessageListener extends ListenerAdapter {
     private final TypeRacer typeRacer;
     private final Sentence sentence;
     private final TextChannel textChannel;
+    private boolean hasReplied = false;
+    private final User user1;
+    private final User user2;
 
     public TypeRacerMessageListener(TypeRacer typeRacer, Sentence sentence){
         this.typeRacer = typeRacer;
         this.sentence = sentence;
         textChannel = typeRacer.getOriginalTextChannel();
+        user1 = typeRacer.getPlayer1();
+        user2 = typeRacer.getPlayer2();
     }
 
     @Override
@@ -30,12 +35,14 @@ public class TypeRacerMessageListener extends ListenerAdapter {
         if (event.getMessage().getAuthor().isBot()){
             return;
         }
-        else if (Anticheat.isCheated(event.getMessage().getContentRaw())){
+        if (hasReplied){
+            return;
+        }
+        if (!(event.getAuthor().equals(user1) || event.getAuthor().equals(user2))){
+            return;
+        }
+        else if (event.getMessage().getContentRaw().equalsIgnoreCase(sentence.getTextRaw())){
             User winner = event.getMessage().getAuthor();
-            if (!((winner.equals(typeRacer.getPlayer1()) || winner.equals(typeRacer.getPlayer2())))){
-                return;
-            }
-
             int charCount = sentence.getCharacterCount();
             typeRacer.getStopwatch().stop();
             int timeInMs = typeRacer.getStopwatch().getElapsedTime();
@@ -49,14 +56,15 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
             games.remove(typeRacer);
+            hasReplied = true;
         }
 
-        else if (event.getMessage().getContentRaw().contains("\u200B")){
-            User loser = event.getMessage().getAuthor();
+        else if (Anticheat.isCheated(event.getMessage().getContentRaw())){
 
-            if (!((loser.equals(typeRacer.getPlayer1()) || loser.equals(typeRacer.getPlayer2())))){
-                return;
-            }
+            User loser = event.getMessage().getAuthor();
+            System.out.println(typeRacer.getPlayer1().getEffectiveName());
+            System.out.println(typeRacer.getPlayer2().getEffectiveName());
+
             User winner;
             if (loser.equals(typeRacer.getPlayer2())){
                 winner = typeRacer.getPlayer1();
@@ -72,6 +80,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
             games.remove(typeRacer);
+            hasReplied = true;
         }
     }
 }
