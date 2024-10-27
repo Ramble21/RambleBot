@@ -40,3 +40,4 @@ build/
 ### Other ###
 .env
 src/main/java/com/github/Ramble21/listeners/EventListener.java
+src/main/java/com/github/Ramble21/classes/Anticheat.java
