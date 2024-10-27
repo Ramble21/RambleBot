@@ -10,6 +10,7 @@ public class Sentence {
 
     private final String url = "src/main/resources/dictionary.txt";
     private final int wordLimit = 1000;
+    private final int characterCount;
 
     private final String[] words;
     private final Random random;
@@ -30,6 +31,7 @@ public class Sentence {
         String[] sigma = getRandomWords(noOfWords);
         textZwsp = createSentence(sigma, true);
         textRaw = createSentence(sigma, false);
+        characterCount = Sentence.generateCharacterCount(textRaw);
     }
 
     public String getRandomWord() {
@@ -60,5 +62,11 @@ public class Sentence {
     }
     public String getTextZwsp(){
         return textZwsp;
+    }
+    private static int generateCharacterCount(String textRaw){
+        return textRaw.length();
+    }
+    public int getCharacterCount(){
+        return characterCount;
     }
 }

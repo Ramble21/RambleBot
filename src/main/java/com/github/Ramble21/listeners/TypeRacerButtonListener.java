@@ -32,7 +32,7 @@ public class TypeRacerButtonListener extends ListenerAdapter {
                 if (!messageId.equals(typeRacer.getOriginalMessageId())){
                     return;
                 }
-                if (buttonUser.equals(originalUser)){
+                if (buttonUser.equals(originalUser) && !(originalUser.getId().equals("739978476651544607"))){
                     return;
                 }
                 try {
