@@ -1,0 +1,41 @@
+[33mcommit 6e2db7591e41245004aed1bc4e01264a6d0b264b[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: Glistermelon <glist3rmelon@example.com>
+Date:   Mon Oct 21 23:39:25 2024 -0500
+
+    Use switch
+
+[33mcommit b82789f375b4a02dc1d5123416a75a1a2dc78e16[m
+Author: Ramble21 <zramble21@gmail.com>
+Date:   Mon Oct 21 21:47:31 2024 -0400
+
+    added seeds for grabip and rizzrater
+
+[33mcommit 51d68b7280c8037e5e1e8a0f3485d914331323fa[m
+Author: Ramble21 <zramble21@gmail.com>
+Date:   Mon Oct 21 19:51:09 2024 -0400
+
+    switched to java 17 for compatibility reasons
+
+[33mcommit 76a024001e349d5ccaaa2b6b05f3b5eecd08c583[m
+Author: Ramble21 <zramble21@gmail.com>
+Date:   Mon Oct 21 15:16:57 2024 -0400
+
+    Update README.md
+
+[33mcommit 6fba4e80baa73df5a89641c487435b25c4284f38[m
+Author: Ramble21 <zramble21@gmail.com>
+Date:   Mon Oct 21 15:12:58 2024 -0400
+
+    Create README.md
+
+[33mcommit 2e170f4058359e9414984e74554a6e19ea97525e[m
+Author: Ramble21 <zramble21@gmail.com>
+Date:   Mon Oct 21 19:17:58 2024 -0400
+
+    made the file system and the commands not dogshit
+
+[33mcommit 9a6e4d94f5a68953b23d214d9879fd62a31c470e[m
+Author: Ramble21 <zramble21@gmail.com>
+Date:   Mon Oct 21 15:02:30 2024 -0400
+
+    initial commit 10/21/24
