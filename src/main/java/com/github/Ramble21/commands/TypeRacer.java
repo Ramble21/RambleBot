@@ -132,8 +132,6 @@ public class TypeRacer implements Command  {
         this.player1 = player1;
         this.player2 = player2;
 
-        System.out.println(originalMessageId + "  start");
-
         EmbedBuilder startEmbed = new EmbedBuilder();
         startEmbed.setColor(yellow);
         startEmbed.setTitle("TypeRacer");

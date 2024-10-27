@@ -27,7 +27,6 @@ public class TypeRacerMessageListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getMessage().getContentRaw().equalsIgnoreCase(sentence.getTextRaw())){
-            System.out.println(1);
             User winner = event.getMessage().getAuthor();
             if (!((winner.equals(typeRacer.getPlayer1()) || winner.equals(typeRacer.getPlayer2())))){
                 return;
