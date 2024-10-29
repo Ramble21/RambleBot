@@ -1,12 +1,19 @@
 package com.github.Ramble21.commands;
 
+import com.github.Ramble21.RambleBot;
+import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.classes.Sentence;
 import com.github.Ramble21.classes.Stopwatch;
+import com.github.Ramble21.classes.WpmScore;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.TypeRacerButtonListener;
 import com.github.Ramble21.listeners.TypeRacerMessageListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -18,8 +25,8 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.w3c.dom.Text;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,5 +174,64 @@ public class TypeRacer implements Command  {
         jda.addEventListener(typeRacerMessageListener);
         System.out.println(sentence.getTextRaw());
     }
+    public void saveToJson(WpmScore wpmScore){
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Guild guild = jda.getGuildById(wpmScore.getGuildId());
+        String jsonName = null;
+        if (guild != null) {
+            String sanitizedGuildName = Ramble21.sanitizeFileName(guild.getName());
+            jsonName = "src/main/json/wpmscore/" + sanitizedGuildName + ".json";
+            List<WpmScore> wpmScoreList;
+
+            try (FileReader reader = new FileReader(jsonName)) {
+                Type listType = new TypeToken<ArrayList<WpmScore>>() {}.getType();
+                wpmScoreList = gson.fromJson(reader, listType);
+
+                if (wpmScoreList == null) {
+                    wpmScoreList = new ArrayList<>();
+                }
+            } catch (IOException e) {
+                wpmScoreList = new ArrayList<>();
+            }
+
+            wpmScoreList.add(wpmScore);
+
+            try (FileWriter writer = new FileWriter(jsonName)){
+                gson.toJson(wpmScoreList,writer);
+            }
+            catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            System.out.println("guild is null");
+        }
+    }
+    public static ArrayList<WpmScore> getServerScores(Guild guild) {
+        Gson gson = new Gson();
+        String sanitizedName = Ramble21.sanitizeFileName(guild.getName());
+        String guildJson = "src/main/json/wpmscore/" + sanitizedName + ".json";
+        Type wpmScoreType = new TypeToken<ArrayList<WpmScore>>() {}.getType();
+        try (FileReader reader = new FileReader(guildJson)) {
+
+            ArrayList<WpmScore> wpmScores = gson.fromJson(reader, wpmScoreType);
+            ArrayList<WpmScore> guildScores = new ArrayList<>();
+
+            for (WpmScore wpmScore : wpmScores) {
+                Guild g = RambleBot.getJda().getGuildById(wpmScore.getGuildId());
+                if (g != null && g.equals(guild)) {
+                    guildScores.add(wpmScore);
+                }
+                else if (g == null){
+                    System.out.println("g is null");
+                }
+            }
+            return guildScores;
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
+
 }
 

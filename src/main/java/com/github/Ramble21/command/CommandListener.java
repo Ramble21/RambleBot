@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -27,7 +28,13 @@ public class CommandListener extends ListenerAdapter {
 
         commandData.add(Commands.slash("state-flags", "Test your US state flag knowledge by guessing a random flag"));
 
-        commandData.add(Commands.slash("typeracer", "Play TypeRacer against another server member!"));
+        commandData.add(
+                Commands.slash("typeracer", "Play TypeRacer commands")
+                        .addSubcommands(
+                                new SubcommandData("play", "Play TypeRacer against another server member!"),
+                                new SubcommandData("leaderboard", "See the leaderboard of the highest WPM scores achieved in this server!")
+                        )
+        );
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }

@@ -3,6 +3,7 @@ package com.github.Ramble21.listeners;
 import com.github.Ramble21.classes.Anticheat;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.classes.Sentence;
+import com.github.Ramble21.classes.WpmScore;
 import com.github.Ramble21.commands.TypeRacer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 import static com.github.Ramble21.commands.TypeRacer.games;
 
@@ -53,6 +55,10 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             winEmbed.setColor(Color.green);
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
+
+            WpmScore wpmScore = new WpmScore(wpm, winner, event.getGuild());
+            typeRacer.saveToJson(wpmScore);
+
             games.remove(typeRacer);
             hasReplied = true;
         }

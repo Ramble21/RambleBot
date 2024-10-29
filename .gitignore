@@ -34,10 +34,11 @@ build/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
-.DS_Store
-
-### Other ###
+### contains bot token and specific guild and user ids ###
 .env
-src/main/java/com/github/Ramble21/listeners/EventListener.java
+
+### contains methods used for typeracer anticheat (no im not making this public so you can cheat :smoothtroll:) ###
 src/main/java/com/github/Ramble21/classes/Anticheat.java
+
+### contains json files with information about guilds and users the bot is in ###
+src/main/json/

@@ -2,6 +2,7 @@ package com.github.Ramble21.command;
 
 
 import com.github.Ramble21.commands.*;
+import com.github.Ramble21.commands.TypeRacerManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;
@@ -9,13 +10,13 @@ import java.util.*;
 
 
 public class CommandManager{
-    private static final Map<String, Command> commands = new HashMap<>();
+    public static final Map<String, Command> commands = new HashMap<>();
 
     public CommandManager(){
         commands.put("grab-ip", new GrabIp());
         commands.put("rizz-rater", new RizzRater());
         commands.put("state-flags", new StateFlags());
-        commands.put("typeracer", new TypeRacer());
+        commands.put("typeracer", new TypeRacerManager());
     }
 
     public Command getCommand(String name){
@@ -31,4 +32,5 @@ public class CommandManager{
             System.out.println("command is null theres a bug");
         }
     }
+
 }
