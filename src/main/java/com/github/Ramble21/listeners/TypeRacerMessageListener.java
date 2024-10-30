@@ -63,7 +63,10 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             hasReplied = true;
         }
 
-        else if (Anticheat.isCheated(event.getMessage().getContentRaw())){
+        else if (Anticheat.isCheated(event.getMessage().getContentRaw()) &&
+                (event.getMessage().getContentRaw().length() > sentence.getCharacterCount()-10+25) &&
+                (event.getMessage().getContentRaw().length() < sentence.getCharacterCount()+10+25)
+            ){
 
             User loser = event.getMessage().getAuthor();
             System.out.println(typeRacer.getPlayer1().getEffectiveName());
