@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.StringJoiner;
 
 
 public class TypeRacerLeaderboard implements Command {
@@ -28,16 +29,13 @@ public class TypeRacerLeaderboard implements Command {
         embed.setThumbnail("attachment://trophy.png");
 
         ArrayList<WpmScore> rawScores = TypeRacer.getServerScores(guild);
-        if (rawScores == null){
+        if (rawScores == null || rawScores.isEmpty()){
             embed.setDescription("No TypeRacer games have been played yet in this server!");
             event.getInteraction().replyEmbeds(embed.build()).queue();
             return;
         }
 
-        int n = rawScores.size();
-        if (rawScores.size() >= 10){
-            n = 10;
-        }
+        if (rawScores.size() > 10) rawScores.subList(10, rawScores.size()).clear();
 
         WpmScore[] scores = new WpmScore[rawScores.size()];
         for (int i = 0; i < rawScores.size(); i++){
@@ -45,114 +43,17 @@ public class TypeRacerLeaderboard implements Command {
         }
         Arrays.sort(scores, Comparator.comparingDouble(WpmScore::getWpm).reversed());
 
-        WpmScore[] scoresToBeDisplayed = new WpmScore[n];
-
-        System.arraycopy(scores, 0, scoresToBeDisplayed, 0, n);
-
-        addDescriptionToEmbed(scoresToBeDisplayed, scoresToBeDisplayed.length, embed);
+        addDescriptionToEmbed(scores, embed);
         event.getInteraction().replyEmbeds(embed.build())
                 .addFiles(FileUpload.fromData(trophy, "trophy.png")
                 ).queue();
     }
-    public static void addDescriptionToEmbed(WpmScore[] scoresToBeDisplayed, int n, EmbedBuilder embed){
-        // im aware that this code blows but i was too lazy to make it good and it does what its supposed to do
-        System.out.println(n);
-        switch (n){
-            case 1:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">"
-                );
-                break;
-            case 2:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">"
-                );
-                break;
-            case 3:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">"
-                );
-                break;
-            case 4:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">"
-                );
-                break;
-            case 5:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[4].getWpm() + "** WPM from <@" + scoresToBeDisplayed[4].getUserId() + ">"
-                );
-                break;
-            case 6:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[4].getWpm() + "** WPM from <@" + scoresToBeDisplayed[4].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[5].getWpm() + "** WPM from <@" + scoresToBeDisplayed[5].getUserId() + ">"
-                );
-                break;
-            case 7:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[4].getWpm() + "** WPM from <@" + scoresToBeDisplayed[4].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[5].getWpm() + "** WPM from <@" + scoresToBeDisplayed[5].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[6].getWpm() + "** WPM from <@" + scoresToBeDisplayed[6].getUserId() + ">"
-                );
-                break;
-            case 8:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[4].getWpm() + "** WPM from <@" + scoresToBeDisplayed[4].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[5].getWpm() + "** WPM from <@" + scoresToBeDisplayed[5].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[6].getWpm() + "** WPM from <@" + scoresToBeDisplayed[6].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[7].getWpm() + "** WPM from <@" + scoresToBeDisplayed[7].getUserId() + ">"
-                );
-                break;
-            case 9:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[4].getWpm() + "** WPM from <@" + scoresToBeDisplayed[4].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[5].getWpm() + "** WPM from <@" + scoresToBeDisplayed[5].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[6].getWpm() + "** WPM from <@" + scoresToBeDisplayed[6].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[7].getWpm() + "** WPM from <@" + scoresToBeDisplayed[7].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[8].getWpm() + "** WPM from <@" + scoresToBeDisplayed[8].getUserId() + ">"
-                );
-                break;
-            case 10:
-                embed.setDescription(
-                        "1. **" + scoresToBeDisplayed[0].getWpm() + "** WPM from <@" + scoresToBeDisplayed[0].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[1].getWpm() + "** WPM from <@" + scoresToBeDisplayed[1].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[2].getWpm() + "** WPM from <@" + scoresToBeDisplayed[2].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[3].getWpm() + "** WPM from <@" + scoresToBeDisplayed[3].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[4].getWpm() + "** WPM from <@" + scoresToBeDisplayed[4].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[5].getWpm() + "** WPM from <@" + scoresToBeDisplayed[5].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[6].getWpm() + "** WPM from <@" + scoresToBeDisplayed[6].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[7].getWpm() + "** WPM from <@" + scoresToBeDisplayed[7].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[8].getWpm() + "** WPM from <@" + scoresToBeDisplayed[8].getUserId() + ">\n" +
-                        "1. **" + scoresToBeDisplayed[9].getWpm() + "** WPM from <@" + scoresToBeDisplayed[9].getUserId() + ">"
-                );
-                break;
+    public static void addDescriptionToEmbed(WpmScore[] scoresToBeDisplayed, EmbedBuilder embed){
+        assert scoresToBeDisplayed.length != 0;
+        StringJoiner joiner = new StringJoiner("\n");
+        for (WpmScore score : scoresToBeDisplayed) {
+            joiner.add("1. **" + score.getWpm() + "** WPM from <@" + score.getUserId() + ">");
         }
+        embed.setDescription(joiner.toString());
     }
 }
