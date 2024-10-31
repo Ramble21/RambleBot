@@ -193,8 +193,7 @@ public class TypeRacer implements Command  {
         Guild guild = jda.getGuildById(wpmScore.getGuildId());
         String jsonName = null;
         if (guild != null) {
-            String sanitizedGuildName = Ramble21.sanitizeFileName(guild.getName());
-            jsonName = "data/json/wpmscore/" + sanitizedGuildName + ".json";
+            jsonName = "data/json/wpmscore/" + guild.getId() + ".json";
             List<WpmScore> wpmScoreList;
 
             try (FileReader reader = new FileReader(jsonName)) {
@@ -223,8 +222,7 @@ public class TypeRacer implements Command  {
     }
     public static ArrayList<WpmScore> getServerScores(Guild guild) {
         Gson gson = new Gson();
-        String sanitizedName = Ramble21.sanitizeFileName(guild.getName());
-        String guildJson = "data/json/wpmscore/" + sanitizedName + ".json";
+        String guildJson = "data/json/wpmscore/" + guild.getId() + ".json";
         Type wpmScoreType = new TypeToken<ArrayList<WpmScore>>() {}.getType();
         try (FileReader reader = new FileReader(guildJson)) {
 
