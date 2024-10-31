@@ -1,7 +1,6 @@
 package com.github.Ramble21.commands;
 
 import com.github.Ramble21.RambleBot;
-import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.classes.Sentence;
 import com.github.Ramble21.classes.Stopwatch;
 import com.github.Ramble21.classes.WpmScore;
@@ -16,13 +15,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.io.*;
@@ -38,13 +35,12 @@ public class TypeRacer implements Command  {
 
     private String originalMessageId;
     private TextChannel originalTextChannel;
-    private Stopwatch stopwatch = new Stopwatch();
+    private final Stopwatch stopwatch = new Stopwatch();
 
     public static List<TypeRacer> games = new ArrayList<>();
 
     private final Color blue = new Color(0, 122, 255);
     private final Color red = new Color(255,0, 0);
-    private final Color green = new Color(0, 255, 0);
     private final Color yellow = new Color(255, 255, 0);
     private User user = null;
 
@@ -73,7 +69,7 @@ public class TypeRacer implements Command  {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) throws IOException {
+    public void execute(SlashCommandInteractionEvent event){
         jda = event.getJDA();
         TextChannel currentChannel = event.getChannel().asTextChannel();
         if (gameInChannel(currentChannel)){
@@ -115,14 +111,13 @@ public class TypeRacer implements Command  {
             TypeRacerButtonListener typeRacerButtonListener = new TypeRacerButtonListener(this);
             event.getJDA().addEventListener(typeRacerButtonListener);
 
+            assert flag != null;
             hook.sendMessageEmbeds(eb.build())
                     .addFiles(FileUpload.fromData(flag, "checkered-flag.png"))
                     .addActionRow(
                             Button.success("acceptButton", "Play"),
                             Button.danger("cancelButton", "Cancel"))
-                    .queue(message -> {
-                            this.originalMessageId = message.getId();
-                    });
+                    .queue(message -> this.originalMessageId = message.getId());
         });
     }
 
@@ -191,7 +186,7 @@ public class TypeRacer implements Command  {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Guild guild = jda.getGuildById(wpmScore.getGuildId());
-        String jsonName = null;
+        String jsonName;
         if (guild != null) {
             jsonName = "data/json/wpmscore/" + guild.getId() + ".json";
             List<WpmScore> wpmScoreList;

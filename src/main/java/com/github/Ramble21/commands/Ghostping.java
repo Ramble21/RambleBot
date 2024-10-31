@@ -1,6 +1,5 @@
 package com.github.Ramble21.commands;
 
-import com.github.Ramble21.classes.Ramble21;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -17,7 +16,6 @@ public class Ghostping {
 
     public void ghostping(){
 
-        String message = event.getMessage().getContentRaw();
         String[] parts = event.getMessage().getContentDisplay().split(" ");
         if (parts.length < 2) {
             return;
@@ -52,12 +50,10 @@ public class Ghostping {
             }
             else{
                 System.out.println("member is null");
-                return;
             }
         }
         catch (IllegalArgumentException e) {
             event.getChannel().sendMessage("<@739978476651544607> theres a bug in your code lol").queue();
-            return;
         }
     }
 }

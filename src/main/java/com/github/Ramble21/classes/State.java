@@ -1,7 +1,5 @@
 package com.github.Ramble21.classes;
 
-import javax.swing.*;
-
 public class State {
     private final String name;
     private final String nameSnakeCase;
@@ -58,9 +56,7 @@ public class State {
     public String getNameSnakeCase(){
         return nameSnakeCase;
     }
-    public String getFlagLocation(){
-        return "src/main/images/flags/" + nameSnakeCase;
-    }
+
     public String getCapital(){
         return capital;
     }

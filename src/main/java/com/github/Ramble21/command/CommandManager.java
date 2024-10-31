@@ -1,8 +1,8 @@
 package com.github.Ramble21.command;
 
-
-import com.github.Ramble21.commands.*;
-import com.github.Ramble21.commands.TypeRacerManager;
+import com.github.Ramble21.commands.GrabIp;
+import com.github.Ramble21.commands.RizzRater;
+import com.github.Ramble21.commands.StateFlags;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;

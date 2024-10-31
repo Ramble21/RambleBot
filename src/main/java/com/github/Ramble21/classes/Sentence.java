@@ -3,17 +3,11 @@ package com.github.Ramble21.classes;
 import com.github.Ramble21.RambleBot;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Random;
 
 public class Sentence {
 
-    private final String url = "dictionary.txt";
-    private final int wordLimit = 1000;
     private final int characterCount;
 
     private final String[] words;
@@ -22,17 +16,19 @@ public class Sentence {
     private final String textRaw;
     private final String textZwsp;
 
-    private final int noOfWords = 20;
+    public Sentence() {
 
-    public Sentence() throws IOException {
-
+        String url = "dictionary.txt";
         final var dictInputStream = RambleBot.class.getResourceAsStream(url);
+        assert dictInputStream != null;
         String[] allWords = new BufferedReader(new InputStreamReader(dictInputStream)).lines().toArray(String[]::new);
+        int wordLimit = 1000;
         words = new String[Math.min(wordLimit, allWords.length)];
         System.arraycopy(allWords, 0, words, 0, words.length);
 
         random = new Random();
 
+        int noOfWords = 20;
         String[] sigma = getRandomWords(noOfWords);
         textZwsp = createSentence(sigma, true);
         textRaw = createSentence(sigma, false);

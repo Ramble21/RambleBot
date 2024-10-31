@@ -1,7 +1,6 @@
-package com.github.Ramble21.commands;
+package com.github.Ramble21.command;
 
-import com.github.Ramble21.command.Command;
-import com.github.Ramble21.command.CommandManager;
+import com.github.Ramble21.commands.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;

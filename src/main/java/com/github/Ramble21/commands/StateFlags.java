@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.*;
@@ -36,8 +35,6 @@ public class StateFlags implements Command {
                 return;
             }
         }
-        User skibidi = event.getUser();
-        String user = skibidi.getId();
 
         Color red = new Color(255, 0, 0);
         Color green = new Color(0, 255, 0);
@@ -56,11 +53,10 @@ public class StateFlags implements Command {
         final var fileStream = RambleBot.class.getResourceAsStream("images/flags/" + filename);
 
         embed.setImage("attachment://mystery.png");
+        assert fileStream != null;
         event.replyEmbeds(embed.build())
                 .addFiles(FileUpload.fromData(fileStream, "mystery.png"))
-                .queue(hook -> {
-                    storedHook = hook;
-                });
+                .queue(hook -> storedHook = hook);
 
         LocalDateTime start = LocalDateTime.now();
 
@@ -91,7 +87,6 @@ public class StateFlags implements Command {
                         currentChannel = null;
 
                         event.getJDA().removeEventListener(this);
-                        return;
                     }
                 }, 15, TimeUnit.SECONDS);
 

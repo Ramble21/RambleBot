@@ -1,6 +1,5 @@
 package com.github.Ramble21.classes;
 
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 
-import java.io.File;
 import java.util.Arrays;
 
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ public class TypeRacerLeaderboard implements Command {
         Arrays.sort(scores, Comparator.comparingDouble(WpmScore::getWpm).reversed());
 
         addDescriptionToEmbed(scores, embed);
+        assert trophy != null;
         event.getInteraction().replyEmbeds(embed.build())
                 .addFiles(FileUpload.fromData(trophy, "trophy.png")
                 ).queue();

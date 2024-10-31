@@ -1,6 +1,5 @@
 package com.github.Ramble21.command;
 
-import com.github.Ramble21.commands.TypeRacer;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
