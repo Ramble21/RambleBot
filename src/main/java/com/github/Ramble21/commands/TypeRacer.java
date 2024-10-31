@@ -27,6 +27,9 @@ import org.w3c.dom.Text;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +104,7 @@ public class TypeRacer implements Command  {
         event.deferReply().queue(hook -> {
             EmbedBuilder eb = new EmbedBuilder();
 
-            File flag = new File(("src/main/images/checkered-flag.png"));
+            final var flag = RambleBot.class.getResourceAsStream("images/checkered-flag.png");
             eb.setThumbnail("attachment://checkered-flag.png");
 
             eb.setTitle("TypeRacer");
@@ -130,8 +133,6 @@ public class TypeRacer implements Command  {
         cancelEmbed.setTitle("TypeRacer");
         cancelEmbed.setDescription("Game cancelled");
         cancelEmbed.setFooter(buttonUser.getEffectiveName(), buttonUser.getAvatarUrl());
-
-        File flag = new File(("src/main/images/checkered-flag.png"));
         cancelEmbed.setThumbnail("attachment://checkered-flag.png");
 
         originalTextChannel.editMessageEmbedsById(this.originalMessageId, cancelEmbed.build())
@@ -149,8 +150,6 @@ public class TypeRacer implements Command  {
         startEmbed.setTitle("TypeRacer");
         startEmbed.setDescription("**" + player2.getAsMention() + " accepted your TypeRacer challenge!** Generating words in 5 seconds!");
         startEmbed.setFooter(player1.getEffectiveName(), player1.getAvatarUrl());
-
-        File flag = new File(("src/main/images/checkered-flag.png"));
         startEmbed.setThumbnail("attachment://checkered-flag.png");
 
         originalTextChannel.editMessageEmbedsById(this.originalMessageId, startEmbed.build())
@@ -175,12 +174,27 @@ public class TypeRacer implements Command  {
         System.out.println(sentence.getTextRaw());
     }
     public void saveToJson(WpmScore wpmScore){
+
+        try {
+            for (String pathStr : new String[]{
+                    "data",
+                    "data/json",
+                    "data/json/wpmscore"
+            }) {
+                Path path = Paths.get(pathStr);
+                if (!Files.exists(path)) Files.createDirectory(path);
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Guild guild = jda.getGuildById(wpmScore.getGuildId());
         String jsonName = null;
         if (guild != null) {
             String sanitizedGuildName = Ramble21.sanitizeFileName(guild.getName());
-            jsonName = "src/main/json/wpmscore/" + sanitizedGuildName + ".json";
+            jsonName = "data/json/wpmscore/" + sanitizedGuildName + ".json";
             List<WpmScore> wpmScoreList;
 
             try (FileReader reader = new FileReader(jsonName)) {
@@ -210,7 +224,7 @@ public class TypeRacer implements Command  {
     public static ArrayList<WpmScore> getServerScores(Guild guild) {
         Gson gson = new Gson();
         String sanitizedName = Ramble21.sanitizeFileName(guild.getName());
-        String guildJson = "src/main/json/wpmscore/" + sanitizedName + ".json";
+        String guildJson = "data/json/wpmscore/" + sanitizedName + ".json";
         Type wpmScoreType = new TypeToken<ArrayList<WpmScore>>() {}.getType();
         try (FileReader reader = new FileReader(guildJson)) {
 

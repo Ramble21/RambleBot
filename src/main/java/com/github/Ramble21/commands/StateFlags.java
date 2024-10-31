@@ -1,5 +1,6 @@
 package com.github.Ramble21.commands;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.State;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -52,13 +53,11 @@ public class StateFlags implements Command {
         thisInstance = this;
 
         String filename = state.getNameSnakeCase() + ".png";
-        File file = new File(("src/main/images/flags/" + filename));
-
-
+        final var fileStream = RambleBot.class.getResourceAsStream("images/flags/" + filename);
 
         embed.setImage("attachment://mystery.png");
         event.replyEmbeds(embed.build())
-                .addFiles(FileUpload.fromData(file, "mystery.png"))
+                .addFiles(FileUpload.fromData(fileStream, "mystery.png"))
                 .queue(hook -> {
                     storedHook = hook;
                 });

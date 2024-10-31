@@ -1,5 +1,6 @@
 package com.github.Ramble21.commands;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.WpmScore;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,7 +24,7 @@ public class TypeRacerLeaderboard implements Command {
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(guild.getName() + " WPM Leaderboard");
-        File trophy = new File(("src/main/images/trophy.png"));
+        final var trophy = RambleBot.class.getResourceAsStream("images/trophy.png");
         embed.setThumbnail("attachment://trophy.png");
 
         ArrayList<WpmScore> rawScores = TypeRacer.getServerScores(guild);
