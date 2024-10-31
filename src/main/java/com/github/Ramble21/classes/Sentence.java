@@ -1,6 +1,10 @@
 package com.github.Ramble21.classes;
 
+import com.github.Ramble21.RambleBot;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,7 +12,7 @@ import java.util.Random;
 
 public class Sentence {
 
-    private final String url = "src/main/resources/dictionary.txt";
+    private final String url = "dictionary.txt";
     private final int wordLimit = 1000;
     private final int characterCount;
 
@@ -22,7 +26,8 @@ public class Sentence {
 
     public Sentence() throws IOException {
 
-        String[] allWords = Files.lines(Paths.get(url)).toArray(String[]::new);
+        final var dictInputStream = RambleBot.class.getResourceAsStream(url);
+        String[] allWords = new BufferedReader(new InputStreamReader(dictInputStream)).lines().toArray(String[]::new);
         words = new String[Math.min(wordLimit, allWords.length)];
         System.arraycopy(allWords, 0, words, 0, words.length);
 
