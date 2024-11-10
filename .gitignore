@@ -36,5 +36,6 @@ build/
 
 ### Other ###
 .env
-
 data/json
+out
+target
