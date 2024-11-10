@@ -67,6 +67,7 @@ public class VocabMessageListener extends ListenerAdapter {
                         originalMessage.editMessageEmbeds(editedEmbed.build()).queue();
                     });
                     timer.cancel();
+                    Vocab.games.remove(vocabInstance);
                 }
             }
         }
