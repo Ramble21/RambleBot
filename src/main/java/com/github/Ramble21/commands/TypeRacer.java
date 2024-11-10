@@ -169,7 +169,6 @@ public class TypeRacer implements Command  {
         System.out.println(sentence.getTextRaw());
     }
     public void saveToJson(WpmScore wpmScore){
-
         try {
             for (String pathStr : new String[]{
                     "data",

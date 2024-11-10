@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,15 @@ public class CommandListener extends ListenerAdapter {
                                 new SubcommandData("play", "Play TypeRacer against another server member!"),
                                 new SubcommandData("leaderboard", "See the leaderboard of the highest WPM scores achieved in this server!")
                         )
+        );
+
+        commandData.add(Commands.slash("vocab", "Study Spanish or French vocabulary")
+                .addOptions(
+                        new OptionData(OptionType.STRING, "language", "Choose a language to study vocab from")
+                                .addChoice("Spanish", "Spanish")
+                                .addChoice("French", "French")
+                                .setRequired(true)
+                )
         );
 
         event.getGuild().updateCommands().addCommands(commandData).queue();

@@ -60,8 +60,6 @@ public class StateFlags implements Command {
 
         LocalDateTime start = LocalDateTime.now();
 
-
-
         event.getJDA().addEventListener(new ListenerAdapter() {
 
             final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);

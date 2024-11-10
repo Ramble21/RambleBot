@@ -1,8 +1,6 @@
 package com.github.Ramble21.command;
 
-import com.github.Ramble21.commands.GrabIp;
-import com.github.Ramble21.commands.RizzRater;
-import com.github.Ramble21.commands.StateFlags;
+import com.github.Ramble21.commands.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;
@@ -17,6 +15,7 @@ public class CommandManager{
         commands.put("rizz-rater", new RizzRater());
         commands.put("state-flags", new StateFlags());
         commands.put("typeracer", new TypeRacerManager());
+        commands.put("vocab", new Vocab());
     }
 
     public Command getCommand(String name){
