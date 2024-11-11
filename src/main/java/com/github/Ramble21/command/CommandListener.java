@@ -38,10 +38,12 @@ public class CommandListener extends ListenerAdapter {
 
         commandData.add(Commands.slash("vocab", "Study Spanish or French vocabulary")
                 .addOptions(
-                        new OptionData(OptionType.STRING, "language", "Choose a language to study vocab from")
+                        (new OptionData(OptionType.STRING, "language", "Choose a language to study vocab from")
                                 .addChoice("Spanish", "Spanish")
                                 .addChoice("French", "French")
-                                .setRequired(true)
+                                .setRequired(true)),
+                        (new OptionData(OptionType.BOOLEAN, "onlyreview", "Guarantee that the vocab word you pick is a review word")
+                                .setRequired(false))
                 )
         );
 

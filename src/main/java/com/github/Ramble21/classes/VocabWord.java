@@ -1,14 +1,18 @@
 package com.github.Ramble21.classes;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import net.dv8tion.jda.api.entities.User;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class VocabWord {
 
@@ -20,23 +24,52 @@ public class VocabWord {
 
     public String word;
     public String[] englishTranslations;
+    public int masteryLevel = 0;
 
-    public VocabWord(String flagName){
+    public VocabWord(String flagName, User user, boolean isFromPersonal){
         if (hashMap.isEmpty()){
             initializeVocabHashMap();
         }
         if (frenchHashMap.isEmpty()){
             initializeFrenchVocabHashMap();
         }
-
-        if (flagName.equals("spanish.png")){
-            int line = (int)(Math.random()*hashMap.size());
-            word = mapKeys.get(line);
+        if (!isFromPersonal){
+            if (flagName.equals("spanish.png")){
+                int line = (int)(Math.random()*hashMap.size());
+                word = mapKeys.get(line);
+            }
+            else{
+                int line = (int)(Math.random()*frenchHashMap.size());
+                word = frenchMapKeys.get(line);
+            }
         }
         else{
-            int line = (int)(Math.random()*frenchHashMap.size());
-            word = frenchMapKeys.get(line);
+            if (flagName.equals("spanish.png")){
+                ArrayList<VocabWord> personal = getPersonalJsonList(user, "spanish");
+                ArrayList<String> possibleVocabWords = new ArrayList<>();
+
+                assert personal != null;
+                for (VocabWord vocabWord : personal){
+                    possibleVocabWords.add(vocabWord.getVocabWord());
+                }
+
+                int line = (int)(Math.random()* possibleVocabWords.size());
+                word = possibleVocabWords.get(line);
+            }
+            else{
+                ArrayList<VocabWord> personal = getPersonalJsonList(user, "french");
+                ArrayList<String> possibleVocabWords = new ArrayList<>();
+
+                assert personal != null;
+                for (VocabWord vocabWord : personal){
+                    possibleVocabWords.add(vocabWord.getVocabWord());
+                }
+
+                int line = (int)(Math.random()* possibleVocabWords.size());
+                word = possibleVocabWords.get(line);
+            }
         }
+
 
         englishTranslations = generateEnglishTranslations(word, flagName);
         System.out.println("Word: " + word);
@@ -74,13 +107,8 @@ public class VocabWord {
         frenchMapKeys.addAll(frenchHashMap.keySet());
     }
     public static String[] generateEnglishTranslations(String key, String flagName){
-        String value;
-        if (flagName.equals("spanish.png")){
-            value = hashMap.get(key);
-        }
-        else{
-            value = frenchHashMap.get(key);
-        }
+        String value = generateContentRaw(key, flagName);
+
         int firstCommaIndex = -1;
         for (int i = 0; i < value.length()-1; i++){
             if ((value.charAt(i) == ',') && firstCommaIndex == -1){
@@ -102,11 +130,80 @@ public class VocabWord {
         }
         return new String[]{value};
     }
-
+    public static String generateContentRaw(String key, String flagName){
+        String value;
+        if (flagName.equals("spanish.png")){
+            value = hashMap.get(key);
+        }
+        else{
+            value = frenchHashMap.get(key);
+        }
+        return value;
+    }
     public String getVocabWord(){
         return word;
     }
     public String[] getEnglishTranslations(){
         return englishTranslations;
+    }
+    public int getMasteryLevel() {
+        return masteryLevel;
+    }
+    public void writeToPersonalJson(User user, String language){
+
+        try {
+            for (String pathStr : new String[]{
+                    "data",
+                    "data/json",
+                    "data/json/personalvocab",
+                    "data/json/personalvocab/" + language
+            }) {
+                Path path = Paths.get(pathStr);
+                if (!Files.exists(path)) Files.createDirectory(path);
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String userId = user.getId();
+
+        List<VocabWord> vocabWordList;
+
+        try (FileReader reader = new FileReader("data/json/personalvocab/" + language + "/" + user.getId() + ".json")) {
+            Type listType = new TypeToken<ArrayList<VocabWord>>() {}.getType();
+            vocabWordList = gson.fromJson(reader, listType);
+
+            if (vocabWordList == null) {
+                vocabWordList = new ArrayList<>();
+            }
+
+        } catch (IOException e) {
+            vocabWordList = new ArrayList<>();
+        }
+
+        vocabWordList.add(this);
+
+        try (FileWriter writer = new FileWriter("data/json/personalvocab/" + language + "/" + user.getId() + ".json")){
+            gson.toJson(vocabWordList,writer);
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+    public static ArrayList<VocabWord> getPersonalJsonList(User user, String language){
+        Gson gson = new Gson();
+        String personalJson = "data/json/personalvocab/" + language + "/" + user.getId() + ".json";
+        Type type = new TypeToken<ArrayList<VocabWord>>() {}.getType();
+
+        try (FileReader reader = new FileReader(personalJson)) {
+            return gson.fromJson(reader, type);
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
+    public String toString(){
+        return "VocabWord{" + "vocabWord='" + word + "\\'" + ", englishTranslations=" + Arrays.toString(englishTranslations) + "}";
     }
 }
