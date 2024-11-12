@@ -38,26 +38,30 @@ public class VocabMessageListener extends ListenerAdapter {
                         shouldCongratulate = updateMasteryLevel(event, vocabWord, vocabInstance);
                     }
 
-                    String description = "";
+                    String otherTranslations = "";
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setColor(Color.green);
                     embed.setTitle("That's correct!");
-                    if (shouldCongratulate){
-                        embed.setDescription("You mastered the verb `" + vocabWord.getVocabWord() +"`!");
-                    }
 
                     for (int ii = 0; ii < vocabWord.getEnglishTranslations().length; ii++){
                         if (!(vocabWord.getEnglishTranslations()[ii].equals(vocabWord.getEnglishTranslations()[i]))){
-                            if (description.isEmpty()) {
-                                description = vocabWord.getEnglishTranslations()[ii];
+                            if (otherTranslations.isEmpty()) {
+                                otherTranslations = vocabWord.getEnglishTranslations()[ii];
                             }
                             else{
-                                description += ", " + vocabWord.getEnglishTranslations()[ii];
+                                otherTranslations += ", " + vocabWord.getEnglishTranslations()[ii];
                             }
                         }
                     }
-                    if (!description.isEmpty()){
-                        embed.setDescription("Other translations: `" + description + "`.");
+
+                    if (shouldCongratulate && otherTranslations.isEmpty()){
+                        embed.setDescription("You mastered the verb `" + vocabWord.getVocabWord() +"`!");
+                    }
+                    else if (shouldCongratulate){
+                        embed.setDescription("You mastered the verb `" + vocabWord.getVocabWord() +"`!" + "\n\nOther translations: `" + otherTranslations + "`.");
+                    }
+                    else if (!otherTranslations.isEmpty()){
+                        embed.setDescription("Other translations: `" + otherTranslations + "`.");
                     }
                     event.getMessage().replyEmbeds(embed.build()).queue();
 
@@ -115,7 +119,7 @@ public class VocabMessageListener extends ListenerAdapter {
     }
 
     public static boolean updateMasteryLevel(MessageReceivedEvent event, VocabWord vocabWord, Vocab vocabInstance){
-        // returns true if follow up message should congratulate
+        // returns true if follow-up message should congratulate
         boolean returnValue = false;
         JsonArray jsonArray;
         String filePath;

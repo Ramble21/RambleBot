@@ -4,9 +4,7 @@ import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.VocabWord;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.VocabMessageListener;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -14,6 +12,8 @@ import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.awt.*;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -81,7 +81,7 @@ public class Vocab implements Command {
 
         VocabWord vocabWord;
 
-        if (event.getOption("onlyreview") == null){
+        if (event.getOption("onlyreview") == null || !Objects.requireNonNull(event.getOption("onlyreview")).getAsBoolean()){
             if (VocabWord.getPersonalJsonList(event.getUser(), language.toLowerCase()) == null ||
                     Objects.requireNonNull(VocabWord.getPersonalJsonList(event.getUser(), language.toLowerCase())).isEmpty()){
                 vocabWord = new VocabWord(flagName, event.getUser(), false);
@@ -99,10 +99,11 @@ public class Vocab implements Command {
             }
         }
         else{
-            if (VocabWord.getPersonalJsonList(event.getUser(), language.toLowerCase()) == null ||
-                    Objects.requireNonNull(VocabWord.getPersonalJsonList(event.getUser(), language.toLowerCase())).isEmpty()){
+            if ((VocabWord.getPersonalJsonList(event.getUser(), language.toLowerCase()) == null ||
+                    Objects.requireNonNull(VocabWord.getPersonalJsonList(event.getUser(), language.toLowerCase())).isEmpty()) ){
                 vocabWord = new VocabWord(flagName, event.getUser(), false);
                 event.reply("You do not have any words to review!").setEphemeral(true).queue();
+                games.remove(vocab);
                 return;
             }
             isReview = true;
@@ -161,7 +162,7 @@ public class Vocab implements Command {
             additionIfReview = "\n\nYou previously got this word wrong, get it correct 1 final time for mastery!";
         }
         else if (isReview && vocabMasteryLevel == 0){
-            additionIfReview = "\n\nYou previously got this word wrong, get it 3 more times correct in a row for mastery!";
+            additionIfReview = "\n\nYou previously got this word wrong, get it 3 times correct in a row for mastery!";
         }
 
         if (isReversed){
@@ -193,7 +194,42 @@ public class Vocab implements Command {
             @Override
             public void run(){
 
-                vocabWord.writeToPersonalJson(event.getUser(), language.toLowerCase());
+                JsonArray jsonArray;
+                String filePath;
+                boolean alreadyExists = false;
+                if (getFlagName().equals("spanish.png")){
+                    filePath = "data/json/personalvocab/spanish/" + event.getUser().getId() + ".json";
+                }
+                else{
+                    filePath = "data/json/personalvocab/french/" + event.getUser().getId() + ".json";
+                }
+                try {
+                    FileReader reader = new FileReader(filePath);
+                    jsonArray = JsonParser.parseReader(reader).getAsJsonArray();
+                    reader.close();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject object = jsonArray.get(i).getAsJsonObject();
+                    if (object.get("word").getAsString().equals(vocabWord.getVocabWord())){
+                        object.addProperty("masteryLevel", 0);
+                        alreadyExists = true;
+                    }
+                }
+                if (alreadyExists){
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    try{
+                        FileWriter writer = new FileWriter(filePath);
+                        gson.toJson(jsonArray, writer);
+                        writer.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else{
+                    vocabWord.writeToPersonalJson(event.getUser(), language.toLowerCase());
+                }
 
                 games.remove(vocab);
                 event.getJDA().removeEventListener(vocabMessageListener);
