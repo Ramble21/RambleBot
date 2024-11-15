@@ -14,7 +14,7 @@ public class mewhen2 extends ListenerAdapter {
         else if (!event.getChannel().asTextChannel().getName().equalsIgnoreCase("glisterbot-errors")){
             return;
         }
-        else if (!event.getAuthor().getId().equals("1029237685656760352")){
+        else if (!event.getAuthor().getId().equals("1283474938895798344")){
             return;
         }
         event.getMessage().addReaction(Emoji.fromCustom("Mewhen2", 940572260421476352L, false)).queue();
