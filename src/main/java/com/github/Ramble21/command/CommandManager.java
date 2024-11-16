@@ -16,6 +16,7 @@ public class CommandManager{
         commands.put("state-flags", new StateFlags());
         commands.put("typeracer", new TypeRacerManager());
         commands.put("vocab", new Vocab());
+        commands.put("update-logs", new UpdateLogs());
     }
 
     public Command getCommand(String name){

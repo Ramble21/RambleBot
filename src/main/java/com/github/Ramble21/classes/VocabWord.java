@@ -149,6 +149,7 @@ public class VocabWord {
     public int getMasteryLevel() {
         return masteryLevel;
     }
+
     public void writeToPersonalJson(User user, String language){
 
         try {
@@ -161,8 +162,7 @@ public class VocabWord {
                 Path path = Paths.get(pathStr);
                 if (!Files.exists(path)) Files.createDirectory(path);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

@@ -28,6 +28,8 @@ public class CommandListener extends ListenerAdapter {
 
         commandData.add(Commands.slash("state-flags", "Test your US state flag knowledge by guessing a random flag"));
 
+        commandData.add(Commands.slash("update-logs", "[BETA] Updates the message logs for this server. May take a long time."));
+
         commandData.add(
                 Commands.slash("typeracer", "Play TypeRacer commands")
                         .addSubcommands(
