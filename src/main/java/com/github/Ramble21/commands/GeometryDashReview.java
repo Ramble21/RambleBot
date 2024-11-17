@@ -50,6 +50,7 @@ public class GeometryDashReview implements Command {
         embed.setTitle("Approve completions for server " + guild.getName());
         embed.setColor(Color.yellow);
         GeometryDashLevel currentLevel = GeometryDashLevel.getFirstInGuild(guild);
+        lastLevel = currentLevel;
         if (currentLevel == null){
             return null;
         }
@@ -60,8 +61,15 @@ public class GeometryDashReview implements Command {
                         "<:length:1307507840864227468> Attempts: **" + currentLevel.getAttempts() + "**\n");
         return embed;
     }
+
+    private GeometryDashLevel lastLevel;
+
+    public GeometryDashLevel getLastLevel() {
+        return lastLevel;
+    }
+
     public void sendEmbed(EmbedBuilder embed, SlashCommandInteractionEvent event, MessageChannel channel, GeometryDashLevel level){
-        if (originalMessageId == null){
+
            event.deferReply().queue(hook -> {
                hook.sendMessageEmbeds(embed.build())
                         .addActionRow(
@@ -73,11 +81,5 @@ public class GeometryDashReview implements Command {
                             event.getJDA().addEventListener(geometryDashReviewButtonListener);
                });
            });
-        }
-        else{
-            channel.editMessageEmbedsById(this.originalMessageId, embed.build()).queue();
-            GeometryDashReviewButtonListener geometryDashReviewButtonListener = new GeometryDashReviewButtonListener(this, level);
-            event.getJDA().addEventListener(geometryDashReviewButtonListener);
-        }
     }
 }

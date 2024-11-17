@@ -36,6 +36,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
 
             GeometryDashLevel.updateModerateQueueJson(level, true);
             level.writeToPersonalJson();
+
             EmbedBuilder embed = reviewInstance.generateNewEmbed(Objects.requireNonNull(buttonEvent.getGuild()));
             if (GeometryDashLevel.getModeratorQueue().isEmpty()){
                 EmbedBuilder done = new EmbedBuilder();
@@ -47,7 +48,10 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
                 return;
             }
 
-            reviewInstance.sendEmbed(embed, reviewInstance.getOriginalEvent(), reviewInstance.getOriginalEvent().getChannel(), GeometryDashLevel.getFirstInGuild(reviewInstance.getOriginalEvent().getGuild()));
+            System.out.println(reviewInstance.getOriginalMessageId());
+            buttonEvent.getChannel().editMessageEmbedsById(reviewInstance.getOriginalMessageId(), embed.build()).queue();
+            GeometryDashReviewButtonListener geometryDashReviewButtonListener = new GeometryDashReviewButtonListener(reviewInstance, reviewInstance.getLastLevel());
+            buttonEvent.getJDA().addEventListener(geometryDashReviewButtonListener);
             buttonEvent.deferEdit().queue();
         }
         else if (Objects.equals(buttonEvent.getComponent().getId(), "rejectButton")){
@@ -55,6 +59,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
             System.out.println("Received button: rejectButton");
 
             GeometryDashLevel.updateModerateQueueJson(level, true);
+
             EmbedBuilder embed = reviewInstance.generateNewEmbed(Objects.requireNonNull(buttonEvent.getGuild()));
             if (GeometryDashLevel.getModeratorQueue().isEmpty()){
                 EmbedBuilder done = new EmbedBuilder();
@@ -65,7 +70,10 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
                         .queue();
                 return;
             }
-            reviewInstance.sendEmbed(embed, reviewInstance.getOriginalEvent(), reviewInstance.getOriginalEvent().getChannel(), GeometryDashLevel.getFirstInGuild(reviewInstance.getOriginalEvent().getGuild()));
+
+            buttonEvent.getChannel().editMessageEmbedsById(reviewInstance.getOriginalMessageId(), embed.build()).queue();
+            GeometryDashReviewButtonListener geometryDashReviewButtonListener = new GeometryDashReviewButtonListener(reviewInstance, reviewInstance.getLastLevel());
+            buttonEvent.getJDA().addEventListener(geometryDashReviewButtonListener);
             buttonEvent.deferEdit().queue();
         }
         else{

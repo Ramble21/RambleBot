@@ -110,7 +110,7 @@ public class GeometryDashLevel {
             }
         }
         for (GeometryDashLevel level : moderatorQueue){
-            if (guild.getMember((guild.getJDA().getUserById(level.getSubmitterId()))) != null){ //
+            if (guild.getMember((guild.getJDA().getUserById(level.getSubmitterId()))) != null){
                 return level;
             }
         }
