@@ -10,9 +10,14 @@ import java.util.Objects;
 public class RizzRater implements Command {
     @Override
     public void execute(SlashCommandInteractionEvent event){
-        User skibidi = Objects.requireNonNull(event.getOption("member")).getAsUser();
-        String user = skibidi.getId();
-        System.out.println(user);
+        String user;
+        if (event.getOption("member") == null){
+            user = event.getUser().getId();
+        }
+        else{
+            User skibidi = Objects.requireNonNull(event.getOption("member")).getAsUser();
+            user = skibidi.getId();
+        }
 
         int seed = Ramble21.generateSeed(user);
         int ballzakz = Ramble21.generateRizz(seed);

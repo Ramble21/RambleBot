@@ -21,10 +21,10 @@ public class CommandListener extends ListenerAdapter {
         List<CommandData> commandData = new ArrayList<>();
 
         commandData.add(Commands.slash("grab-ip", "Grabs the totally real ip of the member that you choose")
-                .addOption(OptionType.USER, "member", "Member to grab IP of", true));
+                .addOption(OptionType.USER, "member", "Member to grab IP of", false));
 
         commandData.add(Commands.slash("rizz-rater", "Rate's a server member's rizz on a scale of 1 to 10")
-                .addOption(OptionType.USER, "member", "Member to get rizz level of", true));
+                .addOption(OptionType.USER, "member", "Member to get rizz level of", false));
 
         commandData.add(Commands.slash("state-flags", "Test your US state flag knowledge by guessing a random flag"));
 
@@ -47,7 +47,8 @@ public class CommandListener extends ListenerAdapter {
                                                 (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete (including practice)")
                                                         .setRequired(true))
                                         ),
-                                new SubcommandData("profile", "View RambleBot GD profile"),
+                                new SubcommandData("profile", "View RambleBot GD profile")
+                                        .addOption(OptionType.USER, "member", "Member to get profile of", false),
                                 new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions")
                         )
         );

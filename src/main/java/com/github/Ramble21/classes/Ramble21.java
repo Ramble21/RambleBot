@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 
 public class Ramble21 {
@@ -76,5 +78,22 @@ public class Ramble21 {
             }
         }
         return (double) matchingChars / totalChars * 100;
+    }
+    public static String getEmojiName(String difficulty){
+        return switch (difficulty){
+            case "Easy Demon" -> "<:icon_demon_easy:1307789634415104000>";
+            case "Medium Demon" -> "<:icon_demon_medium:1307789652010467465>";
+            case "Hard Demon" -> "<:icon_demon_hard:1307789610230874112>";
+            case "Insane Demon" -> "<:icon_demon_insane:1307789727251955783>";
+            case "Extreme Demon" -> "<:icon_demon_extreme:1307789584331178045>";
+            default -> throw new IllegalStateException("Unexpected value: " + difficulty);
+        };
+    }
+
+    public static void sortByEstimatedDiff (ArrayList<GeometryDashLevel> list){
+        list.sort(
+                Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
+                        .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
+        );
     }
 }

@@ -67,6 +67,16 @@ public class GeometryDashLevel {
     public String getDifficulty() {
         return difficulty;
     }
+    public int getDifficultyAsInt(){
+        return switch (difficulty){
+            case "Easy Demon" -> 5;
+            case "Medium Demon" -> 4;
+            case "Hard Demon" -> 3;
+            case "Insane Demon" -> 2;
+            case "Extreme Demon" -> 1;
+            default -> throw new IllegalStateException("Unexpected value: " + difficulty);
+        };
+    }
     public int getAttempts(){
         return attempts;
     }
