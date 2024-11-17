@@ -11,7 +11,7 @@ public class Test extends ListenerAdapter {
         if (event.getMessage().getContentRaw().startsWith("r!apitest")){
             try {
                 int id = Integer.parseInt(event.getMessage().getContentRaw().substring(10));
-                GeometryDashLevel testLevel = new GeometryDashLevel(id);
+                GeometryDashLevel testLevel = new GeometryDashLevel(id, -1);
             } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                 System.out.println("Invalid ID");
             }

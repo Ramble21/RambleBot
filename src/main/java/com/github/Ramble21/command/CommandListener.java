@@ -38,6 +38,20 @@ public class CommandListener extends ListenerAdapter {
                         )
         );
 
+        commandData.add(
+                Commands.slash("gd", "Geometry Dash-related commands")
+                        .addSubcommands(
+                                new SubcommandData("submitrecord", "Submit Geometry Dash completion record")
+                                        .addOptions(
+                                                (new OptionData(OptionType.INTEGER, "id", "Level ID to submit record of", true)),
+                                                (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete (including practice)")
+                                                        .setRequired(true))
+                                        ),
+                                new SubcommandData("profile", "View RambleBot GD profile"),
+                                new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions")
+                        )
+        );
+
         commandData.add(Commands.slash("vocab", "Study Spanish or French vocabulary")
                 .addOptions(
                         (new OptionData(OptionType.STRING, "language", "Choose a language to study vocab from")

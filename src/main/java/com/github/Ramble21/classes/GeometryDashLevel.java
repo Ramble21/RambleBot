@@ -17,19 +17,30 @@ import java.util.List;
 
 public class GeometryDashLevel {
 
-    String jsonResponse;
+    private String name;
+    private int id;
+    private int stars;
+    private String author;
+    private String difficulty;
+    private boolean platformer;
+    private final int attempts;
 
-    String name;
-    int id;
-    String author;
-    String difficulty;
+    private static ArrayList<GeometryDashLevel> moderatorQueue;
 
-    int attempts;
+    public GeometryDashLevel(int levelId, int attempts){
+        this.attempts = attempts;
+        String jsonResponse = getApiResponse(levelId);
+        if (moderatorQueue == null){
+            moderatorQueue = new ArrayList<>();
+        }
 
-    public GeometryDashLevel(int levelId){
-        jsonResponse = getApiResponse(levelId);
-        parseJson();
-        System.out.println(this);
+        if (!jsonResponse.equals("Error")){
+            parseJson(jsonResponse);
+            System.out.println(this);
+        }
+        else{
+            this.id = -1;
+        }
     }
 
     public String getName() {
@@ -37,6 +48,9 @@ public class GeometryDashLevel {
     }
     public int getId() {
         return id;
+    }
+    public int getStars() {
+        return stars;
     }
     public String getAuthor() {
         return author;
@@ -47,10 +61,29 @@ public class GeometryDashLevel {
     public int getAttempts(){
         return attempts;
     }
-    public String toString(){
-        return "{\n \"name\": \"" + name + "\",\n \"id\": \"" + id + "\",\n \"author\": \"" + author + "\",\n \"difficulty\": \"" + difficulty + "\"\n}";
+    public boolean isPlatformer(){
+        return platformer;
     }
 
+    public static ArrayList<GeometryDashLevel> getModeratorQueue() {
+        return moderatorQueue;
+    }
+    public void addToModeratorQueue(){
+        moderatorQueue.add(this);
+    }
+    public void removeFromModeratorQueue(){
+        moderatorQueue.remove(this);
+    }
+
+    public String toString(){
+        return "{\n \"name\": \"" + name +
+                "\",\n \"id\": \"" + id +
+                "\",\n \"author\": \"" + author +
+                "\",\n \"difficulty\": \"" + difficulty +
+                "\",\n \"platformer\": \"" + platformer +
+                "\",\n \"attempts\": \"" + attempts +
+                "\"\n}";
+    }
 
     public String getApiResponse(int levelId){
         try{
@@ -82,13 +115,15 @@ public class GeometryDashLevel {
             throw new RuntimeException(e);
         }
     }
-    public void parseJson(){
+    public void parseJson(String jsonResponse){
         Gson gson = new Gson();
         GeometryDashLevel data = gson.fromJson(jsonResponse, GeometryDashLevel.class);
         this.name = data.name;
         this.author = data.author;
         this.difficulty = data.difficulty;
         this.id = data.id;
+        this.stars = data.stars;
+        this.platformer = data.platformer;
     }
 
     public void writeToPersonalJson(User user){
@@ -106,7 +141,6 @@ public class GeometryDashLevel {
         }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userId = user.getId();
 
         List<GeometryDashLevel> geometryDashLevels;
 
@@ -124,7 +158,7 @@ public class GeometryDashLevel {
 
         geometryDashLevels.add(this);
 
-        try (FileWriter writer = new FileWriter("data/json/personalvocab/" + user.getId() + ".json")){
+        try (FileWriter writer = new FileWriter("data/json/completions/" + user.getId() + ".json")){
             gson.toJson(geometryDashLevels,writer);
         }
         catch (IOException e){
