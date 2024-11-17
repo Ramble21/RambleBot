@@ -1,8 +1,10 @@
 package com.github.Ramble21.classes;
 
+import com.github.Ramble21.RambleBot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GeometryDashLevel {
 
@@ -25,10 +28,16 @@ public class GeometryDashLevel {
     private boolean platformer;
     private final int attempts;
 
+    private final transient User submitter;
+    private final String submitterId;
+
     private static ArrayList<GeometryDashLevel> moderatorQueue;
 
-    public GeometryDashLevel(int levelId, int attempts){
+    public GeometryDashLevel(int levelId, int attempts, User submitter){
         this.attempts = attempts;
+        this.submitter = submitter;
+        this.submitterId = submitter.getId();
+
         String jsonResponse = getApiResponse(levelId);
         if (moderatorQueue == null){
             moderatorQueue = new ArrayList<>();
@@ -64,15 +73,50 @@ public class GeometryDashLevel {
     public boolean isPlatformer(){
         return platformer;
     }
+    public User getSubmitter() {
+        return submitter;
+    }
+    public String getSubmitterId() {
+        return submitterId;
+    }
 
     public static ArrayList<GeometryDashLevel> getModeratorQueue() {
         return moderatorQueue;
     }
     public void addToModeratorQueue(){
         moderatorQueue.add(this);
+        updateModerateQueueJson(this, false);
     }
-    public void removeFromModeratorQueue(){
-        moderatorQueue.remove(this);
+    public static void removeFromModeratorQueue(GeometryDashLevel level){
+        moderatorQueue.remove(level);
+        updateModerateQueueJson(level, true);
+    }
+    @SuppressWarnings("ConstantConditions") // intellij keeps trying to fuck up my code so this is so i don't accidentally listen to it
+    public static GeometryDashLevel getFirstInGuild(Guild guild){
+        if (moderatorQueue == null){
+            moderatorQueue = initializeModeratorQueue();
+            if (moderatorQueue == null){
+                return null;
+            }
+        }
+        for (GeometryDashLevel level : moderatorQueue){
+            if (guild.getMember((guild.getJDA().getUserById(level.getSubmitterId()))) != null){ //
+                return level;
+            }
+        }
+        return null;
+    }
+    public static ArrayList<GeometryDashLevel> initializeModeratorQueue(){
+        Gson gson = new Gson();
+        String path = "data/json/completions/queue/queue.json";
+        Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+
+        try (FileReader reader = new FileReader(path)) {
+            return gson.fromJson(reader, type);
+        }
+        catch (IOException e) {
+            return null;
+        }
     }
 
     public String toString(){
@@ -82,6 +126,7 @@ public class GeometryDashLevel {
                 "\",\n \"difficulty\": \"" + difficulty +
                 "\",\n \"platformer\": \"" + platformer +
                 "\",\n \"attempts\": \"" + attempts +
+                "\",\n \"submitterId\": \"" + submitterId +
                 "\"\n}";
     }
 
@@ -126,7 +171,7 @@ public class GeometryDashLevel {
         this.platformer = data.platformer;
     }
 
-    public void writeToPersonalJson(User user){
+    public void writeToPersonalJson(){
         try {
             for (String pathStr : new String[]{
                     "data",
@@ -144,7 +189,7 @@ public class GeometryDashLevel {
 
         List<GeometryDashLevel> geometryDashLevels;
 
-        try (FileReader reader = new FileReader("data/json/completions/" + user.getId() + ".json")) {
+        try (FileReader reader = new FileReader("data/json/completions/" + submitterId + ".json")) {
             Type listType = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
             geometryDashLevels = gson.fromJson(reader, listType);
 
@@ -158,7 +203,7 @@ public class GeometryDashLevel {
 
         geometryDashLevels.add(this);
 
-        try (FileWriter writer = new FileWriter("data/json/completions/" + user.getId() + ".json")){
+        try (FileWriter writer = new FileWriter("data/json/completions/" + submitterId + ".json")){
             gson.toJson(geometryDashLevels,writer);
         }
         catch (IOException e){
@@ -175,6 +220,58 @@ public class GeometryDashLevel {
         }
         catch (IOException e) {
             return null;
+        }
+    }
+    public static void updateModerateQueueJson(GeometryDashLevel level, Boolean removeLevel){
+        try {
+            for (String pathStr : new String[]{
+                    "data",
+                    "data/json",
+                    "data/json/completions",
+                    "data/json/completions/queue"
+            }) {
+                Path path = Paths.get(pathStr);
+                if (!Files.exists(path)) Files.createDirectory(path);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        List<GeometryDashLevel> geometryDashLevels;
+
+        try (FileReader reader = new FileReader("data/json/completions/queue/queue.json")) {
+            Type listType = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+            geometryDashLevels = gson.fromJson(reader, listType);
+
+            if (geometryDashLevels == null) {
+                geometryDashLevels = new ArrayList<>();
+            }
+
+        } catch (IOException e) {
+            geometryDashLevels = new ArrayList<>();
+        }
+
+        if (!removeLevel){
+            geometryDashLevels.add(level);
+        }
+        else{
+            int skibidi = -1;
+            for (int i = 0; i < geometryDashLevels.size(); i++){
+                if (geometryDashLevels.get(i).getName().equals(level.getName()) && geometryDashLevels.get(i).getAuthor().equals(level.getAuthor())){
+                    skibidi = i;
+                }
+            }
+            if (skibidi != -1){
+                geometryDashLevels.remove(skibidi);
+            }
+        }
+        moderatorQueue = (ArrayList<GeometryDashLevel>) geometryDashLevels;
+        try (FileWriter writer = new FileWriter("data/json/completions/queue/queue.json")){
+            gson.toJson(geometryDashLevels,writer);
+        } catch (IOException e){
+            throw new RuntimeException(e);
         }
     }
 }

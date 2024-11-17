@@ -14,7 +14,9 @@ public class GeometryDashRecord implements Command {
     public void execute(SlashCommandInteractionEvent event){
         GeometryDashLevel level = new GeometryDashLevel(
                 Objects.requireNonNull(event.getOption("id")).getAsInt(),
-                Objects.requireNonNull(event.getOption("attempts")).getAsInt());
+                Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
+                event.getUser()
+        );
         if (level.getId() == -1){
             event.reply("Invalid level ID!").setEphemeral(true).queue();
             return;
@@ -39,7 +41,7 @@ public class GeometryDashRecord implements Command {
         }
         else{
             embed = generateEmbed(level);
-            level.writeToPersonalJson(event.getUser());
+            level.writeToPersonalJson();
         }
         event.getInteraction().replyEmbeds(embed.build()).queue();
     }
