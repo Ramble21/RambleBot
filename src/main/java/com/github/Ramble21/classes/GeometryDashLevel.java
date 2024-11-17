@@ -210,8 +210,15 @@ public class GeometryDashLevel {
         } catch (IOException e) {
             geometryDashLevels = new ArrayList<>();
         }
-
-        geometryDashLevels.add(this);
+        boolean skibidi = false;
+        for (GeometryDashLevel level : geometryDashLevels){
+            if (this.getName().equals(level.getName()) && this.getAuthor().equals(level.getAuthor())){
+                skibidi = true;
+            }
+        }
+        if (!skibidi){
+            geometryDashLevels.add(this);
+        }
 
         try (FileWriter writer = new FileWriter("data/json/completions/" + submitterId + ".json")){
             gson.toJson(geometryDashLevels,writer);
