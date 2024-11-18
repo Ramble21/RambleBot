@@ -47,8 +47,11 @@ public class CommandListener extends ListenerAdapter {
                                                 (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete (including practice)")
                                                         .setRequired(true))
                                         ),
-                                new SubcommandData("profile", "View RambleBot GD profile")
-                                        .addOption(OptionType.USER, "member", "Member to get profile of", false),
+                                                new SubcommandData("profile", "View RambleBot GD profile")
+                                        .addOptions(
+                                                (new OptionData (OptionType.USER, "member", "Member to get profile of", false)),
+                                                (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))
+                                        ),
                                 new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions")
                         )
         );

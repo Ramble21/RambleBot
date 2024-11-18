@@ -39,7 +39,7 @@ public class PaginatorListener extends ListenerAdapter {
         switch(Objects.requireNonNull(buttonEvent.getComponent().getId())) {
             case "next_profile":
             {
-                ArrayList<GeometryDashLevel> list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser());
+                ArrayList<GeometryDashLevel> list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser(), gdProfileInstance.isPlatformer());
 
                 assert list != null;
                 Ramble21.sortByEstimatedDiff(list);
@@ -47,7 +47,17 @@ public class PaginatorListener extends ListenerAdapter {
                 pageNo++;
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setDescription(GeometryDashProfile.makePageProfileDescription(list, 15, pageNo));
+
+                String originalTitle = buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getTitle();
+                embedBuilder.setTitle(originalTitle);
+
+                String description = GeometryDashProfile.makePageProfileDescription(list, 10, pageNo);
+                if (description.isEmpty()){
+                    embedBuilder.setDescription(buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getDescription());
+                }
+                else{
+                    embedBuilder.setDescription(description);
+                }
                 embedBuilder.setColor(Color.yellow);
                 buttonEvent.editMessageEmbeds(embedBuilder.build()).queue();
 
@@ -58,12 +68,23 @@ public class PaginatorListener extends ListenerAdapter {
             }
             case "previous_profile":
             {
-                ArrayList<GeometryDashLevel> list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser());
+                ArrayList<GeometryDashLevel> list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser(), gdProfileInstance.isPlatformer());
                 if (pageNo > 0){
                     pageNo--;
                 }
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setDescription(GeometryDashProfile.makePageProfileDescription(list, 15, pageNo));
+
+                String originalTitle = buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getTitle();
+                embedBuilder.setTitle(originalTitle);
+
+                String description = GeometryDashProfile.makePageProfileDescription(list, 10, pageNo);
+                if (description.isEmpty()){
+                    embedBuilder.setDescription(buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getDescription());
+                }
+                else{
+                    embedBuilder.setDescription(description);
+                }
+
                 embedBuilder.setColor(Color.yellow);
                 buttonEvent.editMessageEmbeds(embedBuilder.build()).queue();
 

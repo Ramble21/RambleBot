@@ -11,6 +11,9 @@ import java.util.Objects;
 
 
 public class GeometryDashRecord implements Command {
+
+    private boolean isPlatformer = false;
+
     @Override
     public void execute(SlashCommandInteractionEvent event){
         GeometryDashLevel level = new GeometryDashLevel(
@@ -27,8 +30,7 @@ public class GeometryDashRecord implements Command {
             return;
         }
         else if (level.isPlatformer()){
-            event.reply("Only classic (non-platformer) levels are supported.").setEphemeral(true).queue();
-            return;
+            isPlatformer = true;
         }
         else if (level.getAttempts() < 1){
             event.reply("Nice try, but I know you spent more than " + level.getAttempts() + " attempts beating that.").setEphemeral(true).queue();
@@ -42,7 +44,7 @@ public class GeometryDashRecord implements Command {
         }
         else{
             embed = generateEmbed(level);
-            level.writeToPersonalJson();
+            level.writeToPersonalJson(isPlatformer);
         }
         event.getInteraction().replyEmbeds(embed.build()).queue();
     }

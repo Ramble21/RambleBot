@@ -1,6 +1,5 @@
 package com.github.Ramble21.listeners;
 
-import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.GeometryDashLevel;
 import com.github.Ramble21.commands.GeometryDashReview;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,7 +34,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
             System.out.println("Received button: acceptButtonGD");
 
             GeometryDashLevel.updateModerateQueueJson(level, true);
-            level.writeToPersonalJson();
+            level.writeToPersonalJson(level.isPlatformer());
 
             EmbedBuilder embed = reviewInstance.generateNewEmbed(Objects.requireNonNull(buttonEvent.getGuild()));
             if (GeometryDashLevel.getModeratorQueue().isEmpty()){

@@ -27,7 +27,7 @@ public class GeometryDashLevel {
     private final int attempts;
 
     private final transient User submitter;
-    public static transient HashMap<Integer, Integer> gddlTiers;
+    public static HashMap<Integer, Integer> gddlTiers;
     private final String submitterId;
 
     private static ArrayList<GeometryDashLevel> moderatorQueue;
@@ -126,7 +126,7 @@ public class GeometryDashLevel {
         moderatorQueue.remove(level);
         updateModerateQueueJson(level, true);
     }
-    @SuppressWarnings("ConstantConditions") // intellij keeps trying to fuck up my code so this is so i don't accidentally listen to it
+    @SuppressWarnings("ConstantConditions") // intellij keeps trying to fuck up my code and I don't accidentally listen to it
     public static GeometryDashLevel getFirstInGuild(Guild guild){
         if (moderatorQueue == null){
             moderatorQueue = initializeModeratorQueue();
@@ -206,12 +206,17 @@ public class GeometryDashLevel {
         this.platformer = data.platformer;
     }
 
-    public void writeToPersonalJson(){
+    public void writeToPersonalJson(boolean isPlatformer){
+        String type = "classic";
+        if (isPlatformer){
+            type = "platformer";
+        }
         try {
             for (String pathStr : new String[]{
                     "data",
                     "data/json",
-                    "data/json/completions"
+                    "data/json/completions",
+                    "data/json/completions/" + type
             }) {
                 Path path = Paths.get(pathStr);
                 if (!Files.exists(path)) Files.createDirectory(path);
@@ -224,7 +229,7 @@ public class GeometryDashLevel {
 
         List<GeometryDashLevel> geometryDashLevels;
 
-        try (FileReader reader = new FileReader("data/json/completions/" + submitterId + ".json")) {
+        try (FileReader reader = new FileReader("data/json/completions/" + type + "/" + submitterId + ".json")) {
             Type listType = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
             geometryDashLevels = gson.fromJson(reader, listType);
 
@@ -239,22 +244,27 @@ public class GeometryDashLevel {
         for (GeometryDashLevel level : geometryDashLevels){
             if (this.getName().equals(level.getName()) && this.getAuthor().equals(level.getAuthor())){
                 skibidi = true;
+                break;
             }
         }
         if (!skibidi){
             geometryDashLevels.add(this);
         }
 
-        try (FileWriter writer = new FileWriter("data/json/completions/" + submitterId + ".json")){
+        try (FileWriter writer = new FileWriter("data/json/completions/" + type + "/" + submitterId + ".json")){
             gson.toJson(geometryDashLevels,writer);
         }
         catch (IOException e){
             throw new RuntimeException(e);
         }
     }
-    public static ArrayList<GeometryDashLevel> getPersonalJsonList(User user){
+    public static ArrayList<GeometryDashLevel> getPersonalJsonList(User user, boolean isPlatformer){
+        String typeAAA = "classic";
+        if (isPlatformer){
+            typeAAA = "platformer";
+        }
         Gson gson = new Gson();
-        String personalJson = "data/json/completions/" + user.getId() + ".json";
+        String personalJson = "data/json/completions/" + typeAAA + "/" + user.getId() + ".json";
         Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
 
         try (FileReader reader = new FileReader(personalJson)) {
