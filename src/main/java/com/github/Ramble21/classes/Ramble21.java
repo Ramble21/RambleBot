@@ -93,6 +93,7 @@ public class Ramble21 {
     public static void sortByEstimatedDiff (ArrayList<GeometryDashLevel> list){
         list.sort(
                 Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
+                        .thenComparingInt(GeometryDashLevel::getGddlTier)
                         .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
         );
     }

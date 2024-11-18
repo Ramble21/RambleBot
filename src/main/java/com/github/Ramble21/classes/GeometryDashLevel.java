@@ -1,6 +1,5 @@
 package com.github.Ramble21.classes;
 
-import com.github.Ramble21.RambleBot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -14,9 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class GeometryDashLevel {
 
@@ -25,10 +22,12 @@ public class GeometryDashLevel {
     private int stars;
     private String author;
     private String difficulty;
+    private Integer gddlTier;
     private boolean platformer;
     private final int attempts;
 
     private final transient User submitter;
+    public static transient HashMap<Integer, Integer> gddlTiers;
     private final String submitterId;
 
     private static ArrayList<GeometryDashLevel> moderatorQueue;
@@ -42,14 +41,18 @@ public class GeometryDashLevel {
         if (moderatorQueue == null){
             moderatorQueue = new ArrayList<>();
         }
-
+        if (gddlTiers == null){
+            initializeGddlMap();
+        }
         if (!jsonResponse.equals("Error")){
             parseJson(jsonResponse);
             System.out.println(this);
         }
-        else{
+        else {
             this.id = -1;
         }
+
+        gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(id, 0);
     }
 
     public String getName() {
@@ -88,6 +91,28 @@ public class GeometryDashLevel {
     }
     public String getSubmitterId() {
         return submitterId;
+    }
+    public int getGddlTier(){
+        return gddlTier;
+    }
+    public void setGddlTier(int gddlTier){
+        if (gddlTiers == null){
+            initializeGddlMap();
+        }
+        this.gddlTier = gddlTier;
+    }
+
+    public static void initializeGddlMap(){
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<GddlDataObject>>() {}.getType();
+        ClassLoader loader = GeometryDashLevel.class.getClassLoader();
+        InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(loader.getResourceAsStream("com/github/Ramble21/gddl_data.json")));
+        List<GddlDataObject> dataList = gson.fromJson(reader, listType);
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        for (GddlDataObject object : dataList){
+            hashMap.put(object.getId(), object.getGddlTier());
+        }
+        gddlTiers = hashMap;
     }
 
     public static ArrayList<GeometryDashLevel> getModeratorQueue() {
