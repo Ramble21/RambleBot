@@ -16,11 +16,34 @@ public class GeometryDashRecord implements Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event){
-        GeometryDashLevel level = new GeometryDashLevel(
-                Objects.requireNonNull(event.getOption("id")).getAsInt(),
-                Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
-                event.getUser()
-        );
+        GeometryDashLevel level;
+        if (Objects.requireNonNull(event.getOption("id")).getAsInt() < 4 && Objects.requireNonNull(event.getOption("id")).getAsInt() > 0){
+            if (Objects.requireNonNull(event.getOption("id")).getAsInt() == 3){
+                level = new GeometryDashLevel(
+                        "Deadlocked",
+                        Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
+                        event.getUser());
+            }
+            else if (Objects.requireNonNull(event.getOption("id")).getAsInt() == 2){
+                level = new GeometryDashLevel(
+                        "Theory of Everything 2",
+                        Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
+                        event.getUser());
+            }
+            else {
+                level = new GeometryDashLevel(
+                        "Clubstep",
+                        Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
+                        event.getUser());
+            }
+        }
+        else{
+            level = new GeometryDashLevel(
+                    Objects.requireNonNull(event.getOption("id")).getAsInt(),
+                    Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
+                    event.getUser()
+            );
+        }
         if (level.getId() == -1){
             event.reply("Invalid level ID!").setEphemeral(true).queue();
             return;

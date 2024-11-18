@@ -54,6 +54,25 @@ public class GeometryDashLevel {
 
         gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(id, 0);
     }
+    public GeometryDashLevel(String robtopLevelName, int attempts, User submitter){
+        this.attempts = attempts;
+        this.submitter = submitter;
+        this.submitterId = submitter.getId();
+
+        if (moderatorQueue == null){
+            moderatorQueue = new ArrayList<>();
+        }
+        if (gddlTiers == null){
+            initializeGddlMap();
+        }
+
+        gddlTier = 0;
+        name = robtopLevelName;
+        stars = 10;
+        author = "RobTop";
+        difficulty = "Easy Demon";
+        platformer = false;
+    }
 
     public String getName() {
         return name;
