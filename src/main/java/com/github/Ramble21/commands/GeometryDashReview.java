@@ -12,7 +12,8 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.awt.*;
 import java.util.Objects;
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class GeometryDashReview implements Command {
@@ -69,7 +70,7 @@ public class GeometryDashReview implements Command {
     }
 
     public void sendEmbed(EmbedBuilder embed, SlashCommandInteractionEvent event, MessageChannel channel, GeometryDashLevel level){
-
+        final GeometryDashReviewButtonListener[] geometryDashReviewButtonListener = {null}; // again it has to be an array bc dumb java
            event.deferReply().queue(hook -> {
                hook.sendMessageEmbeds(embed.build())
                         .addActionRow(
@@ -77,9 +78,22 @@ public class GeometryDashReview implements Command {
                                 Button.danger("rejectButton", "Reject"))
                         .queue(message -> {
                             this.originalMessageId = message.getId();
-                            GeometryDashReviewButtonListener geometryDashReviewButtonListener = new GeometryDashReviewButtonListener(this, level);
-                            event.getJDA().addEventListener(geometryDashReviewButtonListener);
+                            geometryDashReviewButtonListener[0] = new GeometryDashReviewButtonListener(this, level);
+                            event.getJDA().addEventListener(geometryDashReviewButtonListener[0]);
                });
+               Timer buttonTimeout = new Timer();
+               TimerTask removeButtons = new TimerTask() {
+                   @Override
+                   public void run() {
+                       event.getChannel().editMessageComponentsById(originalMessageId)
+                               .setActionRow(
+                                       Button.secondary("acceptButtonGD", "Accept").asDisabled(),
+                                       Button.secondary("rejectButton", "Reject").asDisabled())
+                               .queue();
+                       event.getJDA().removeEventListener(geometryDashReviewButtonListener[0]);
+                   }
+               };
+               buttonTimeout.schedule(removeButtons, 60000);
            });
     }
 }

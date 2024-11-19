@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class GeometryDashProfile implements Command {
@@ -66,6 +68,7 @@ public class GeometryDashProfile implements Command {
         embed.setDescription(description);
         embed.setColor(Color.yellow);
         if (includeButtons){
+            final PaginatorListener[] paginatorListener = {null}; // it has to be a 1 element array bc of some dumb java shit
             event.deferReply().queue(hook -> {
                 hook.sendMessageEmbeds(embed.build())
                         .addActionRow(
@@ -73,10 +76,23 @@ public class GeometryDashProfile implements Command {
                                 Button.secondary("next_profile", "Next"))
                         .queue(message -> {
                             this.originalMessageId = message.getId();
-                            PaginatorListener paginatorListener = new PaginatorListener(this, originalMessageId);
-                            event.getJDA().addEventListener(paginatorListener);
+                            paginatorListener[0] = new PaginatorListener(this, originalMessageId);
+                            event.getJDA().addEventListener(paginatorListener[0]);
                         });
             });
+            Timer buttonTimeout = new Timer();
+            TimerTask removeButtons = new TimerTask() {
+                @Override
+                public void run() {
+                    event.getChannel().editMessageComponentsById(originalMessageId)
+                            .setActionRow(
+                                    Button.secondary("previous_profile", "Previous").asDisabled(),
+                                    Button.secondary("next_profile", "Next").asDisabled())
+                            .queue();
+                    event.getJDA().removeEventListener(paginatorListener[0]);
+                }
+            };
+            buttonTimeout.schedule(removeButtons, 60000);
         }
         else{
             event.deferReply().queue(hook -> {
