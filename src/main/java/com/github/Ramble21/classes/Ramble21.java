@@ -1,10 +1,17 @@
 package com.github.Ramble21.classes;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -96,5 +103,73 @@ public class Ramble21 {
                         .thenComparingInt(GeometryDashLevel::getGddlTier)
                         .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
         );
+    }
+
+    public static String getVictorsAsMention (GeometryDashLevel level, Guild guild, boolean isPlatformer){
+        ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
+        for (int i = 0; i < toReturn.size(); i++){
+            String s = "<@" + toReturn.get(i) + ">";
+            toReturn.set(i, s);
+        }
+        String amongUsPotionAtThreeAM = toReturn.get(0);
+        for (int i = 1; i < toReturn.size(); i++){
+            amongUsPotionAtThreeAM += (", " + toReturn.get(i));
+        }
+        return amongUsPotionAtThreeAM;
+    }
+    public static int getAverageAttempts (GeometryDashLevel level, Guild guild, boolean isPlatformer){
+        ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
+        int total = 0;
+        int iterations = 0;
+        for (String memberId : toReturn){
+            String rizz;
+            if (isPlatformer){
+                rizz = "platformer";
+            }
+            else{
+                rizz = "classic";
+            }
+            String path = "data/json/completions/" + rizz + "/" + memberId + ".json";
+            try (FileReader reader = new FileReader(path)){
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+                for (GeometryDashLevel level2 : completions){
+                    if (level2.getId() == level.getId()){
+                        total += level2.getAttempts();
+                        iterations++;
+                    }
+                }
+            } catch (IOException e){
+                continue;
+            }
+        }
+        return total/iterations;
+    }
+    public static ArrayList<String> getVictors(GeometryDashLevel level, Guild guild, boolean isPlatformer) {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for (Member member : guild.getMembers()){
+            String rizz;
+            if (isPlatformer){
+                rizz = "platformer";
+            }
+            else{
+                rizz = "classic";
+            }
+            String path = "data/json/completions/" + rizz + "/" + member.getId() + ".json";
+            try (FileReader reader = new FileReader(path)){
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+                for (GeometryDashLevel level2 : completions){
+                    if (level2.getId() == level.getId()){
+                        toReturn.add(member.getId());
+                    }
+                }
+            } catch (IOException e){
+                continue;
+            }
+        }
+        return toReturn;
     }
 }

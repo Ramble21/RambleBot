@@ -1,7 +1,7 @@
 package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
-import com.github.Ramble21.commands.GeometryDashReview;
+import com.github.Ramble21.commands.geometrydash.GeometryDashReview;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;

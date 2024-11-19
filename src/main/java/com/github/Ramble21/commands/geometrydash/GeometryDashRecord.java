@@ -1,4 +1,4 @@
-package com.github.Ramble21.commands;
+package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -58,6 +59,15 @@ public class GeometryDashRecord implements Command {
         else if (level.getAttempts() < 1){
             event.reply("Nice try, but I know you spent more than " + level.getAttempts() + " attempts beating that.").setEphemeral(true).queue();
             return;
+        }
+        ArrayList<GeometryDashLevel> previousCompletions = GeometryDashLevel.getPersonalJsonList(event.getUser(), isPlatformer);
+        if (previousCompletions != null) {
+            for (GeometryDashLevel level2 : previousCompletions) {
+                if (level2.getId() == level.getId()) {
+                    event.reply("You have already submitted this level!").setEphemeral(true).queue();
+                    return;
+                }
+            }
         }
 
         EmbedBuilder embed;

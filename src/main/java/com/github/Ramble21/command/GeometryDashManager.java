@@ -1,6 +1,9 @@
 package com.github.Ramble21.command;
 
-import com.github.Ramble21.commands.*;
+import com.github.Ramble21.commands.geometrydash.GeometryDashLeaderboard;
+import com.github.Ramble21.commands.geometrydash.GeometryDashProfile;
+import com.github.Ramble21.commands.geometrydash.GeometryDashRecord;
+import com.github.Ramble21.commands.geometrydash.GeometryDashReview;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;
@@ -14,6 +17,7 @@ public class GeometryDashManager implements Command {
         subcommands.put("submitrecord", new GeometryDashRecord());
         subcommands.put("profile", new GeometryDashProfile());
         subcommands.put("review", new GeometryDashReview());
+        subcommands.put("leaderboard", new GeometryDashLeaderboard());
     }
 
     @Override

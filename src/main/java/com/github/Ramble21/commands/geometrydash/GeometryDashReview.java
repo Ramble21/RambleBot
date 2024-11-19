@@ -1,4 +1,4 @@
-package com.github.Ramble21.commands;
+package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
 import com.github.Ramble21.command.Command;
@@ -87,8 +87,8 @@ public class GeometryDashReview implements Command {
                    public void run() {
                        event.getChannel().editMessageComponentsById(originalMessageId)
                                .setActionRow(
-                                       Button.secondary("acceptButtonGD", "Accept").asDisabled(),
-                                       Button.secondary("rejectButton", "Reject").asDisabled())
+                                       Button.success("acceptButtonGD", "Accept").asDisabled(),
+                                       Button.danger("rejectButton", "Reject").asDisabled())
                                .queue();
                        event.getJDA().removeEventListener(geometryDashReviewButtonListener[0]);
                    }

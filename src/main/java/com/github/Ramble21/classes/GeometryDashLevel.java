@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -292,6 +294,37 @@ public class GeometryDashLevel {
         catch (IOException e) {
             return null;
         }
+    }
+    public static ArrayList<GeometryDashLevel> getGuildJsonList(Guild guild, boolean isPlatformer){
+        String typeAAA = "classic";
+        if (isPlatformer){
+            typeAAA = "platformer";
+        }
+        ArrayList<GeometryDashLevel> list = new ArrayList<>();
+        Gson gson = new Gson();
+        ArrayList<String> userIds = new ArrayList<>();
+        for (Member member : guild.getMembers()){
+            String path = "data/json/completions/" + typeAAA + "/" + member.getId() + ".json";
+            File file = new File(path);
+            if (file.exists()){
+                userIds.add(path);
+            }
+        }
+
+        Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+        for (String json : userIds){
+            try (FileReader reader = new FileReader(json)) {
+                list.addAll(gson.fromJson(reader, type));
+            }
+            catch (IOException e) {
+                return null;
+            }
+        }
+        // removes duplicates
+        HashSet<Integer> seenIds = new HashSet<>();
+        list.removeIf(obj -> !seenIds.add(obj.getId()));
+
+        return list;
     }
     public static void updateModerateQueueJson(GeometryDashLevel level, Boolean removeLevel){
         try {
