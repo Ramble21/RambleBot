@@ -47,7 +47,7 @@ public class CommandListener extends ListenerAdapter {
                                                 (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete (including practice)")
                                                         .setRequired(true))
                                         ),
-                                                new SubcommandData("profile", "View RambleBot GD profile")
+                                                new SubcommandData("profile", "View hardest levels beaten by a server member")
                                         .addOptions(
                                                 (new OptionData(OptionType.USER, "member", "Member to get profile of", false)),
                                                 (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))
@@ -56,7 +56,12 @@ public class CommandListener extends ListenerAdapter {
                                         .addOptions(
                                                 (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))
                                         ),
-                                                new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions")
+                                                new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions"),
+                                                new SubcommandData("level", "View statistics about a specific level in this server")
+                                        .addOptions(
+                                                (new OptionData(OptionType.STRING, "name", "Name of the level in question", true)),
+                                                (new OptionData(OptionType.STRING, "author", "Author of the level in question", true))
+                                        )
                         )
         );
 

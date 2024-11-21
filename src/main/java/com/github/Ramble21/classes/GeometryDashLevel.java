@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,6 +26,13 @@ public class GeometryDashLevel {
     private Integer gddlTier;
     private boolean platformer;
     private final int attempts;
+
+    private String rating = ""; // feature epic etc, just a star rate is ""
+
+    public boolean featured;
+    public boolean epic;
+    public boolean legendary;
+    public boolean mythic;
 
     private final transient User submitter;
     public static HashMap<Integer, Integer> gddlTiers;
@@ -53,7 +59,7 @@ public class GeometryDashLevel {
         else {
             this.id = -1;
         }
-
+        makeRating();
         gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(id, 0);
     }
     public GeometryDashLevel(String robtopLevelName, int attempts, User submitter){
@@ -122,6 +128,20 @@ public class GeometryDashLevel {
         }
         this.gddlTier = gddlTier;
     }
+    public String getRating(){
+        return rating;
+    }
+
+    public static void initializeRating(GeometryDashLevel level){
+        String apiResponse = getApiResponse(level.getId());
+        Gson gson = new Gson();
+        GeometryDashLevel data = gson.fromJson(apiResponse, GeometryDashLevel.class);
+        level.featured = data.featured;
+        level.epic = data.epic;
+        level.legendary = data.legendary;
+        level.mythic = data.mythic;
+        level.makeRating();
+    }
 
     public static void initializeGddlMap(){
         Gson gson = new Gson();
@@ -186,15 +206,13 @@ public class GeometryDashLevel {
                 "\"\n}";
     }
 
-    public String getApiResponse(int levelId){
+    public static String getApiResponse(int levelId){
         try{
             String apiUrl = "https://gdbrowser.com/api/level/" + levelId;
             URL url = new URL(apiUrl);
-            System.out.println("API URL: " + apiUrl);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            System.out.println("Response Code: " + connection.getResponseCode());
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -225,6 +243,29 @@ public class GeometryDashLevel {
         this.id = data.id;
         this.stars = data.stars;
         this.platformer = data.platformer;
+
+        this.featured = data.featured;
+        this.epic = data.epic;
+        this.legendary = data.legendary;
+        this.mythic = data.mythic;
+    }
+
+    public void makeRating(){
+        if (featured){
+            rating = "featured";
+        }
+        if (epic){
+            rating = "epic";
+        }
+        if (legendary){
+            rating = "legendary";
+        }
+        if (mythic){
+            rating = "mythic";
+        }
+        if (!featured && !epic && !legendary && !mythic){
+            rating = "";
+        }
     }
 
     public void writeToPersonalJson(boolean isPlatformer){

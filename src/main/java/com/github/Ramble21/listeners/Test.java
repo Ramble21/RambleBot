@@ -23,6 +23,7 @@ public class Test extends ListenerAdapter {
                     "data/json/completions/classic/615425385231810560.json",
                     "data/json/completions/classic/674819147963564054.json",
                     "data/json/completions/classic/681666746511523851.json",
+                    "data/json/completions/classic/689616447017975881.json",
                     "data/json/completions/classic/730407701057896521.json",
                     "data/json/completions/classic/739978476651544607.json",
                     "data/json/completions/classic/759086512586358794.json",
@@ -38,7 +39,10 @@ public class Test extends ListenerAdapter {
                     "data/json/completions/platformer/739978476651544607.json",
             };
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .setPrettyPrinting()
+                    .create();
 
             for (String filePath : filePaths){
                 Reader reader = null;
@@ -51,9 +55,8 @@ public class Test extends ListenerAdapter {
                 List<GeometryDashLevel> levels = gson.fromJson(reader, listType);
 
                 for (GeometryDashLevel level : levels) {
-                    GeometryDashLevel.initializeGddlMap();
-                    int gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(level.getId(), 0);
-                    level.setGddlTier(gddlTier);
+                    GeometryDashLevel.initializeRating(level);
+                    System.out.println(level.getRating());
                 }
 
                 try (Writer writer = new FileWriter(filePath)) {
@@ -67,6 +70,9 @@ public class Test extends ListenerAdapter {
         if (event.getMessage().getContentRaw().equalsIgnoreCase("r!json")){
             GeometryDashLevel.initializeGddlMap();
             System.out.println(GeometryDashLevel.gddlTiers.size());
+        }
+        if (event.getMessage().getContentRaw().equals("r!test")){
+            System.out.println("Hello world!");
         }
     }
 }

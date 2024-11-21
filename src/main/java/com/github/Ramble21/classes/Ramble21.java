@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -171,5 +172,72 @@ public class Ramble21 {
             }
         }
         return toReturn;
+    }
+    public static String getHardestsAsString(GeometryDashLevel level, Guild guild, boolean isPlatformer){
+        ArrayList<String> victorIds = new ArrayList<>();
+        String rizz;
+        if (isPlatformer){
+            rizz = "platformer";
+        }
+        else{
+            rizz = "classic";
+        }
+        for (Member member : guild.getMembers()){
+            String path = "data/json/completions/" + rizz + "/" + member.getId() + ".json";
+            try (FileReader reader = new FileReader(path)){
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+                for (GeometryDashLevel level2 : completions){
+                    if (level2.getId() == level.getId()){
+                        victorIds.add(member.getId());
+                    }
+                }
+            } catch (IOException e){
+                continue;
+            }
+        }
+        ArrayList<String> hardestIdsAsMention = new ArrayList<>();
+        for (String id : victorIds){
+            String path = "data/json/completions/" + rizz + "/" + id + ".json";
+            try (FileReader reader = new FileReader(path)){
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+                sortByEstimatedDiff(completions);
+                if (completions.get(0).getName().equals(level.getName()) && completions.get(0).getAuthor().equals(level.getAuthor())){
+                    hardestIdsAsMention.add("<@" + id + ">");
+                }
+            } catch (IOException e){
+                continue;
+            }
+        }
+        if (hardestIdsAsMention.isEmpty()){
+            return "";
+        }
+        else if (hardestIdsAsMention.size() == 1){
+            return "This is the hardest " + rizz + " level beaten by " + hardestIdsAsMention.get(0) + "!";
+        }
+        String finalString = "";
+        for (int i = 0; i < hardestIdsAsMention.size()-1; i++){
+            if (i == hardestIdsAsMention.size()-2){
+                finalString += hardestIdsAsMention.get(i) + " and " + hardestIdsAsMention.get(i+1);
+            }
+            else{
+                finalString += hardestIdsAsMention.get(i) + ", ";
+            }
+        }
+        return "This is the hardest " + rizz + " level beaten by " + finalString + "!";
+    }
+    public static String getDifficultyPngName(GeometryDashLevel level){
+        String[] parts = level.getDifficulty().toLowerCase().split(" ", 2);
+        String name = parts[0];
+        if (level.getRating().equals("featured")){
+            name += "_feature";
+        }
+        else if (!level.getRating().isEmpty()){
+            name += "_" + level.getRating();
+        }
+        return "images/diff_faces/" + name + ".png";
     }
 }
