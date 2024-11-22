@@ -202,6 +202,7 @@ public class GeometryDashLevel {
                 "\",\n \"difficulty\": \"" + difficulty +
                 "\",\n \"platformer\": \"" + platformer +
                 "\",\n \"attempts\": \"" + attempts +
+                "\",\n \"gddlTier\": \"" + gddlTier +
                 "\",\n \"submitterId\": \"" + submitterId +
                 "\"\n}";
     }

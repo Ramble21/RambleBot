@@ -86,7 +86,7 @@ public class GeometryDashLeaderboard implements Command {
                     event.getJDA().removeEventListener(paginatorListener[0]);
                 }
             };
-            buttonTimeout.schedule(removeButtons, 60000);
+            buttonTimeout.schedule(removeButtons, 300000);
         }
         else{
             event.deferReply().queue(hook -> {
@@ -97,6 +97,7 @@ public class GeometryDashLeaderboard implements Command {
     }
     public static String makePageLeaderboardDescription(ArrayList<GeometryDashLevel> list, int perPage, int pageNo, Guild guild, Boolean isPlatformer){
         Ramble21.sortByEstimatedDiff(list);
+        System.out.println(list);
         String description = "";
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){
             String emoji = Ramble21.getEmojiName(list.get(i).getDifficulty());

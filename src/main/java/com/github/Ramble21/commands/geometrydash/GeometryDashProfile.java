@@ -92,7 +92,7 @@ public class GeometryDashProfile implements Command {
                     event.getJDA().removeEventListener(paginatorListener[0]);
                 }
             };
-            buttonTimeout.schedule(removeButtons, 60000);
+            buttonTimeout.schedule(removeButtons, 300000);
         }
         else{
             event.deferReply().queue(hook -> {
