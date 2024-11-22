@@ -42,11 +42,13 @@ public class Ghostping {
             if (member != null){
                 String pingee1 = "<@" + member.getId() + ">ㅤㅤ";
                 event.getMessage().delete().queue();
+                for (int i =0; i < 400; i++) {
                 event.getChannel().asTextChannel().sendMessage(pingee1).queue();
                 event.getChannel().asTextChannel().sendMessage(pingee1).queue();
                 event.getChannel().asTextChannel().sendMessage(pingee1).queue();
                 event.getChannel().asTextChannel().sendMessage(pingee1).queue();
-                event.getChannel().asTextChannel().sendMessage(pingee1).queue();
+                }
+                
             }
             else{
                 System.out.println("member is null");
