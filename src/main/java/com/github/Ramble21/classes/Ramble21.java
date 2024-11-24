@@ -64,12 +64,9 @@ public class Ramble21 {
     }
 
     public static boolean isRambleBot(User user){
-        String id = user.getId();
-        return id.equalsIgnoreCase("1295872060341616640");
+        return user.getId().equalsIgnoreCase("1295872060341616640");
     }
-    public static void bugOccurred(MessageChannel channel){
-        channel.sendMessage("<@739978476651544607> theres a bug in your code lol").queue();
-    }
+
     public static double getMatchingPercentage(String str1, String str2) {
         if (str1.isEmpty()) {
             return 0.0;
@@ -108,10 +105,7 @@ public class Ramble21 {
 
     public static String getVictorsAsMention (GeometryDashLevel level, Guild guild, boolean isPlatformer){
         ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
-        for (int i = 0; i < toReturn.size(); i++){
-            String s = "<@" + toReturn.get(i) + ">";
-            toReturn.set(i, s);
-        }
+        toReturn.replaceAll(string -> "<@" + string + ">");
         String amongUsPotionAtThreeAM = toReturn.get(0);
         for (int i = 1; i < toReturn.size(); i++){
             amongUsPotionAtThreeAM += (", " + toReturn.get(i));

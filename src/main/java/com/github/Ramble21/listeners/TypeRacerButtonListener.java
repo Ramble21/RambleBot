@@ -61,7 +61,7 @@ public class TypeRacerButtonListener extends ListenerAdapter {
                 typeRacer.cancelGame(buttonUser);
                 break;
             default:
-                Ramble21.bugOccurred(buttonEvent.getChannel());
+                throw new RuntimeException();
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.TrumpQuote;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -73,6 +74,12 @@ public class Test extends ListenerAdapter {
         }
         if (event.getMessage().getContentRaw().equals("r!test")){
             System.out.println("Hello world!");
+        }
+        if (event.getMessage().getContentRaw().equals("r!trumptest")){
+            TrumpQuote quote1 = new TrumpQuote(true);
+            TrumpQuote quote2 = new TrumpQuote(false);
+            System.out.println(quote1);
+            System.out.println(quote2);
         }
     }
 }

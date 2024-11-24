@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands;
 
 import com.github.Ramble21.RambleBot;
+import com.github.Ramble21.classes.SpainCommunity;
 import com.github.Ramble21.classes.State;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,8 +15,10 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.concurrent.*;
 
 public class StateFlags implements Command {
@@ -40,26 +43,60 @@ public class StateFlags implements Command {
         Color green = new Color(0, 255, 0);
         Color blue = new Color(0, 122, 255);
 
+        String countrySymbol;
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("What US state flag is this?");
-        State state = new State();
+
+        State state = null;
+        SpainCommunity spainCommunity = null;
+        if (event.getOption("country") == null){
+            countrySymbol = "us";
+            state = new State();
+        }
+        else{
+            countrySymbol = Objects.requireNonNull(event.getOption("country")).getAsString();
+            if (countrySymbol.equals("es")){
+                spainCommunity = new SpainCommunity();
+            }
+            else{
+                state = new State();
+            }
+        }
+
         embed.setColor(blue);
-        System.out.println(state.getName());
         gameIsInProgress = true;
         currentChannel = event.getChannel();
         thisInstance = this;
 
-        String filename = state.getNameSnakeCase() + ".png";
-        final var fileStream = RambleBot.class.getResourceAsStream("images/flags/" + filename);
-
-        embed.setImage("attachment://mystery.png");
-        assert fileStream != null;
-        event.replyEmbeds(embed.build())
-                .addFiles(FileUpload.fromData(fileStream, "mystery.png"))
-                .queue(hook -> storedHook = hook);
+        String fileName;
+        final InputStream fileStream;
+        if (countrySymbol.equals("us")){
+            embed.setTitle("What US state flag is this?");
+            System.out.println("Flag: " + state.getName());
+            fileName = state.getNameSnakeCase() + ".png";
+            fileStream = RambleBot.class.getResourceAsStream("images/flags/us/" + fileName);
+            embed.setImage("attachment://mystery.png");
+            assert fileStream != null;
+            event.replyEmbeds(embed.build())
+                    .addFiles(FileUpload.fromData(fileStream, "mystery.png"))
+                    .queue(hook -> storedHook = hook);
+        }
+        else{
+            embed.setTitle("What Spanish autonomous community flag is this?");
+            assert spainCommunity != null;
+            System.out.println("Flag: " + spainCommunity.getName());
+            fileName = spainCommunity.getNameSnakeCase() + ".png";
+            fileStream = RambleBot.class.getResourceAsStream("images/flags/es/" + fileName);
+            embed.setImage("attachment://mystery.png");
+            assert fileStream != null;
+            event.replyEmbeds(embed.build())
+                    .addFiles(FileUpload.fromData(fileStream, "mystery.png"))
+                    .queue(hook -> storedHook = hook);
+        }
 
         LocalDateTime start = LocalDateTime.now();
 
+        State finalState = state;
+        SpainCommunity finalSpainCommunity = spainCommunity;
         event.getJDA().addEventListener(new ListenerAdapter() {
 
             final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -73,7 +110,12 @@ public class StateFlags implements Command {
                 timeoutTask = scheduler.schedule(() -> {
                     if (gameIsInProgress) {
                         EmbedBuilder timeoutEmbed = new EmbedBuilder();
-                        timeoutEmbed.setTitle("What US state flag is this?");
+                        if (countrySymbol.equals("us")) {
+                            timeoutEmbed.setTitle("What US state flag is this?");
+                        }
+                        else{
+                            timeoutEmbed.setTitle("What Spanish autonomous community flag is this?");
+                        }
                         timeoutEmbed.setDescription("Nobody answered correctly during the time limit, losers");
                         streak = 1;
                         lastUser = null;
@@ -88,7 +130,7 @@ public class StateFlags implements Command {
                     }
                 }, 15, TimeUnit.SECONDS);
 
-                if (guess.equalsIgnoreCase(state.getName())) {
+                if (countrySymbol.equals("us") && guess.equalsIgnoreCase(finalState.getName())) {
                     LocalDateTime end = LocalDateTime.now();
                     Duration duration = Duration.between(start, end);
                     double seconds = (double) (duration.toMillis());
@@ -114,7 +156,46 @@ public class StateFlags implements Command {
                         embed3.setTitle("Congrats! You guessed correctly!");
                         lastUser = event.getAuthor();
                     }
-                    embed3.setDescription("The state was **" + state.getName() + "**");
+                    embed3.setDescription("The flag was **" + finalState.getName() + "**");
+                    embed3.setColor(Color.GREEN);
+                    gameIsInProgress = false;
+                    currentChannel = null;
+                    event.getMessage().replyEmbeds(embed3.build()).queue();
+
+                    if (timeoutTask != null && !timeoutTask.isDone()) {
+                        timeoutTask.cancel(false);
+                    }
+                }
+                else if (countrySymbol.equals("es") && (guess.equalsIgnoreCase(finalSpainCommunity.getName()) || guess.equalsIgnoreCase(finalSpainCommunity.getSpanishName()))){
+                    LocalDateTime end = LocalDateTime.now();
+                    Duration duration = Duration.between(start, end);
+                    double seconds = (double) (duration.toMillis());
+                    String sussyTime = Double.toString(seconds / 1000);
+                    String time = sussyTime.substring(0, sussyTime.length() - 2);
+                    if (time.charAt(time.length()-1) == '.'){
+                        time += "0";
+                    }
+
+                    EmbedBuilder embed2 = new EmbedBuilder();
+                    embed2.setTitle("What Spanish autonomous community flag is this?");
+                    embed2.setDescription("**Answered correctly by <@" + event.getAuthor().getId() + "> in " + time + " seconds!**");
+                    embed2.setColor(green);
+                    embed2.setImage("attachment://mystery.png");
+
+                    storedHook.editOriginalEmbeds(embed2.build()).queue();
+                    event.getJDA().removeEventListener(this);
+
+                    EmbedBuilder embed3 = new EmbedBuilder();
+                    if (lastUser == event.getAuthor()) {
+                        streak++;
+                        System.out.println(streak);
+                        embed3.setTitle("Congrats! You guessed correctly! x" + streak);
+                    } else {
+                        streak = 1;
+                        embed3.setTitle("Congrats! You guessed correctly!");
+                        lastUser = event.getAuthor();
+                    }
+                    embed3.setDescription("The flag was **" + finalSpainCommunity.getName() + "**");
                     embed3.setColor(Color.GREEN);
                     gameIsInProgress = false;
                     currentChannel = null;
