@@ -1,7 +1,9 @@
 package com.github.Ramble21.commands;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -47,8 +49,10 @@ public class Ghostping {
                 if (isCabezaRot){
                     ArrayList<MessageChannel> messageChannels = new ArrayList<>();
                     guild.getChannels().forEach(channel -> {
-                        if (channel instanceof MessageChannel) {
-                            messageChannels.add((MessageChannel) channel);
+                        if (channel instanceof GuildChannel && channel instanceof MessageChannel messageChannel) {
+                            if (guild.getSelfMember().hasPermission((GuildChannel) channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) {
+                                messageChannels.add(messageChannel);
+                            }
                         }
                     });
                     for (MessageChannel channel : messageChannels){
