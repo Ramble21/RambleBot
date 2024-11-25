@@ -43,7 +43,8 @@ public class Ramble21 {
     public static boolean isBrainrotServer(Guild guild){
         final Dotenv config = Dotenv.configure().load();
         String id = config.get("BRAINROT_ID");
-        return guild.getId().equalsIgnoreCase(id);
+        String otherId = "993983631007682620";
+        return (guild.getId().equalsIgnoreCase(id) || guild.getId().equalsIgnoreCase(otherId));
     }
     public static int generateSeed(String userId) {
         return Integer.parseInt(userId.substring(14)) * LocalDate.now().getMonthValue();
