@@ -35,7 +35,7 @@ public class CommandListener extends ListenerAdapter {
             )
         );
 
-        commandData.add(Commands.slash("trump", "Guess which one of 3 Trump quotes is made up"));
+        // commandData.add(Commands.slash("trump", "Guess which one of 3 Trump quotes is made up"));
 
         commandData.add(Commands.slash("update-logs", "[BETA] Updates the message logs for this server. May take a long time."));
 
@@ -69,7 +69,7 @@ public class CommandListener extends ListenerAdapter {
                                                 new SubcommandData("level", "View statistics about a specific level in this server")
                                         .addOptions(
                                                 (new OptionData(OptionType.STRING, "name", "Name of the level in question", true)),
-                                                (new OptionData(OptionType.STRING, "author", "Author of the level in question", true))
+                                                (new OptionData(OptionType.STRING, "creator", "Creator of the level in question", true))
                                         )
                         )
         );

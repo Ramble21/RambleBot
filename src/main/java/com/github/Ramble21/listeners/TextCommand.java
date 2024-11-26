@@ -25,7 +25,8 @@ public class TextCommand extends ListenerAdapter {
             Ghostping ghostping = new Ghostping(event);
             ghostping.ghostping(false);
         }
-        else if ((message.length() > 14) && Ramble21.isBrainrotServer(event.getGuild()) && (message.startsWith("r!rotcerebros")) && !user.getId().equals("840216337119969301")){
+        else if ((message.length() > 14) && Ramble21.isBrainrotServer(event.getGuild()) && (message.startsWith("r!rotcerebros"))
+                && !user.getId().equals("840216337119969301") && !user.getId().equals("710503097343934494") && !user.getId().equals("870078781308674098")){
             Ghostping ghostping = new Ghostping(event);
             ghostping.ghostping(true);
             System.out.println("1");
