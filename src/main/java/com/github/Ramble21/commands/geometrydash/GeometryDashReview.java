@@ -34,7 +34,7 @@ public class GeometryDashReview implements Command {
 
         this.originalEvent = event;
 
-        if (Ramble21.memberIsModerator(event.getMember())){
+        if (!Ramble21.memberIsModerator(event.getMember())){
             event.reply("You do not have permission to run this command!").setEphemeral(true).queue();
             return;
         }
