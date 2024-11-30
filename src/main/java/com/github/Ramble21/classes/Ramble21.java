@@ -2,6 +2,7 @@ package com.github.Ramble21.classes;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,6 +17,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Random;
 
 public class Ramble21 {
@@ -96,13 +98,24 @@ public class Ramble21 {
         };
     }
 
-    public static void sortByEstimatedDiff (ArrayList<GeometryDashLevel> list){
-        list.sort(
-                Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
-                        .thenComparingInt(GeometryDashLevel::getGddlTier)
-                        .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
-        );
+    public static void sortByEstimatedDiff (ArrayList<GeometryDashLevel> list, boolean isObjective){
+        if (isObjective){
+            list.sort(
+                    Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
+                            .thenComparingInt(GeometryDashLevel::getGddlTier)
+                            .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
+            );
+        }
+        else{
+            list.sort(
+                    Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
+                            .thenComparingInt(GeometryDashLevel::getGddlTier)
+                            .thenComparingInt(GeometryDashLevel::getBiasLevel)
+                            .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
+            );
+        }
     }
+
 
     public static String getVictorsAsMention (GeometryDashLevel level, Guild guild, boolean isPlatformer){
         ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
@@ -199,7 +212,7 @@ public class Ramble21 {
                 Gson gson = new Gson();
                 Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
                 ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
-                sortByEstimatedDiff(completions);
+                sortByEstimatedDiff(completions, false);
                 if (completions.get(0).getName().equals(level.getName()) && completions.get(0).getAuthor().equals(level.getAuthor())){
                     hardestIdsAsMention.add("<@" + id + ">");
                 }
@@ -234,5 +247,8 @@ public class Ramble21 {
             name += "_" + level.getRating();
         }
         return "images/diff_faces/" + name + ".png";
+    }
+    public static boolean memberIsModerator(Member member){
+        return (Objects.requireNonNull(member).hasPermission(Permission.MANAGE_SERVER)) || (member.getId().equals("739978476651544607"));
     }
 }

@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
+
 public class mewhen2 extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -17,6 +19,12 @@ public class mewhen2 extends ListenerAdapter {
         else if (!event.getAuthor().getId().equals("1283474938895798344")){
             return;
         }
-        event.getMessage().addReaction(Emoji.fromCustom("Mewhen2", 940572260421476352L, false)).queue();
+        else{
+            String emojiName = "Mewhen2";
+            if (LocalDate.now().getMonth().toString().equalsIgnoreCase("DECEMBER")){
+                emojiName = "jolly_mewhen2";
+            }
+            event.getMessage().addReaction(Emoji.fromCustom(emojiName, 940572260421476352L, false)).queue();
+        }
     }
 }

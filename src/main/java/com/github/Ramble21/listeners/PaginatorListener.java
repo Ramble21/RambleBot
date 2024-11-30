@@ -67,14 +67,14 @@ public class PaginatorListener extends ListenerAdapter {
                 if (isGDProfile){
                     list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser(), gdProfileInstance.isPlatformer());
                     assert list != null;
-                    Ramble21.sortByEstimatedDiff(list);
+                    Ramble21.sortByEstimatedDiff(list, false);
                     if (pageNo < list.size()/10) pageNo++;
                     description = GeometryDashProfile.makePageProfileDescription(list, 10, pageNo);
                 }
                 else if (isGDLeaderboard){
                     list = GeometryDashLevel.getGuildJsonList(gdLeaderboardInstance.getGuild(), gdLeaderboardInstance.isPlatformer());
                     assert list != null;
-                    Ramble21.sortByEstimatedDiff(list);
+                    Ramble21.sortByEstimatedDiff(list, true);
                     if (pageNo < list.size()/10) pageNo++;
                     description = GeometryDashLeaderboard.makePageLeaderboardDescription(list, 10, pageNo, buttonEvent.getGuild(), gdLeaderboardInstance.isPlatformer());
                 }
@@ -119,13 +119,13 @@ public class PaginatorListener extends ListenerAdapter {
                 if (isGDProfile){
                     list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser(), gdProfileInstance.isPlatformer());
                     assert list != null;
-                    Ramble21.sortByEstimatedDiff(list);
+                    Ramble21.sortByEstimatedDiff(list, false);
                     description = GeometryDashProfile.makePageProfileDescription(list, 10, pageNo);
                 }
                 else if (isGDLeaderboard){
                     list = GeometryDashLevel.getGuildJsonList(gdLeaderboardInstance.getGuild(), gdLeaderboardInstance.isPlatformer());
                     assert list != null;
-                    Ramble21.sortByEstimatedDiff(list);
+                    Ramble21.sortByEstimatedDiff(list, true);
                     description = GeometryDashLeaderboard.makePageLeaderboardDescription(list, 10, pageNo, buttonEvent.getGuild(), gdLeaderboardInstance.isPlatformer());
                 }
                 else{

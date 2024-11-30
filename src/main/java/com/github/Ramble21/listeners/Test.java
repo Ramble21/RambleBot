@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Test extends ListenerAdapter {
@@ -30,21 +31,25 @@ public class Test extends ListenerAdapter {
                     "data/json/completions/classic/786006212415979570.json",
                     "data/json/completions/classic/840216337119969301.json",
                     "data/json/completions/classic/917819764682915912.json",
+                    "data/json/completions/classic/941951025236037632.json",
                     "data/json/completions/classic/987132003331764284.json",
                     "data/json/completions/classic/1030383982774321162.json",
                     "data/json/completions/classic/1105270481294209075.json",
                     "data/json/completions/classic/1206894200831090700.json",
                     "data/json/completions/platformer/597173421671186433.json",
+                    "data/json/completions/platformer/615425385231810560.json",
                     "data/json/completions/platformer/681666746511523851.json",
                     "data/json/completions/platformer/739978476651544607.json",
+                    "data/json/completions/platformer/987132003331764284.json",
+                    "data/json/completions/platformer/1105270481294209075.json"
             };
 
             Gson gson = new GsonBuilder()
-                    .excludeFieldsWithoutExposeAnnotation()
                     .setPrettyPrinting()
                     .create();
 
             for (String filePath : filePaths){
+                System.out.println("Attempting to parse json: " + filePath.substring(21));
                 Reader reader = null;
                 try {
                     reader = new FileReader(filePath);
@@ -56,7 +61,6 @@ public class Test extends ListenerAdapter {
 
                 for (GeometryDashLevel level : levels) {
                     GeometryDashLevel.initializeRating(level);
-                    System.out.println(level.getRating());
                 }
 
                 try (Writer writer = new FileWriter(filePath)) {
@@ -64,18 +68,8 @@ public class Test extends ListenerAdapter {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(filePath.substring(17) + " updated successfully");
+                System.out.println(filePath.substring(21) + " updated successfully");
             }
-        }
-        if (event.getMessage().getContentRaw().equalsIgnoreCase("r!json")){
-            GeometryDashLevel.initializeGddlMap();
-            System.out.println(GeometryDashLevel.gddlTiers.size());
-        }
-        if (event.getMessage().getContentRaw().equals("r!test")){
-            System.out.println("Hello world!");
-        }
-        if (event.getMessage().getContentRaw().equals("r!trumptest")){
-
         }
     }
 }

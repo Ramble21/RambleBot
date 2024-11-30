@@ -53,9 +53,33 @@ public class CommandListener extends ListenerAdapter {
                                 new SubcommandData("submitrecord", "Submit Geometry Dash completion record")
                                         .addOptions(
                                                 (new OptionData(OptionType.INTEGER, "id", "Level ID to submit record of", true)),
-                                                (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete (including practice)")
+                                                (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete")
                                                         .setRequired(true))
                                         ),
+                                                new SubcommandData("editrecord", "Edit a previously submitted Geometry Dash completion record")
+                                        .addOptions(
+                                                (new OptionData(OptionType.INTEGER, "id", "Level ID to edit record of", true)),
+                                                (new OptionData(OptionType.STRING, "type", "Type of level")
+                                                        .addChoice("Classic", "classic")
+                                                        .addChoice("Platformer", "platformer")
+                                                        .setRequired(true)),
+                                                (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", false)),
+                                                (new OptionData(OptionType.STRING, "difficulty", "Difficulty of the level")
+                                                        .addChoice("Underrated", "underrated")
+                                                        .addChoice("Overrated", "overrated")
+                                                        .setRequired(false)),
+                                                (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being edited", false))
+                                        ),
+                                                new SubcommandData("deleterecord", "Delete a previously submitted Geometry Dash completion record")
+                                        .addOptions(
+                                                (new OptionData(OptionType.INTEGER, "id", "Level ID to delete", true)),
+                                                (new OptionData(OptionType.STRING, "type", "Type of level")
+                                                        .addChoice("Classic", "classic")
+                                                        .addChoice("Platformer", "platformer")
+                                                        .setRequired(true)),
+                                                (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being deleted", false))
+                                        ),
+
                                                 new SubcommandData("profile", "View hardest levels beaten by a server member")
                                         .addOptions(
                                                 (new OptionData(OptionType.USER, "member", "Member to get profile of", false)),

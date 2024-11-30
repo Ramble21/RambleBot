@@ -55,7 +55,7 @@ public class GeometryDashLeaderboard implements Command {
             includeButtons = false;
         }
         else{
-            Ramble21.sortByEstimatedDiff(list);
+            Ramble21.sortByEstimatedDiff(list, true);
             description = makePageLeaderboardDescription(list, 10, 0, guild, isPlatformer);
         }
 
@@ -96,7 +96,7 @@ public class GeometryDashLeaderboard implements Command {
 
     }
     public static String makePageLeaderboardDescription(ArrayList<GeometryDashLevel> list, int perPage, int pageNo, Guild guild, Boolean isPlatformer){
-        Ramble21.sortByEstimatedDiff(list);
+        Ramble21.sortByEstimatedDiff(list, true);
         System.out.println(list);
         String description = "";
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){

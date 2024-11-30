@@ -61,7 +61,7 @@ public class GeometryDashProfile implements Command {
             includeButtons = false;
         }
         else{
-            Ramble21.sortByEstimatedDiff(list);
+            Ramble21.sortByEstimatedDiff(list, false);
             description = makePageProfileDescription(list, 10, 0);
         }
 
@@ -101,7 +101,7 @@ public class GeometryDashProfile implements Command {
         }
     }
     public static String makePageProfileDescription(ArrayList<GeometryDashLevel> list, int perPage, int pageNo){
-        Ramble21.sortByEstimatedDiff(list);
+        Ramble21.sortByEstimatedDiff(list, false);
         String description = "";
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){
             String emoji = Ramble21.getEmojiName(list.get(i).getDifficulty());

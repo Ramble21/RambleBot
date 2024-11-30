@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.GeometryDashReviewButtonListener;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,8 +34,7 @@ public class GeometryDashReview implements Command {
 
         this.originalEvent = event;
 
-        if (!(Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER))
-                && !(event.getUser().getId().equals("739978476651544607"))){
+        if (Ramble21.memberIsModerator(event.getMember())){
             event.reply("You do not have permission to run this command!").setEphemeral(true).queue();
             return;
         }

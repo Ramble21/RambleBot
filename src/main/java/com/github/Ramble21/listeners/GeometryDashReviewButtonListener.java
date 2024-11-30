@@ -37,7 +37,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
             level.writeToPersonalJson(level.isPlatformer());
 
             EmbedBuilder embed = reviewInstance.generateNewEmbed(Objects.requireNonNull(buttonEvent.getGuild()));
-            if (GeometryDashLevel.getModeratorQueue().isEmpty()){
+            if (GeometryDashLevel.getModeratorQueue().isEmpty() || embed == null){
                 EmbedBuilder done = new EmbedBuilder();
                 done.setTitle("All levels successfully reviewed!");
                 done.setColor(Color.green);

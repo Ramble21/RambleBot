@@ -25,7 +25,10 @@ public class GeometryDashLevel {
     private String difficulty;
     private Integer gddlTier;
     private boolean platformer;
-    private final int attempts;
+    private int attempts;
+    private int biasLevel;
+
+    private final String submitterId;
 
     private String rating = ""; // feature epic etc, just a star rate is ""
 
@@ -34,16 +37,13 @@ public class GeometryDashLevel {
     public boolean legendary;
     public boolean mythic;
 
-    private final transient User submitter;
     public static HashMap<Integer, Integer> gddlTiers;
-    private final String submitterId;
-
     private static ArrayList<GeometryDashLevel> moderatorQueue;
 
     public GeometryDashLevel(int levelId, int attempts, User submitter){
         this.attempts = attempts;
-        this.submitter = submitter;
         this.submitterId = submitter.getId();
+        biasLevel = 0;
 
         String jsonResponse = getApiResponse(levelId);
         if (moderatorQueue == null){
@@ -64,7 +64,6 @@ public class GeometryDashLevel {
     }
     public GeometryDashLevel(String robtopLevelName, int attempts, User submitter){
         this.attempts = attempts;
-        this.submitter = submitter;
         this.submitterId = submitter.getId();
 
         if (moderatorQueue == null){
@@ -113,9 +112,7 @@ public class GeometryDashLevel {
     public boolean isPlatformer(){
         return platformer;
     }
-    public User getSubmitter() {
-        return submitter;
-    }
+
     public String getSubmitterId() {
         return submitterId;
     }
@@ -131,16 +128,19 @@ public class GeometryDashLevel {
     public String getRating(){
         return rating;
     }
+    public void setAttempts(int attempts){
+        this.attempts = attempts;
+    }
+    public int getBiasLevel() {
+        return biasLevel;
+    }
+    public void setBiasLevel(int biasLevel) {
+        this.biasLevel = biasLevel;
+    }
+
 
     public static void initializeRating(GeometryDashLevel level){
-        String apiResponse = getApiResponse(level.getId());
-        Gson gson = new Gson();
-        GeometryDashLevel data = gson.fromJson(apiResponse, GeometryDashLevel.class);
-        level.featured = data.featured;
-        level.epic = data.epic;
-        level.legendary = data.legendary;
-        level.mythic = data.mythic;
-        level.makeRating();
+        level.biasLevel = 0;
     }
 
     public static void initializeGddlMap(){
@@ -203,6 +203,7 @@ public class GeometryDashLevel {
                 "\",\n \"platformer\": \"" + platformer +
                 "\",\n \"attempts\": \"" + attempts +
                 "\",\n \"gddlTier\": \"" + gddlTier +
+                "\",\n \"biasLevel\": \"" + biasLevel +
                 "\",\n \"submitterId\": \"" + submitterId +
                 "\"\n}";
     }
@@ -316,8 +317,7 @@ public class GeometryDashLevel {
 
         try (FileWriter writer = new FileWriter("data/json/completions/" + type + "/" + submitterId + ".json")){
             gson.toJson(geometryDashLevels,writer);
-        }
-        catch (IOException e){
+        } catch (IOException e){
             throw new RuntimeException(e);
         }
     }
