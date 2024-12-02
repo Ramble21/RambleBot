@@ -21,10 +21,12 @@ public class mewhen2 extends ListenerAdapter {
         }
         else{
             String emojiName = "Mewhen2";
+            long id = 940572260421476352L;
             if (LocalDate.now().getMonth().toString().equalsIgnoreCase("DECEMBER")){
                 emojiName = "jolly_mewhen2";
+                id = 1309966603412049920L;
             }
-            event.getMessage().addReaction(Emoji.fromCustom(emojiName, 940572260421476352L, false)).queue();
+            event.getMessage().addReaction(Emoji.fromCustom(emojiName, id, false)).queue();
         }
     }
 }
