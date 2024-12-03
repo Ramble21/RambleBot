@@ -18,7 +18,8 @@ public class GeometryDashRecordEdit implements Command {
     public void execute(SlashCommandInteractionEvent event){
 
         User submitter = event.getUser();
-        int id = Objects.requireNonNull(event.getOption("id")).getAsInt();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String creator = Objects.requireNonNull(event.getOption("creator")).getAsString();
 
         boolean isPlatformer = Objects.requireNonNull(event.getOption("type")).getAsString().equals("platformer");
         String type = "classic"; if (isPlatformer) type = "platformer";
@@ -35,7 +36,7 @@ public class GeometryDashRecordEdit implements Command {
         }
 
         if (!(event.getOption("member") == null || Objects.requireNonNull(event.getOption("member")).getAsUser() == event.getUser())){
-            if (!Ramble21.memberIsModerator(event.getMember())){
+            if (!submitter.getId().equalsIgnoreCase("739978476651544607")){
                 event.reply("You do not have permission to run this command!").setEphemeral(true).queue();
                 return;
             }
@@ -53,18 +54,18 @@ public class GeometryDashRecordEdit implements Command {
         GeometryDashLevel targetLevel = null;
 
         if (levels == null){
-            event.reply("This completion does not exist!").queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
         int index = -1;
         for (int i = 0; i < levels.size(); i++){
-            if (levels.get(i).getId() == id){
+            if (levels.get(i).getName().equalsIgnoreCase(name) && levels.get(i).getAuthor().equalsIgnoreCase(creator)){
                 index = i;
                 targetLevel = levels.get(i);
             }
         }
         if (index == -1){
-            event.reply("This completion does not exist!").queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
         GeometryDashLevel editedLevel = levels.get(index);
@@ -88,7 +89,7 @@ public class GeometryDashRecordEdit implements Command {
                 event.reply("Your completion of " + targetLevel.getName() + " has been successfully edited!").setEphemeral(true).queue();
             }
             else{
-                event.reply( submitter.getEffectiveName() + "'s " + targetLevel.getName() + " completion has been successfully edited!").setEphemeral(true).queue();
+                event.reply( submitter.getEffectiveName() + "'s " + targetLevel.getName() + " completion has been successfully edited!").queue();
             }
         }
         catch (IOException e){

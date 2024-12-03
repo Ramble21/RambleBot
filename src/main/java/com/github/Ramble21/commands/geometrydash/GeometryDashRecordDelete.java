@@ -18,13 +18,14 @@ public class GeometryDashRecordDelete implements Command {
     public void execute(SlashCommandInteractionEvent event){
 
         User submitter = event.getUser();
-        int id = Objects.requireNonNull(event.getOption("id")).getAsInt();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String creator = Objects.requireNonNull(event.getOption("creator")).getAsString();
         boolean isPlatformer = Objects.requireNonNull(event.getOption("type")).getAsString().equals("platformer");
         String type = "classic"; if (isPlatformer) type = "platformer";
         boolean ownDelete = true;
 
         if (!(event.getOption("member") == null || Objects.requireNonNull(event.getOption("member")).getAsUser() == event.getUser())){
-            if (!Ramble21.memberIsModerator(event.getMember())){
+            if (!submitter.getId().equalsIgnoreCase("739978476651544607")){
                 event.reply("You do not have permission to run this command!").setEphemeral(true).queue();
                 return;
             }
@@ -38,18 +39,18 @@ public class GeometryDashRecordDelete implements Command {
         GeometryDashLevel targetLevel = null;
 
         if (levels == null){
-            event.reply("This completion does not exist!").queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
         int index = -1;
         for (int i = 0; i < levels.size(); i++){
-            if (levels.get(i).getId() == id){
+            if (levels.get(i).getName().equalsIgnoreCase(name) && levels.get(i).getAuthor().equalsIgnoreCase(creator)){
                 index = i;
                 targetLevel = levels.get(i);
             }
         }
         if (index == -1){
-            event.reply("This completion does not exist!").queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
         levels.remove(index);
@@ -61,7 +62,7 @@ public class GeometryDashRecordDelete implements Command {
                 event.reply("Your completion of " + targetLevel.getName() + " has been deleted from the records").setEphemeral(true).queue();
             }
             else{
-                event.reply( submitter.getEffectiveName() + "'s " + targetLevel.getName() + " completion has been deleted from the records").setEphemeral(true).queue();
+                event.reply( submitter.getEffectiveName() + "'s " + targetLevel.getName() + " completion has been deleted from the records").queue();
             }
         }
         catch (IOException e){

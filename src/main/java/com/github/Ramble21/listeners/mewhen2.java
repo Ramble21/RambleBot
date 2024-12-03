@@ -13,7 +13,7 @@ public class mewhen2 extends ListenerAdapter {
         if (!event.getGuild().getId().equals("931838136223412235")){
             return;
         }
-        else if (!event.getChannel().asTextChannel().getName().equalsIgnoreCase("glisterbot-errors")){
+        else if (!event.getChannel().asTextChannel().getName().contains("glisterbot-errors")){
             return;
         }
         else if (!event.getAuthor().getId().equals("1283474938895798344")){
