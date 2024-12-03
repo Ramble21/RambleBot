@@ -21,7 +21,7 @@ public class GeometryDashLevelCommand implements Command {
         possibleLevels.addAll(GeometryDashLevel.getGuildJsonList(event.getGuild(), false));
         possibleLevels.addAll(GeometryDashLevel.getGuildJsonList(event.getGuild(), true));
         String levelName = Objects.requireNonNull(event.getOption("name")).getAsString();
-        String authorName = Objects.requireNonNull(event.getOption("author")).getAsString();
+        String authorName = Objects.requireNonNull(event.getOption("creator")).getAsString();
         GeometryDashLevel level = null;
         for (GeometryDashLevel possibleLevel : possibleLevels){
             if (possibleLevel.getName().equalsIgnoreCase(levelName) && possibleLevel.getAuthor().equalsIgnoreCase(authorName)){
