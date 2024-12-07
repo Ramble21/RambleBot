@@ -51,10 +51,13 @@ public class Ramble21 {
     public static int generateSeed(String userId) {
         return Integer.parseInt(userId.substring(14)) * LocalDate.now().getMonthValue();
     }
+    public static int generateDailySeed(String userId){
+        return Integer.parseInt(userId.substring(14)) * LocalDate.now().getDayOfYear();
+    }
 
     public static int generateRizz(int seed) {
         Random random = new Random(seed);
-        return random.nextInt(10) + 1; // Generates a number between 1 and 10
+        return random.nextInt(10) + 1;
     }
 
     public static String generateIp(int seed) {

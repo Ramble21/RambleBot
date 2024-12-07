@@ -1,5 +1,6 @@
 package com.github.Ramble21.commands;
 
+import com.github.Ramble21.classes.Ramble21;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -8,11 +9,13 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Ghostping {
 
     private final MessageReceivedEvent event;
+    private static final HashSet<Integer> dailyIds = new HashSet<>();
 
     public Ghostping(MessageReceivedEvent event){
         this.event = event;
@@ -26,15 +29,12 @@ public class Ghostping {
         }
 
         String tag = parts[1];
-
-        System.out.println(tag);
         Guild guild = event.getGuild();
 
         String userId = "bug";
         List<Member> members = guild.getMembersByName(tag, true);
         if (!members.isEmpty()) {
             userId = members.get(0).getId();
-            System.out.println(userId);
         }
         else {
             System.out.println("glistermelon is fat");
@@ -45,18 +45,30 @@ public class Ghostping {
         try {
             if (member != null){
                 String pingee1 = "<@" + member.getId() + ">ㅤㅤ";
-                event.getMessage().delete().queue();
+
                 if (isCabezaRot){
+
+                    int seed = Ramble21.generateDailySeed(member.getId());
+                    System.out.println(dailyIds);
+                    System.out.println("Seed: " + seed);
+
+                    if (dailyIds.contains(seed) && !event.getAuthor().getId().equalsIgnoreCase("739978476651544607")){
+                        event.getMessage().reply("You can only rot cerebros once per day, nice try").queue();
+                        return;
+                    }
+                    dailyIds.add(seed);
+
+                    event.getMessage().delete().queue();
                     ArrayList<MessageChannel> messageChannels = new ArrayList<>();
                     guild.getChannels().forEach(channel -> {
-                        if (channel instanceof GuildChannel && channel instanceof MessageChannel messageChannel) {
+                        if (channel instanceof MessageChannel messageChannel) {
                             if (guild.getSelfMember().hasPermission((GuildChannel) channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) {
                                 messageChannels.add(messageChannel);
                             }
                         }
                     });
                     for (MessageChannel channel : messageChannels){
-                        for (int i = 0; i < 69; i++){
+                        for (int i = 0; i < 3; i++){
                             channel.sendMessage(pingee1).queue();
                         }
                     }
