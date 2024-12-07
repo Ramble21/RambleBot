@@ -75,6 +75,10 @@ public class GeometryDashRecord implements Command {
             embed = generateExtremeEmbed(level);
             level.addToModeratorQueue();
         }
+        else if (event.getUser().getId().equalsIgnoreCase("840216337119969301")) {
+            embed = generateBlacklistEmbed(level);
+            level.addToModeratorQueue();
+        }
         else{
             embed = generateEmbed(level);
             level.writeToPersonalJson(isPlatformer);
@@ -104,5 +108,16 @@ public class GeometryDashRecord implements Command {
                         "<:length:1307507840864227468> Attempts: **" + level.getAttempts() + "**\n");
         return embed;
     }
-
+    public EmbedBuilder generateBlacklistEmbed(GeometryDashLevel level){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Completion successfully added to moderator queue!");
+        embed.setColor(new Color(0, 122, 255));
+        embed.setDescription(
+                "Due to being blacklisted, all of your submissions must be approved by a server moderator before getting added to your profile. \n\n" +
+                        "Submission: \n" +
+                        "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
+                        "<:star:1307518203122942024> Difficulty: **" + level.getDifficulty() + "**\n" +
+                        "<:length:1307507840864227468> Attempts: **" + level.getAttempts() + "**\n");
+        return embed;
+    }
 }
