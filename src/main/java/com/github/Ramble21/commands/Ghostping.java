@@ -74,6 +74,7 @@ public class Ghostping {
                     }
                 }
                 else{
+                    event.getMessage().delete().queue();
                     event.getChannel().asTextChannel().sendMessage(pingee1).queue();
                     event.getChannel().asTextChannel().sendMessage(pingee1).queue();
                     event.getChannel().asTextChannel().sendMessage(pingee1).queue();
