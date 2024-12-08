@@ -68,7 +68,7 @@ public class Ghostping {
                         }
                     });
                     for (MessageChannel channel : messageChannels){
-                        for (int i = 0; i < 3; i++){
+                        for (int i = 0; i < 69; i++){
                             channel.sendMessage(pingee1).queue();
                         }
                     }
