@@ -48,12 +48,12 @@ public class Ghostping {
 
                 if (isCabezaRot){
 
-                    int seed = Ramble21.generateDailySeed(member.getId());
+                    int seed = Ramble21.generateWeeklySeed(member.getId());
                     System.out.println(dailyIds);
                     System.out.println("Seed: " + seed);
 
                     if (dailyIds.contains(seed) && !event.getAuthor().getId().equalsIgnoreCase("739978476651544607")){
-                        event.getMessage().reply("You can only rot cerebros once per day, nice try").queue();
+                        event.getMessage().reply("You can only rot cerebros once per week, nice try").queue();
                         return;
                     }
                     dailyIds.add(seed);

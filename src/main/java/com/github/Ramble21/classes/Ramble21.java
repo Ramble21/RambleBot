@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
@@ -51,8 +52,9 @@ public class Ramble21 {
     public static int generateSeed(String userId) {
         return Integer.parseInt(userId.substring(14)) * LocalDate.now().getMonthValue();
     }
-    public static int generateDailySeed(String userId){
-        return Integer.parseInt(userId.substring(14)) * LocalDate.now().getDayOfYear();
+    public static int generateWeeklySeed(String userId){
+        int weekOfYear = LocalDate.now().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        return Integer.parseInt(userId.substring(14)) * weekOfYear;
     }
 
     public static int generateRizz(int seed) {
