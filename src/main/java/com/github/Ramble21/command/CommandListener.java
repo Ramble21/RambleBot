@@ -58,8 +58,8 @@ public class CommandListener extends ListenerAdapter {
                                         ),
                                                 new SubcommandData("editrecord", "Edit a previously submitted Geometry Dash completion record")
                                         .addOptions(
-                                                (new OptionData(OptionType.INTEGER, "name", "Name of the level to edit record of", true)),
-                                                (new OptionData(OptionType.INTEGER, "creator", "Creator of the level to edit record of", true)),
+                                                (new OptionData(OptionType.STRING, "name", "Name of the level to edit record of", true)),
+                                                (new OptionData(OptionType.STRING, "creator", "Creator of the level to edit record of", true)),
                                                 (new OptionData(OptionType.STRING, "type", "Type of level")
                                                         .addChoice("Classic", "classic")
                                                         .addChoice("Platformer", "platformer")
