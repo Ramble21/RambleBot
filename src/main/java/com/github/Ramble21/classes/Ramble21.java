@@ -267,6 +267,42 @@ public class Ramble21 {
             throw new IOException(e);
         }
     }
+    public static GeometryDashLevel getAttemptExtrema(User user, String difficulty, boolean high) throws IOException {
+        try (FileReader reader = new FileReader("data/json/completions/classic/" + user.getId() + ".json")){
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+            ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+            int max = 0;
+            int min = Integer.MAX_VALUE;
+            GeometryDashLevel maxLevel = null;
+            GeometryDashLevel minLevel = null;
+            for (GeometryDashLevel level : completions){
+                if (!level.getDifficulty().equals(difficulty)) continue;
+                if (level.getAttempts() < min){
+                    min = level.getAttempts();
+                    minLevel = level;
+                }
+                if (level.getAttempts() > max){
+                    max = level.getAttempts();
+                    maxLevel = level;
+                }
+            }
+            if (high){
+                return maxLevel;
+            }
+            return minLevel;
+        } catch (IOException e){
+            return null;
+        }
+    }
+    public static String makeExtremaString(GeometryDashLevel level){
+        if (level == null){
+            return "N/A\n";
+        }
+        else{
+            return "**" + level.getName() + "** (" + level.getAttempts() + " atts)\n";
+        }
+    }
     public static int getLeaderboardPosition(GeometryDashLevel level, Guild guild, boolean isPlatformer){
         ArrayList<GeometryDashLevel> levels = GeometryDashLevel.getGuildJsonList(guild, isPlatformer);
         sortByEstimatedDiff(levels, true);

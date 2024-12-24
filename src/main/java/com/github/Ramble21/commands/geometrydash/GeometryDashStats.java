@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.awt.*;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -26,7 +27,7 @@ public class GeometryDashStats implements Command {
         assert member != null;
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(Color.yellow);
+        embed.setColor(Color.magenta);
         embed.setTitle(member.getEffectiveName() + "'s Profile Stats");
         embed.setThumbnail(member.getUser().getEffectiveAvatarUrl());
 
@@ -34,15 +35,16 @@ public class GeometryDashStats implements Command {
         if (levels == null) levels = new ArrayList<>();
         try {
             levels.addAll(GeometryDashLevel.getPersonalJsonList(member.getUser(), false));
-        } catch (NullPointerException e){
-            embed.setDescription(member.getAsMention() + " has not submitted any completions yet!");
-            event.replyEmbeds(embed.build()).queue();
-            return;
+        } catch (Exception e){
+            levels = GeometryDashLevel.getPersonalJsonList(member.getUser(), true);
         }
 
         String description;
-        if (levels.isEmpty()){
+        if (levels == null || levels.isEmpty()){
             description = (member.getAsMention() + " has not submitted any completions yet!");
+            embed.setDescription(description);
+            event.replyEmbeds(embed.build()).queue();
+            return;
         }
         else{
             description =
@@ -63,7 +65,25 @@ public class GeometryDashStats implements Command {
             GeometryDashLevel hardestPlat = Ramble21.getHardest(member.getUser(), true);
             string2 = "Hardest Platformer Completion:** " + Ramble21.getEmojiName(hardestPlat.getDifficulty()) + " " + hardestPlat.getName() + "** " + "(#" + Ramble21.getLeaderboardPosition(hardestPlat, event.getGuild(), true) + ")\n";
         }
-        description += string1 + string2;
+        description += string1 + string2 + "\n <:star:1307518203122942024> **Attempt Records**:\n";
+        description +=
+                (Ramble21.getEmojiName("Easy Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Easy Demon", false)) +
+                Ramble21.getEmojiName("Medium Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Medium Demon", false)) +
+                Ramble21.getEmojiName("Hard Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Hard Demon", false)) +
+                Ramble21.getEmojiName("Insane Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Insane Demon", false)) +
+                Ramble21.getEmojiName("Extreme Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Extreme Demon", false))
+        );
+
+        description += "\n <:star:1307518203122942024> **Attempt Highs** :\n";
+
+        description +=
+                (Ramble21.getEmojiName("Easy Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Easy Demon", true)) +
+                        Ramble21.getEmojiName("Medium Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Medium Demon", true)) +
+                        Ramble21.getEmojiName("Hard Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Hard Demon", true)) +
+                        Ramble21.getEmojiName("Insane Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Insane Demon", true)) +
+                        Ramble21.getEmojiName("Extreme Demon") + ": " + Ramble21.makeExtremaString(Ramble21.getAttemptExtrema(member.getUser(), "Extreme Demon", true))
+        );
+
         embed.setDescription(description);
         event.replyEmbeds(embed.build()).queue();
     }
