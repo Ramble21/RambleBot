@@ -15,6 +15,7 @@ public class GeometryDashManager implements Command {
         subcommands.put("editrecord", new GeometryDashRecordEdit());
         subcommands.put("deleterecord", new GeometryDashRecordDelete());
         subcommands.put("profile", new GeometryDashProfile());
+        subcommands.put("stats", new GeometryDashStats());
         subcommands.put("review", new GeometryDashReview());
         subcommands.put("leaderboard", new GeometryDashLeaderboard());
         subcommands.put("level", new GeometryDashLevelCommand());

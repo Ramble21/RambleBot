@@ -87,6 +87,10 @@ public class CommandListener extends ListenerAdapter {
                                                 (new OptionData(OptionType.USER, "member", "Member to get profile of", false)),
                                                 (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))
                                         ),
+                                                new SubcommandData("stats", "View stats about a server member")
+                                        .addOptions(
+                                                (new OptionData(OptionType.USER, "member", "Member to get stats of", false))
+                                        ),
                                                 new SubcommandData("leaderboard", "View hardest levels beaten in the entire server")
                                         .addOptions(
                                                 (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))

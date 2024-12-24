@@ -7,12 +7,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.temporal.IsoFields;
@@ -231,13 +228,13 @@ public class Ramble21 {
         else if (hardestIdsAsMention.size() == 1){
             return "This is the hardest " + rizz + " level beaten by " + hardestIdsAsMention.get(0) + "!";
         }
-        String finalString = "";
+        StringBuilder finalString = new StringBuilder();
         for (int i = 0; i < hardestIdsAsMention.size()-1; i++){
             if (i == hardestIdsAsMention.size()-2){
-                finalString += hardestIdsAsMention.get(i) + " and " + hardestIdsAsMention.get(i+1);
+                finalString.append(hardestIdsAsMention.get(i)).append(" and ").append(hardestIdsAsMention.get(i + 1));
             }
             else{
-                finalString += hardestIdsAsMention.get(i) + ", ";
+                finalString.append(hardestIdsAsMention.get(i)).append(", ");
             }
         }
         return "This is the hardest " + rizz + " level beaten by " + finalString + "!";
@@ -255,5 +252,29 @@ public class Ramble21 {
     }
     public static boolean memberIsModerator(Member member){
         return (Objects.requireNonNull(member).hasPermission(Permission.MANAGE_SERVER)) || (member.getId().equals("739978476651544607"));
+    }
+    public static GeometryDashLevel getHardest(User user, boolean isPlatformer) throws IOException {
+        String rizz = "platformer";
+        if (!isPlatformer) rizz = "classic";
+        String path =  "data/json/completions/" + rizz + "/" + user.getId() + ".json";
+        try (FileReader reader = new FileReader(path)){
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
+            ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+            sortByEstimatedDiff(completions, false);
+            return completions.get(0);
+        } catch (IOException e){
+            throw new IOException(e);
+        }
+    }
+    public static int getLeaderboardPosition(GeometryDashLevel level, Guild guild, boolean isPlatformer){
+        ArrayList<GeometryDashLevel> levels = GeometryDashLevel.getGuildJsonList(guild, isPlatformer);
+        sortByEstimatedDiff(levels, true);
+        for (int i = 0; i < Objects.requireNonNull(levels).size(); i++){
+            if (Objects.equals(levels.get(i).getName(), level.getName()) && Objects.equals(levels.get(i).getAuthor(), level.getAuthor())){
+                return i+1;
+            }
+        }
+        return -1;
     }
 }

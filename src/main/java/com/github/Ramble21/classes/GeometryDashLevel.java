@@ -365,7 +365,6 @@ public class GeometryDashLevel {
         // removes duplicates
         HashSet<Integer> seenIds = new HashSet<>();
         list.removeIf(obj -> !seenIds.add(obj.getId()));
-
         return list;
     }
     public static void updateModerateQueueJson(GeometryDashLevel level, Boolean removeLevel){
