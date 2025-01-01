@@ -29,7 +29,6 @@ public class TextCommand extends ListenerAdapter {
                 && !user.getId().equals("840216337119969301")
                 && !user.getId().equals("710503097343934494")
                 && !user.getId().equals("870078781308674098")
-                && !user.getId().equals("680189020076376080")
                 && !user.getId().equals("1135014520964784128")){
             Ghostping ghostping = new Ghostping(event);
             ghostping.ghostping(true);
