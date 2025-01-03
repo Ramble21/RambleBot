@@ -1,5 +1,6 @@
 package com.github.Ramble21.listeners;
 
+import com.github.Ramble21.classes.Diacritics;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.commands.Ghostping;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -37,7 +38,7 @@ public class TextCommand extends ListenerAdapter {
         if (message.contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();
         }
-        if (message.toLowerCase().contains(string1) && Ramble21.isBrainrotServer(event.getGuild()) && !(event.getAuthor().isBot())){
+        if (Diacritics.removeDiacritics(message.toLowerCase()).contains(string1) && Ramble21.isBrainrotServer(event.getGuild()) && !(event.getAuthor().isBot())){
             event.getChannel().asTextChannel().sendMessage(string2).queue();
         }
         // Needed in order to make ghostping messages deleted successfully
