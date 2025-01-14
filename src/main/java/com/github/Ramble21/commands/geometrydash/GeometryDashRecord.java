@@ -23,26 +23,26 @@ public class GeometryDashRecord implements Command {
                 level = new GeometryDashLevel(
                         "Deadlocked",
                         Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
-                        event.getUser());
+                        event.getUser(), 0);
             }
             else if (Objects.requireNonNull(event.getOption("id")).getAsInt() == 2){
                 level = new GeometryDashLevel(
                         "Theory of Everything 2",
                         Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
-                        event.getUser());
+                        event.getUser(), 0);
             }
             else {
                 level = new GeometryDashLevel(
                         "Clubstep",
                         Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
-                        event.getUser());
+                        event.getUser(), 0);
             }
         }
         else{
             level = new GeometryDashLevel(
                     Objects.requireNonNull(event.getOption("id")).getAsInt(),
                     Objects.requireNonNull(event.getOption("attempts")).getAsInt(),
-                    event.getUser()
+                    event.getUser().getId(), 0
             );
         }
         if (level.getId() == -1){

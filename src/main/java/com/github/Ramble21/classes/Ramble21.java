@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.User;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.temporal.IsoFields;
 import java.util.ArrayList;

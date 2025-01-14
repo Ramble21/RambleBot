@@ -19,6 +19,7 @@ public class GeometryDashManager implements Command {
         subcommands.put("review", new GeometryDashReview());
         subcommands.put("leaderboard", new GeometryDashLeaderboard());
         subcommands.put("level", new GeometryDashLevelCommand());
+        subcommands.put("refresh", new GeometryDashRefresh());
     }
 
     @Override

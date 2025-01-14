@@ -23,7 +23,7 @@ public class GeometryDashLevel {
     private int stars;
     private String author;
     private String difficulty;
-    private Integer gddlTier;
+    private final Integer gddlTier;
     private boolean platformer;
     private int attempts;
     private int biasLevel;
@@ -32,44 +32,51 @@ public class GeometryDashLevel {
 
     private String rating = ""; // feature epic etc, just a star rate is ""
 
-    public boolean featured;
-    public boolean epic;
-    public boolean legendary;
-    public boolean mythic;
+    private boolean featured;
+    private boolean epic;
+    private boolean legendary;
+    private boolean mythic;
 
-    public static HashMap<Integer, Integer> gddlTiers;
+    private static final Map<String, Integer> hardCodes = Map.of(
+            "38306937", 18, // Buff This
+            "104187415", 19, // How to Platformer
+            "97543536", 18 // I wanna be the guy
+    );
+
+    private static final HashMap<Integer, Integer> gddlTiers = new HashMap<>();
     private static ArrayList<GeometryDashLevel> moderatorQueue;
 
-    public GeometryDashLevel(int levelId, int attempts, User submitter){
+    public GeometryDashLevel(int levelId, int attempts, String submitterId, int biasLevel){
         this.attempts = attempts;
-        this.submitterId = submitter.getId();
-        biasLevel = 0;
+        this.submitterId = submitterId;
+        this.biasLevel = biasLevel;
 
         String jsonResponse = getApiResponse(levelId);
         if (moderatorQueue == null){
             moderatorQueue = new ArrayList<>();
         }
-        if (gddlTiers == null){
+        if (gddlTiers.isEmpty()){
             initializeGddlMap();
         }
         if (!jsonResponse.equals("Error")){
             parseJson(jsonResponse);
-            System.out.println(this);
         }
         else {
             this.id = -1;
         }
         makeRating();
         gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(id, 0);
+        System.out.println(name + " " + gddlTier);
     }
-    public GeometryDashLevel(String robtopLevelName, int attempts, User submitter){
+    public GeometryDashLevel(String robtopLevelName, int attempts, User submitter, int biasLevel){
         this.attempts = attempts;
         this.submitterId = submitter.getId();
+        this.biasLevel = biasLevel;
 
         if (moderatorQueue == null){
             moderatorQueue = new ArrayList<>();
         }
-        if (gddlTiers == null){
+        if (gddlTiers.isEmpty()){
             initializeGddlMap();
         }
 
@@ -119,12 +126,6 @@ public class GeometryDashLevel {
     public int getGddlTier(){
         return gddlTier;
     }
-    public void setGddlTier(int gddlTier){
-        if (gddlTiers == null){
-            initializeGddlMap();
-        }
-        this.gddlTier = gddlTier;
-    }
     public String getRating(){
         return rating;
     }
@@ -138,22 +139,35 @@ public class GeometryDashLevel {
         this.biasLevel = biasLevel;
     }
 
-
-    public static void initializeRating(GeometryDashLevel level){
-        level.biasLevel = 0;
-    }
-
     public static void initializeGddlMap(){
-        Gson gson = new Gson();
-        Type listType = new TypeToken<List<GddlDataObject>>() {}.getType();
-        ClassLoader loader = GeometryDashLevel.class.getClassLoader();
-        InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(loader.getResourceAsStream("com/github/Ramble21/gddl_data.json")));
-        List<GddlDataObject> dataList = gson.fromJson(reader, listType);
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (GddlDataObject object : dataList){
-            hashMap.put(object.getId(), object.getGddlTier());
+        HashMap<String, String> strings = Refresh.fetchGDDLData();
+        System.out.println(strings.size());
+        for (String key : hardCodes.keySet()){
+            gddlTiers.put(Integer.parseInt(key), hardCodes.get(key));
+            System.out.println(key + " -- " + hardCodes.get(key));
         }
-        gddlTiers = hashMap;
+        for (Map.Entry<String, String> entry : strings.entrySet()){
+            if (hardCodes.containsKey(entry.getKey())) continue;
+            if (!canParseInt(entry.getKey())) {
+                System.out.println(entry.getKey() + " -- " + entry.getValue());
+                continue;
+            }
+            System.out.println(entry.getKey() + " -- " + entry.getValue());
+            int key = Integer.parseInt(entry.getKey());
+            int value = getValue(entry.getValue());
+            gddlTiers.put(key, value);
+        }
+    }
+    public static int getValue(String value){
+        return canParseInt(value) ? Integer.parseInt(value) : 0;
+    }
+    public static boolean canParseInt(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public static ArrayList<GeometryDashLevel> getModeratorQueue() {
@@ -162,10 +176,6 @@ public class GeometryDashLevel {
     public void addToModeratorQueue(){
         moderatorQueue.add(this);
         updateModerateQueueJson(this, false);
-    }
-    public static void removeFromModeratorQueue(GeometryDashLevel level){
-        moderatorQueue.remove(level);
-        updateModerateQueueJson(level, true);
     }
     @SuppressWarnings("ConstantConditions") // intellij keeps trying to fuck up my code and I don't accidentally listen to it
     public static GeometryDashLevel getFirstInGuild(Guild guild){
