@@ -15,7 +15,7 @@ import java.util.List;
 public class Ghostping {
 
     private final MessageReceivedEvent event;
-    private static final HashSet<Integer> dailyIds = new HashSet<>();
+    private static final HashSet<Integer> weeklyIds = new HashSet<>();
 
     public Ghostping(MessageReceivedEvent event){
         this.event = event;
@@ -49,14 +49,14 @@ public class Ghostping {
                 if (isCabezaRot){
 
                     int seed = Ramble21.generateWeeklySeed(member.getId());
-                    System.out.println(dailyIds);
+                    System.out.println(weeklyIds);
                     System.out.println("Seed: " + seed);
 
-                    if (dailyIds.contains(seed) && !event.getAuthor().getId().equalsIgnoreCase("739978476651544607")){
+                    if (weeklyIds.contains(seed) && !event.getAuthor().getId().equalsIgnoreCase("739978476651544607")){
                         event.getMessage().reply("You can only rot cerebros once per week, nice try").queue();
                         return;
                     }
-                    dailyIds.add(seed);
+                    weeklyIds.add(seed);
 
                     event.getMessage().delete().queue();
                     ArrayList<MessageChannel> messageChannels = new ArrayList<>();

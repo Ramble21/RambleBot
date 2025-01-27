@@ -33,7 +33,6 @@ public class RambleBot {
         // User Cache and Retrieval
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setChunkingFilter(ChunkingFilter.ALL);
-        // builder.enableCache(CacheFlag.VOICE_STATE);
 
         // Gateway Intents
         builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
@@ -54,17 +53,9 @@ public class RambleBot {
         shardManager = builder.build();
     }
 
-    public ShardManager getShardManager() {
-        return shardManager;
-    }
-    public Dotenv getConfig(){
-        return config;
-    }
     public static JDA getJda() { return jda; }
 
     public static void main(String[] args) {
-
-
         try {
             RambleBot bot = new RambleBot();
         }

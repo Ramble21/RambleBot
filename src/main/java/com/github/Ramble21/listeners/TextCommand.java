@@ -45,17 +45,5 @@ public class TextCommand extends ListenerAdapter {
         if (message.contains("ㅤㅤ") && isRambleBot(user)){
             event.getMessage().delete().queue();
         }
-
-        // this code doesn't always work and i only needed it for one specific time so its commented out cause im too lazy to fix it
-
-//        VoiceChannel voiceChannel = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getMember()).getVoiceState()).getChannel()).asVoiceChannel();
-//        AudioManager audioManager = voiceChannel.getGuild().getAudioManager();
-//
-//        if (message.equalsIgnoreCase("r!sendtovc")){
-//            audioManager.openAudioConnection(voiceChannel);
-//        }
-//        else if (message.equalsIgnoreCase("r!kickfromvc")){
-//            audioManager.closeAudioConnection();
-//        }
     }
 }

@@ -51,7 +51,9 @@ public class Ramble21 {
     }
     public static int generateWeeklySeed(String userId){
         int weekOfYear = LocalDate.now().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-        return Integer.parseInt(userId.substring(14)) * weekOfYear;
+        long seed = Long.parseLong(userId) * weekOfYear;
+        Random random = new Random(seed);
+        return random.nextInt(Integer.MAX_VALUE);
     }
 
     public static int generateRizz(int seed) {
