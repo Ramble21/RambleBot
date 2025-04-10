@@ -25,7 +25,7 @@ public class GeometryDashRecordDelete implements Command {
         boolean ownDelete = true;
 
         if (!(event.getOption("member") == null || Objects.requireNonNull(event.getOption("member")).getAsUser() == event.getUser())){
-            if (!submitter.getId().equalsIgnoreCase("739978476651544607")){
+            if (!Ramble21.isBotOwner(submitter)){
                 event.reply("You do not have permission to run this command!").setEphemeral(true).queue();
                 return;
             }

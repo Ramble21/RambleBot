@@ -21,6 +21,8 @@ public class RambleBot {
     private final Dotenv config;
     private static JDA jda = null;
 
+    private static boolean maintenanceMode;
+
     public RambleBot() throws LoginException {
         config = Dotenv.configure().load();
         String token = config.get("TOKEN");
@@ -51,9 +53,18 @@ public class RambleBot {
 
         // Build shard manager
         shardManager = builder.build();
+
+        // Declare global variables
+        maintenanceMode = false;
     }
 
     public static JDA getJda() { return jda; }
+    public static void setMaintenanceMode(boolean b) {
+        maintenanceMode = b;
+    }
+    public static boolean maintenanceMode() {
+        return maintenanceMode;
+    }
 
     public static void main(String[] args) {
         try {

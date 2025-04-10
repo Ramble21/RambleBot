@@ -52,7 +52,7 @@ public class Ghostping {
                     System.out.println(weeklyIds);
                     System.out.println("Seed: " + seed);
 
-                    if (weeklyIds.contains(seed) && !event.getAuthor().getId().equalsIgnoreCase("739978476651544607")){
+                    if (weeklyIds.contains(seed) && !Ramble21.isBotOwner(member.getUser())){
                         event.getMessage().reply("You can only rot cerebros once per week, nice try").queue();
                         return;
                     }

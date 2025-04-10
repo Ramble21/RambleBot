@@ -253,7 +253,7 @@ public class Ramble21 {
         return "images/diff_faces/" + name + ".png";
     }
     public static boolean memberIsModerator(Member member){
-        return (Objects.requireNonNull(member).hasPermission(Permission.MANAGE_SERVER)) || (member.getId().equals("739978476651544607"));
+        return (Objects.requireNonNull(member).hasPermission(Permission.MANAGE_SERVER)) || isBotOwner(member.getUser());
     }
     public static GeometryDashLevel getHardest(User user, boolean isPlatformer) throws IOException {
         String rizz = "platformer";
@@ -315,5 +315,7 @@ public class Ramble21 {
         }
         return -1;
     }
-
+    public static boolean isBotOwner(User u) {
+        return u.getId().equals("739978476651544607");
+    }
 }

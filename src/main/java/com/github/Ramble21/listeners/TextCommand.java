@@ -1,5 +1,6 @@
 package com.github.Ramble21.listeners;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Diacritics;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.commands.Ghostping;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import static com.github.Ramble21.classes.Ramble21.isBotOwner;
 import static com.github.Ramble21.classes.Ramble21.isRambleBot;
 
 
@@ -21,6 +23,14 @@ public class TextCommand extends ListenerAdapter {
         config = Dotenv.configure().load();
         String string1 = config.get("STRING_ONE");
         String string2 = config.get("STRING_TWO");
+        if (message.equals("r!maint.on") && isBotOwner(user)) {
+            RambleBot.setMaintenanceMode(true);
+            event.getChannel().sendMessage("Maintenance mode successfully turned on.").queue();
+        }
+        else if (message.equals("r!maint.off") && isBotOwner(user)) {
+            RambleBot.setMaintenanceMode(false);
+            event.getChannel().sendMessage("Maintenance mode successfully turned off.").queue();
+        }
 
         if ((message.length() > 12) && Ramble21.isBrainrotServer(event.getGuild()) && (message.startsWith("r!ghostping"))){
             Ghostping ghostping = new Ghostping(event);

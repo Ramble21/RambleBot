@@ -1,5 +1,7 @@
 package com.github.Ramble21.command;
 
+import com.github.Ramble21.RambleBot;
+import com.github.Ramble21.classes.Ramble21;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -122,11 +124,16 @@ public class CommandListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName(); // gets name of command minus the slash
         System.out.println("Received command: " + commandName); // for debugging
-        CommandManager commandManager = new CommandManager();
-        try {
-            commandManager.executeCommand(commandName, event);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (RambleBot.maintenanceMode() && !Ramble21.isBotOwner(event.getUser())) {
+            event.reply("Cannot run command, bot is currently in maintenance. Sorry!").queue();
+        }
+        else {
+            CommandManager commandManager = new CommandManager();
+            try {
+                commandManager.executeCommand(commandName, event);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

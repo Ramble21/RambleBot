@@ -1,6 +1,7 @@
 package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.commands.geometrydash.GeometryDashReview;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -25,7 +26,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent buttonEvent) {
 
         if (!(Objects.requireNonNull(buttonEvent.getMember()).hasPermission(Permission.MANAGE_SERVER))
-                && !(buttonEvent.getUser().getId().equals("739978476651544607"))){
+                && !(Ramble21.isBotOwner(buttonEvent.getUser()))){
             return;
         }
 

@@ -36,7 +36,7 @@ public class TypeRacerButtonListener extends ListenerAdapter {
                 if (!messageId.equals(typeRacer.getOriginalMessageId())){
                     return;
                 }
-                if (buttonUser.equals(originalUser) && !(originalUser.getId().equals("739978476651544607"))){
+                if (buttonUser.equals(originalUser) && !Ramble21.isBotOwner(originalUser)){
                     return;
                 }
                 isStarting = true;
