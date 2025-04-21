@@ -45,7 +45,7 @@ public class TextCommand extends ListenerAdapter {
             ghostping.ghostping(true);
             System.out.println("1");
         }
-        if (message.contains("sigma sigma on the wall")){
+        if (message.toLowerCase().contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();
         }
         if (Diacritics.removeDiacritics(message.toLowerCase()).contains(string1) && Ramble21.isBrainrotServer(event.getGuild()) && !(event.getAuthor().isBot())){
