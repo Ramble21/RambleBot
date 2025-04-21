@@ -104,6 +104,8 @@ public class GeometryDashLevel {
         return difficulty;
     }
     public int getDifficultyAsInt(){
+        if (difficulty == null)
+            throw new NullPointerException(toString());
         return switch (difficulty){
             case "Easy Demon" -> 5;
             case "Medium Demon" -> 4;

@@ -123,7 +123,7 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName(); // gets name of command minus the slash
-        System.out.println("Received command: " + commandName); // for debugging
+        System.out.println("Received command: /" + commandName); // for debugging
         if (RambleBot.maintenanceMode() && !Ramble21.isBotOwner(event.getUser())) {
             event.reply("Cannot run command, bot is currently in maintenance. Sorry!").queue();
         }
