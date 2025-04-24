@@ -16,7 +16,7 @@ public class mewhen2 extends ListenerAdapter {
         else if (!event.getChannel().asTextChannel().getName().contains("glisterbot-errors")){
             return;
         }
-        else if (!event.getAuthor().getId().equals("1283474938895798344")){
+        else if (!(event.getAuthor().getId().equals("1283474938895798344") || !event.getAuthor().getId().equals("1029237685656760352"))){
             return;
         }
         else{
