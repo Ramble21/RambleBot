@@ -48,7 +48,7 @@ public class TextCommand extends ListenerAdapter {
         if (message.toLowerCase().contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();
         }
-        if (Diacritics.removeDiacritics(message.toLowerCase()).contains(string1) && Ramble21.isBrainrotServer(event.getGuild()) && !(event.getAuthor().isBot())){
+        if (Diacritics.containsOneAway(Diacritics.removeDiacritics(message.toLowerCase()), string1) && (Ramble21.isBrainrotServer(event.getGuild()) || event.getGuild().getId().equals("993983631007682620")) && !(event.getAuthor().isBot())){
             event.getChannel().asTextChannel().sendMessage(string2).queue();
         }
         // Needed in order to make ghostping messages deleted successfully
