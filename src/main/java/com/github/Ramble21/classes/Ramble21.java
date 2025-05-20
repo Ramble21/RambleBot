@@ -1,5 +1,6 @@
 package com.github.Ramble21.classes;
 
+import com.github.Ramble21.RambleBot;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
@@ -7,8 +8,10 @@ import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.*;
@@ -33,7 +36,15 @@ public class Ramble21 {
             default -> "rizz count is -1/12 because there's a bug in this bot's stupid code";
         };
     }
-
+    public static ArrayList<String> getTrustedUserIDs() {
+        String url = "trusted_users.txt";
+        final var dictInputStream = RambleBot.class.getResourceAsStream(url);
+        assert dictInputStream != null;
+        ArrayList<String> temp = new ArrayList<>(new BufferedReader(new InputStreamReader(dictInputStream)).lines().toList());
+        temp.replaceAll(s -> s.substring(0, s.indexOf("/") - 1));
+        System.out.println(temp);
+        return temp;
+    }
     public static boolean isBrainrotServer(Guild guild){
         final Dotenv config = Dotenv.configure().load();
         String id = config.get("BRAINROT_ID");
@@ -232,8 +243,7 @@ public class Ramble21 {
         return "images/diff_faces/" + name + ".png";
     }
     public static boolean memberIsModerator(Member member){
-        HashSet<String> trustedUsers = new HashSet<>(Set.of("674819147963564054", "1105270481294209075", "987132003331764284"));
-        return trustedUsers.contains(member.getId()) || isBotOwner(member.getUser());
+        return getTrustedUserIDs().contains(member.getId());
     }
     public static GeometryDashLevel getHardest(User user, boolean isPlatformer) throws IOException {
         String rizz = "platformer";

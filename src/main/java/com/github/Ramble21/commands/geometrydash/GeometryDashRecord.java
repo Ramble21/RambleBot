@@ -5,6 +5,7 @@ import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class GeometryDashRecord implements Command {
     private boolean isPlatformer = false;
 
     @Override
-    public void execute(SlashCommandInteractionEvent event){
+    public void execute(SlashCommandInteractionEvent event) throws ErrorResponseException {
         GeometryDashLevel level;
         if (Objects.requireNonNull(event.getOption("id")).getAsInt() < 4 && Objects.requireNonNull(event.getOption("id")).getAsInt() > 0){
             if (Objects.requireNonNull(event.getOption("id")).getAsInt() == 3){
