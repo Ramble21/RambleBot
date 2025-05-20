@@ -24,6 +24,6 @@ public class RizzRater implements Command {
 
         user = "<@" + user + ">";
 
-        event.reply(user + "'s " + Ramble21.rateRizz(ballzakz)).queue();
+        event.reply(user + "'s " + Ramble21.rateRizz(ballzakz, event.getUser())).queue();
     }
 }

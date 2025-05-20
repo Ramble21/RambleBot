@@ -9,16 +9,13 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import javax.security.auth.login.LoginException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
+import java.io.File;
 
 public class RambleBot {
 
@@ -60,7 +57,10 @@ public class RambleBot {
         shardManager = builder.build();
 
         // Declare global variables
-        maintenanceMode = false;
+        maintenanceMode = new File("local.flag").exists();
+        if (maintenanceMode) {
+            System.out.println("Bot turned on locally, maintenance mode automatically activated");
+        }
     }
 
     public static JDA getJda() {

@@ -18,12 +18,22 @@ public class TextCommand extends ListenerAdapter {
         User user = event.getAuthor();
 
         if (message.equals("r!maint.on") && isBotOwner(user)) {
-            RambleBot.setMaintenanceMode(true);
-            event.getChannel().sendMessage("Maintenance mode successfully turned on.").queue();
+            if (RambleBot.maintenanceMode()) {
+                event.getChannel().sendMessage("Maintenance mode is already turned on!").queue();
+            }
+            else {
+                RambleBot.setMaintenanceMode(true);
+                event.getChannel().sendMessage("Maintenance mode successfully turned on.").queue();
+            }
         }
         else if (message.equals("r!maint.off") && isBotOwner(user)) {
-            RambleBot.setMaintenanceMode(false);
-            event.getChannel().sendMessage("Maintenance mode successfully turned off.").queue();
+            if (!RambleBot.maintenanceMode()) {
+                event.getChannel().sendMessage("Maintenance mode is already turned off!").queue();
+            }
+            else {
+                RambleBot.setMaintenanceMode(false);
+                event.getChannel().sendMessage("Maintenance mode successfully turned off.").queue();
+            }
         }
         else if (message.contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();

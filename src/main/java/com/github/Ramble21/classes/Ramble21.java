@@ -17,9 +17,9 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Ramble21 {
-    public static String rateRizz(int rizz) {
+    public static String rateRizz(int rizz, User user) {
         return switch (rizz) {
-            case 1 -> "rizz count is 1/10. Ain't no party like a Diddy party!";
+            case 1 -> "rizz count is 1/10. Ain't no party like a " + user.getGlobalName() + " party!";
             case 2 -> "rizz count is 2/10. Maybe they should stop watching so much anime and touch some grass";
             case 3 ->
                     "rizz count is 3/10. It would've been higher if they didn't piss their pants every time they see their crush";

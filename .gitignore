@@ -40,3 +40,4 @@ build/
 /target/
 /out/
 /src/main/resources/com/github/Ramble21/trusted_users.txt
+/local.flag
