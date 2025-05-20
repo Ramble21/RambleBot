@@ -66,7 +66,6 @@ public class GeometryDashLevel {
         }
         makeRating();
         gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(id, 0);
-        System.out.println(name + " " + gddlTier);
     }
     public GeometryDashLevel(String robtopLevelName, int attempts, User submitter, int biasLevel){
         this.attempts = attempts;
@@ -143,18 +142,14 @@ public class GeometryDashLevel {
 
     public static void initializeGddlMap(){
         HashMap<String, String> strings = Refresh.fetchGDDLData();
-        System.out.println(strings.size());
         for (String key : hardCodes.keySet()){
             gddlTiers.put(Integer.parseInt(key), hardCodes.get(key));
-            System.out.println(key + " -- " + hardCodes.get(key));
         }
         for (Map.Entry<String, String> entry : strings.entrySet()){
             if (hardCodes.containsKey(entry.getKey())) continue;
             if (!canParseInt(entry.getKey())) {
-                System.out.println(entry.getKey() + " -- " + entry.getValue());
                 continue;
             }
-            System.out.println(entry.getKey() + " -- " + entry.getValue());
             int key = Integer.parseInt(entry.getKey());
             int value = getValue(entry.getValue());
             gddlTiers.put(key, value);

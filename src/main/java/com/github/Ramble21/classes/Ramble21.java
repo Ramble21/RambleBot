@@ -2,7 +2,6 @@ package com.github.Ramble21.classes;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,31 +11,27 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.time.temporal.IsoFields;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class Ramble21 {
-
+    private static final String brainrotterID = Dotenv.configure().load().get("BRAINROTTER_ID");
     public static String rateRizz(int rizz) {
         return switch (rizz) {
-            case 1 -> "rizz count is 1/10. You're playing Minecraft, in a cave, looking for diamonds";
+            case 1 -> "rizz count is 1/10. Ain't no party like a Diddy party!";
             case 2 -> "rizz count is 2/10. Maybe they should stop watching so much anime and touch some grass";
             case 3 ->
                     "rizz count is 3/10. It would've been higher if they didn't piss their pants every time they see their crush";
-            case 4 -> "rizz count is 4/10. Womp womp";
-            case 5 -> "rizz count is 5/10. Literal NPC";
+            case 4 -> "rizz count is 4/10. I would check that out if I were them";
+            case 5 -> "rizz count is 5/10. Booooooooring";
             case 6 -> "rizz count is 6/10. I'm honestly shocked that its even this high";
             case 7 ->
                     "rizz count is 7/10. They only know how to rizz up dudes though, maybe they should try to vary it up";
             case 8 ->
-                    "rizz count is 8/10. While getting dates is easy for them, their 1 inch penis makes it hard for anyone to want to stay with them for long";
+                    "rizz count is 8/10. If only they didn't scare all of their dates away by yapping endlessly about Balatro";
             case 9 -> "rizz count is 9/10. Maybe this is a result of them finally not playing geometry dash anymore";
             case 10 ->
                     "rizz count is 10/10. Holy shit. We have found the skibidi sigma rizzler themself. Maybe even the future CEO of Ohio";
-            default -> "rizz count is -1/12 because there's a bug in ur code";
+            default -> "rizz count is -1/12 because there's a bug in this bot's stupid code";
         };
     }
 
@@ -49,16 +44,9 @@ public class Ramble21 {
     public static int generateSeed(String userId) {
         return Integer.parseInt(userId.substring(14)) * LocalDate.now().getMonthValue();
     }
-    public static int generateWeeklySeed(String userId){
-        int weekOfYear = LocalDate.now().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-        long seed = Long.parseLong(userId) * weekOfYear;
-        Random random = new Random(seed);
-        return random.nextInt(Integer.MAX_VALUE);
-    }
 
     public static int generateRizz(int seed) {
-        Random random = new Random(seed);
-        return random.nextInt(10) + 1;
+        return new Random(seed).nextInt(10) + 1;
     }
 
     public static String generateIp(int seed) {
@@ -68,10 +56,6 @@ public class Ramble21 {
         String rand3 = Integer.toString(random1.nextInt(255)+1);
         String rand4 = Integer.toString(random1.nextInt(255)+1);
         return rand1 + "." + rand2 + "." + rand3 + "." + rand4;
-    }
-
-    public static boolean isRambleBot(User user){
-        return user.getId().equalsIgnoreCase("1295872060341616640");
     }
 
     public static double getMatchingPercentage(String str1, String str2) {
@@ -124,11 +108,11 @@ public class Ramble21 {
     public static String getVictorsAsMention (GeometryDashLevel level, Guild guild, boolean isPlatformer){
         ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
         toReturn.replaceAll(string -> "<@" + string + ">");
-        String amongUsPotionAtThreeAM = toReturn.get(0);
+        StringBuilder amongUsPotionAtThreeAM = new StringBuilder(toReturn.get(0));
         for (int i = 1; i < toReturn.size(); i++){
-            amongUsPotionAtThreeAM += (", " + toReturn.get(i));
+            amongUsPotionAtThreeAM.append(", ").append(toReturn.get(i));
         }
-        return amongUsPotionAtThreeAM;
+        return amongUsPotionAtThreeAM.toString();
     }
     public static int getAverageAttempts (GeometryDashLevel level, Guild guild, boolean isPlatformer){
         ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
@@ -153,8 +137,7 @@ public class Ramble21 {
                         iterations++;
                     }
                 }
-            } catch (IOException e){
-                continue;
+            } catch (IOException ignored){
             }
         }
         return total/iterations;
@@ -179,8 +162,7 @@ public class Ramble21 {
                         toReturn.add(member.getId());
                     }
                 }
-            } catch (IOException e){
-                continue;
+            } catch (IOException ignored){
             }
         }
         return toReturn;
@@ -205,8 +187,7 @@ public class Ramble21 {
                         victorIds.add(member.getId());
                     }
                 }
-            } catch (IOException e){
-                continue;
+            } catch (IOException ignored){
             }
         }
         ArrayList<String> hardestIdsAsMention = new ArrayList<>();
@@ -220,8 +201,7 @@ public class Ramble21 {
                 if (completions.get(0).getName().equals(level.getName()) && completions.get(0).getAuthor().equals(level.getAuthor())){
                     hardestIdsAsMention.add("<@" + id + ">");
                 }
-            } catch (IOException e){
-                continue;
+            } catch (IOException ignored){
             }
         }
         if (hardestIdsAsMention.isEmpty()){
@@ -253,7 +233,8 @@ public class Ramble21 {
         return "images/diff_faces/" + name + ".png";
     }
     public static boolean memberIsModerator(Member member){
-        return (Objects.requireNonNull(member).hasPermission(Permission.MANAGE_SERVER)) || isBotOwner(member.getUser());
+        HashSet<String> trustedUsers = new HashSet<>(Set.of("674819147963564054", "1105270481294209075", "987132003331764284"));
+        return trustedUsers.contains(member.getId()) || isBotOwner(member.getUser());
     }
     public static GeometryDashLevel getHardest(User user, boolean isPlatformer) throws IOException {
         String rizz = "platformer";
@@ -269,7 +250,7 @@ public class Ramble21 {
             throw new IOException(e);
         }
     }
-    public static GeometryDashLevel getAttemptExtrema(User user, String difficulty, boolean high) throws IOException {
+    public static GeometryDashLevel getAttemptExtrema(User user, String difficulty, boolean high) {
         try (FileReader reader = new FileReader("data/json/completions/classic/" + user.getId() + ".json")){
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
@@ -316,6 +297,16 @@ public class Ramble21 {
         return -1;
     }
     public static boolean isBotOwner(User u) {
-        return u.getId().equals("739978476651544607");
+        return u.getId().equals(getBotOwnerID());
+    }
+    public static boolean isBlacklisted(User u) {
+        HashSet<String> blacklistedIDs = new HashSet<>(Set.of(brainrotterID)){};
+        return blacklistedIDs.contains(u.getId());
+    }
+    public static String getBrainrotterID() {
+        return brainrotterID;
+    }
+    public static String getBotOwnerID() {
+        return "739978476651544607";
     }
 }

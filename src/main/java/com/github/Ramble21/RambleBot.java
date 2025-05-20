@@ -1,5 +1,6 @@
 package com.github.Ramble21;
 
+import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.CommandListener;
 import com.github.Ramble21.listeners.*;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -8,12 +9,16 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import javax.security.auth.login.LoginException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 
 public class RambleBot {
 
@@ -58,7 +63,9 @@ public class RambleBot {
         maintenanceMode = false;
     }
 
-    public static JDA getJda() { return jda; }
+    public static JDA getJda() {
+        return jda;
+    }
     public static void setMaintenanceMode(boolean b) {
         maintenanceMode = b;
     }
@@ -68,7 +75,7 @@ public class RambleBot {
 
     public static void main(String[] args) {
         try {
-            RambleBot bot = new RambleBot();
+            new RambleBot();
         }
         catch (LoginException e) {
             System.out.println("ERROR: Provided bot token is invalid");

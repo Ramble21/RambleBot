@@ -149,7 +149,6 @@ public class StateFlags implements Command {
                     EmbedBuilder embed3 = new EmbedBuilder();
                     if (lastUser == event.getAuthor()) {
                         streak++;
-                        System.out.println(streak);
                         embed3.setTitle("Congrats! You guessed correctly! x" + streak);
                     } else {
                         streak = 1;
@@ -188,7 +187,6 @@ public class StateFlags implements Command {
                     EmbedBuilder embed3 = new EmbedBuilder();
                     if (lastUser == event.getAuthor()) {
                         streak++;
-                        System.out.println(streak);
                         embed3.setTitle("Congrats! You guessed correctly! x" + streak);
                     } else {
                         streak = 1;

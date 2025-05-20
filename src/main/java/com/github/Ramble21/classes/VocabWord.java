@@ -72,8 +72,6 @@ public class VocabWord {
 
 
         englishTranslations = generateEnglishTranslations(word, flagName);
-        System.out.println("Word: " + word);
-        System.out.println("English Translations: " + Arrays.toString(englishTranslations));
     }
     public VocabWord(String key, String flagName){
         if (hashMap.isEmpty() ) {
@@ -81,9 +79,6 @@ public class VocabWord {
         }
         word = key;
         englishTranslations = generateEnglishTranslations(word, flagName);
-
-        System.out.println("Word: " + word);
-        System.out.println("English Translations: " + Arrays.toString(englishTranslations));
     }
 
     public static void initializeVocabHashMap(){

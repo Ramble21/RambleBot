@@ -69,9 +69,6 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             ){
 
             User loser = event.getMessage().getAuthor();
-            System.out.println(typeRacer.getPlayer1().getEffectiveName());
-            System.out.println(typeRacer.getPlayer2().getEffectiveName());
-
             User winner;
             if (loser.equals(typeRacer.getPlayer2())){
                 winner = typeRacer.getPlayer1();

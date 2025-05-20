@@ -75,7 +75,7 @@ public class GeometryDashRecord implements Command {
             embed = generateExtremeEmbed(level);
             level.addToModeratorQueue();
         }
-        else if (event.getUser().getId().equalsIgnoreCase("840216337119969301")) {
+        else if (Ramble21.isBlacklisted(event.getUser())) {
             embed = generateBlacklistEmbed(level);
             level.addToModeratorQueue();
         }
