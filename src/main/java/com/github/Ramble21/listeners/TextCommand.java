@@ -3,7 +3,6 @@ package com.github.Ramble21.listeners;
 import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Diacritics;
 import com.github.Ramble21.classes.Ramble21;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -29,8 +28,8 @@ public class TextCommand extends ListenerAdapter {
         else if (message.contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();
         }
-        else if (message.contains("repuesta") && isBrainrotServer(event.getGuild())) {
-            event.getChannel().sendMessage("<@" + Ramble21.getBrainrotterID() + "> dame repuestas").queue();
+        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isBrainrotServer(event.getGuild())) {
+            event.getChannel().sendMessage("<@" + getBrainrotterID() + "> dame repuestas").queue();
         }
         else if (message.contains("lalalalava")) {
             event.getChannel().sendMessage("chichichichicken").queue();

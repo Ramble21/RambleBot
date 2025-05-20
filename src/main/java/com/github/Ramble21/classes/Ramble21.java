@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Ramble21 {
-    private static final String brainrotterID = Dotenv.configure().load().get("BRAINROTTER_ID");
     public static String rateRizz(int rizz) {
         return switch (rizz) {
             case 1 -> "rizz count is 1/10. Ain't no party like a Diddy party!";
@@ -300,13 +299,16 @@ public class Ramble21 {
         return u.getId().equals(getBotOwnerID());
     }
     public static boolean isBlacklisted(User u) {
-        HashSet<String> blacklistedIDs = new HashSet<>(Set.of(brainrotterID)){};
+        HashSet<String> blacklistedIDs = new HashSet<>(Set.of(getBrainrotterID())){};
         return blacklistedIDs.contains(u.getId());
     }
     public static String getBrainrotterID() {
-        return brainrotterID;
+        return Dotenv.configure().load().get("BRAINROTTER_ID");
     }
     public static String getBotOwnerID() {
         return "739978476651544607";
+    }
+    public static boolean isRambleBot(User u) {
+        return u.getId().equals("1295872060341616640");
     }
 }
