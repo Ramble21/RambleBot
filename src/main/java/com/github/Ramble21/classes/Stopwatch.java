@@ -2,7 +2,6 @@ package com.github.Ramble21.classes;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 public final class Stopwatch {
 
@@ -41,7 +40,4 @@ public final class Stopwatch {
         return (int)duration.toMillis();
     }
 
-    public int getElapsedTime(TimeUnit timeUnit) {
-        return (int)(timeUnit.convert(getElapsedTime(), TimeUnit.MILLISECONDS));
-    }
 }
