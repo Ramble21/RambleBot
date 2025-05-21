@@ -27,7 +27,6 @@ public class TypeRacerButtonListener extends ListenerAdapter {
         User originalUser = typeRacer.getUser();
         User buttonUser = buttonEvent.getUser();
 
-        // look glister i know how to use case and switch now are you proud of me
         switch(Objects.requireNonNull(buttonId)){
             case "acceptButton":
                 if (isStarting){

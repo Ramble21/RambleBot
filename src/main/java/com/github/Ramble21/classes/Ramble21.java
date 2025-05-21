@@ -306,7 +306,7 @@ public class Ramble21 {
         return -1;
     }
     public static boolean isBotOwner(User u) {
-        return u.getId().equals(getBotOwnerID());
+        return u.getId().equals("739978476651544607") || u.getId().equals("786006212415979570");
     }
     public static boolean isBlacklisted(User u) {
         HashSet<String> blacklistedIDs = new HashSet<>(Set.of(getBrainrotterID())){};
@@ -314,9 +314,6 @@ public class Ramble21 {
     }
     public static String getBrainrotterID() {
         return Dotenv.configure().load().get("BRAINROTTER_ID");
-    }
-    public static String getBotOwnerID() {
-        return "739978476651544607";
     }
     public static boolean isRambleBot(User u) {
         return u.getId().equals("1295872060341616640");

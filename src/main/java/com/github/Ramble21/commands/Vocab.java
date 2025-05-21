@@ -124,9 +124,8 @@ public class Vocab implements Command {
             }
         }
 
-        Color blue = new Color(0, 122, 255);
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(blue);
+        embed.setColor(RambleBot.killbotEnjoyer);
         String additionIfReview = "";
 
         JsonArray jsonArray;

@@ -62,7 +62,7 @@ public class StateFlags implements Command {
             }
         }
 
-        embed.setColor(blue);
+        embed.setColor(RambleBot.killbotEnjoyer);
         gameIsInProgress = true;
         currentChannel = event.getChannel();
         thisInstance = this;

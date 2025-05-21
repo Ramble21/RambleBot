@@ -15,12 +15,14 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.io.File;
 
 public class RambleBot {
 
     private final ShardManager shardManager;
     private final Dotenv config;
+    public static final Color killbotEnjoyer = new Color(174, 221, 0);
     private static JDA jda = null;
 
     private static boolean maintenanceMode;

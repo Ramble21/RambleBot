@@ -33,11 +33,28 @@ public class CommandListener extends ListenerAdapter {
                     (new OptionData(OptionType.STRING, "country", "Choose a country to guess flags from (default: US)")
                             .addChoice("United States", "us")
                             .addChoice("Spain", "es")
-                            .setRequired(false))
+                            .setRequired(false)
+                    )
             )
         );
-
-        // commandData.add(Commands.slash("trump", "Guess which one of 3 Trump quotes is made up"));
+        commandData.add(Commands.slash("wordbomb", "Play WordBomb on Discord! [NOT FINISHED YET!]")
+                .addOptions(
+                        (new OptionData(OptionType.INTEGER, "difficulty", "Difficulty of the letter sequences given")
+                                .addChoice("Easy", 1)
+                                .addChoice("Medium", 2)
+                                .addChoice("Hard", 3)
+                                .setRequired(true)
+                        ),
+                        (new OptionData(OptionType.INTEGER, "language", "Language to play WordBomb in (default: English)")
+                                .addChoice("English", 0)
+                                .addChoice("Español", 1)
+                                .setRequired(false)
+                        ),
+                        (new OptionData(OptionType.BOOLEAN, "practice", "Select \"True\" to play in practice mode (currently unsupported)")
+                                .setRequired(false)
+                        )
+                )
+        );
 
         commandData.add(Commands.slash("update-logs", "[BETA] Updates the message logs for this server. May take a long time."));
 

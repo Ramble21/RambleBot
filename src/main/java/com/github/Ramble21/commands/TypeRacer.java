@@ -39,9 +39,9 @@ public class TypeRacer implements Command  {
 
     public static List<TypeRacer> games = new ArrayList<>();
 
-    private final Color blue = new Color(0, 122, 255);
     private final Color red = new Color(255,0, 0);
     private final Color yellow = new Color(255, 255, 0);
+
     private User user = null;
 
     private User player1;
@@ -105,7 +105,7 @@ public class TypeRacer implements Command  {
 
             eb.setTitle("TypeRacer");
             eb.setDescription(event.getUser().getAsMention() + " wants to play TypeRacer! The first person to type a random group of 20 words wins!");
-            eb.setColor(blue);
+            eb.setColor(RambleBot.killbotEnjoyer);
             eb.setFooter(username, pfpurl);
 
             TypeRacerButtonListener typeRacerButtonListener = new TypeRacerButtonListener(this);

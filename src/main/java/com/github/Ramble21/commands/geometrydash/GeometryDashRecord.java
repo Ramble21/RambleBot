@@ -1,5 +1,6 @@
 package com.github.Ramble21.commands.geometrydash;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
@@ -100,7 +101,7 @@ public class GeometryDashRecord implements Command {
     public EmbedBuilder generateExtremeEmbed(GeometryDashLevel level){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Completion successfully added to moderator queue!");
-        embed.setColor(new Color(0, 122, 255));
+        embed.setColor(RambleBot.killbotEnjoyer);
         embed.setDescription(
                 "Extreme Demon completions have to be approved by a server moderator before getting added to your profile. \n\n" +
                         "Submission: \n" +
@@ -112,7 +113,7 @@ public class GeometryDashRecord implements Command {
     public EmbedBuilder generateBlacklistEmbed(GeometryDashLevel level){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Completion successfully added to moderator queue!");
-        embed.setColor(new Color(0, 122, 255));
+        embed.setColor(RambleBot.killbotEnjoyer);
         embed.setDescription(
                 "Due to being blacklisted, all of your submissions must be approved by a server moderator before getting added to your profile. \n\n" +
                         "Submission: \n" +
