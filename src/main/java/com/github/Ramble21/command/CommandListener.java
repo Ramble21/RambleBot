@@ -37,7 +37,7 @@ public class CommandListener extends ListenerAdapter {
                     )
             )
         );
-        commandData.add(Commands.slash("wordbomb", "Play WordBomb on Discord! [NOT FINISHED YET!]")
+        commandData.add(Commands.slash("wordbomb", "Play WordBomb on Discord!")
                 .addOptions(
                         (new OptionData(OptionType.INTEGER, "difficulty", "Difficulty of the letter sequences given")
                                 .addChoice("Easy", 1)
