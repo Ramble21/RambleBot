@@ -38,7 +38,7 @@ public class VocabMessageListener extends ListenerAdapter {
                         shouldCongratulate = updateMasteryLevel(event, vocabWord, vocabInstance);
                     }
 
-                    String otherTranslations = "";
+                    StringBuilder otherTranslations = new StringBuilder();
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setColor(Color.green);
                     embed.setTitle("That's correct!");
@@ -46,15 +46,15 @@ public class VocabMessageListener extends ListenerAdapter {
                     for (int ii = 0; ii < vocabWord.getEnglishTranslations().length; ii++){
                         if (!(vocabWord.getEnglishTranslations()[ii].equals(vocabWord.getEnglishTranslations()[i]))){
                             if (otherTranslations.isEmpty()) {
-                                otherTranslations = vocabWord.getEnglishTranslations()[ii];
+                                otherTranslations = new StringBuilder(vocabWord.getEnglishTranslations()[ii]);
                             }
                             else{
-                                otherTranslations += ", " + vocabWord.getEnglishTranslations()[ii];
+                                otherTranslations.append(", ").append(vocabWord.getEnglishTranslations()[ii]);
                             }
                         }
                     }
 
-                    if (shouldCongratulate && otherTranslations.isEmpty()){
+                    if (shouldCongratulate && (otherTranslations.isEmpty())){
                         embed.setDescription("You mastered the verb `" + vocabWord.getVocabWord() +"`!");
                     }
                     else if (shouldCongratulate){

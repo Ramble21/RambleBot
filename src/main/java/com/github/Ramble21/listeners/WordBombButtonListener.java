@@ -51,8 +51,9 @@ public class WordBombButtonListener extends ListenerAdapter {
                     try {
                         Thread.sleep(3500);
                     } catch (InterruptedException ignored) {}
+                    game.currentPlayerIndex = (int)(Math.random()*game.players.size());
                     buttonEvent.getJDA().removeEventListener(this);
-                    game.startGame();
+                    game.promptTurn();
                 }
                 break;
 
