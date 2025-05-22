@@ -4,12 +4,16 @@ import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.WordBombPlayer;
 import com.github.Ramble21.commands.WordBomb;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WordBombButtonListener extends ListenerAdapter {
     private final WordBomb game;
@@ -74,13 +78,14 @@ public class WordBombButtonListener extends ListenerAdapter {
                 else if (game.players.size() == 1) {
                     buttonEvent.deferEdit().queue(hook -> {
                         EmbedBuilder eb = game.getEmbed();
+                        eb.setColor(Color.red);
                         eb.setDescription("Game cancelled by host");
-                        hook.sendMessageEmbeds(eb.build())
-                                .queue();
+                        hook.sendMessageEmbeds(eb.build()).queue();
+                        WordBomb.activeChannelIDs.remove(game.channel.getId());
                     });
                 }
                 else {
-                    if (!game.players.get(0).user.equals(game.host)) {
+                    if (user.getId().equals(game.host.getId())) {
                         game.host = game.players.get(1).user;
                     }
                     game.players.remove(new WordBombPlayer(user, game.STARTING_LIVES));

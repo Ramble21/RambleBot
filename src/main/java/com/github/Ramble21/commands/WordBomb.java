@@ -24,7 +24,7 @@ import java.util.List;
 
 public class WordBomb implements Command {
 
-    private final static HashSet<String> activeChannelIDs = new HashSet<>();
+    public final static HashSet<String> activeChannelIDs = new HashSet<>();
 
     private HashSet<String> dictionary;
     private ArrayList<String> prompts;
@@ -119,8 +119,28 @@ public class WordBomb implements Command {
                             Button.danger("leave", "Leave Game"),
                             Button.secondary("help", "Help")
                     )
-                    .queue();
+                    .queue(message -> {
+                        Timer timer = new Timer();
+                        TimerTask expiration = new TimerTask() {
+                            @Override
+                            public void run() {
+                                EmbedBuilder eb = new EmbedBuilder();
+                                eb.setTitle("WordBomb");
+                                eb.setColor(Color.red);
+                                eb.setDescription("Timed out due to inactivity");
+                                eb.setFooter(host.getEffectiveName(), host.getAvatarUrl());
+                                message.editMessageEmbeds(eb.build())
+                                        .setAttachments()
+                                        .setComponents()
+                                        .queue();
+                                event.getJDA().removeEventListener(listener);
+                                activeChannelIDs.remove(channel.getId());
+                            }
+                        };
+                        timer.schedule(expiration, 300_000); // 5 minutes until expiration
+                    });
         });
+
     }
 
     public String getRandomPrompt() {
