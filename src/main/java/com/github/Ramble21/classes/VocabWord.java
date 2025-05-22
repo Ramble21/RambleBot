@@ -24,7 +24,6 @@ public class VocabWord {
 
     public String word;
     public String[] englishTranslations;
-    public int masteryLevel = 0;
 
     public VocabWord(String flagName, User user, boolean isFromPersonal){
         if (hashMap.isEmpty()){
@@ -71,13 +70,6 @@ public class VocabWord {
         }
 
 
-        englishTranslations = generateEnglishTranslations(word, flagName);
-    }
-    public VocabWord(String key, String flagName){
-        if (hashMap.isEmpty() ) {
-            initializeVocabHashMap();
-        }
-        word = key;
         englishTranslations = generateEnglishTranslations(word, flagName);
     }
 
@@ -141,9 +133,6 @@ public class VocabWord {
     public String[] getEnglishTranslations(){
         return englishTranslations;
     }
-    public int getMasteryLevel() {
-        return masteryLevel;
-    }
 
     public void writeToPersonalJson(User user, String language){
 
@@ -161,7 +150,6 @@ public class VocabWord {
             throw new RuntimeException(e);
         }
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userId = user.getId();
 
         List<VocabWord> vocabWordList;
 

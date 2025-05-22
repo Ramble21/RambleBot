@@ -9,7 +9,6 @@ public class WpmScore {
     private final String userId;
     private final String guildId;
 
-
     public WpmScore(int wpm, User user, Guild guild){
         this.wpm = wpm;
         this.userId = user.getId();
