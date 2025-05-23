@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.GeometryDashRecord;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.PaginatorListener;
@@ -11,10 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class GeometryDashLeaderboard implements Command {
     private Guild guild;
@@ -23,9 +21,6 @@ public class GeometryDashLeaderboard implements Command {
 
     public Guild getGuild() {
         return guild;
-    }
-    public String getOriginalMessageId() {
-        return originalMessageId;
     }
     public boolean isPlatformer() {
         return isPlatformer;
@@ -38,7 +33,7 @@ public class GeometryDashLeaderboard implements Command {
         }
         guild = event.getGuild();
         assert guild != null;
-        ArrayList<GeometryDashLevel> list = GeometryDashLevel.getGuildJsonList(guild, isPlatformer);
+        ArrayList<GeometryDashLevel> list = new ArrayList<>(GeometryDashRecord.getGuildLevels(guild, isPlatformer));
 
         EmbedBuilder embed = new EmbedBuilder();
         if (isPlatformer){
@@ -50,7 +45,7 @@ public class GeometryDashLeaderboard implements Command {
 
         String description;
         boolean includeButtons = true;
-        if (list == null || list.isEmpty()){
+        if (list.isEmpty()){
             description = "There have been no completions submitted to this server yet!";
             includeButtons = false;
         }
@@ -100,9 +95,9 @@ public class GeometryDashLeaderboard implements Command {
         System.out.println(list);
         String description = "";
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){
-            String emoji = Ramble21.getEmojiName(list.get(i).getDifficulty());
+            String emoji = Ramble21.getEmojiName(list.get(i).difficulty);
             description += (
-                    i+1 + " - " + emoji + " **" + list.get(i).getName() + "** by " + list.get(i).getAuthor() + "\n" +
+                    i+1 + " - " + emoji + " **" + list.get(i).name + "** by " + list.get(i).author + "\n" +
                             "<:star:1307518203122942024> *Victors:* " + Ramble21.getVictorsAsMention(list.get(i), guild, isPlatformer) + "\n" +
                             "<:length:1307507840864227468> *Average Attempt Count: " + Ramble21.getAverageAttempts(list.get(i), guild, isPlatformer) + "*\n\n"
             );

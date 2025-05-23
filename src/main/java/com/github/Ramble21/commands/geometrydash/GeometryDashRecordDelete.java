@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.GeometryDashRecord;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.google.gson.Gson;
@@ -35,7 +36,7 @@ public class GeometryDashRecordDelete implements Command {
             }
         }
 
-        ArrayList<GeometryDashLevel> levels = GeometryDashLevel.getPersonalJsonList(submitter, isPlatformer);
+        ArrayList<GeometryDashRecord> levels = GeometryDashRecord.getPersonalJSON(submitter.getId(), isPlatformer);
         GeometryDashLevel targetLevel = null;
 
         if (levels == null){
@@ -44,9 +45,9 @@ public class GeometryDashRecordDelete implements Command {
         }
         int index = -1;
         for (int i = 0; i < levels.size(); i++){
-            if (levels.get(i).getName().equalsIgnoreCase(name) && levels.get(i).getAuthor().equalsIgnoreCase(creator)){
+            if (levels.get(i).level.name.equals(name) && levels.get(i).level.author.equals(creator)){
                 index = i;
-                targetLevel = levels.get(i);
+                targetLevel = levels.get(i).level;
             }
         }
         if (index == -1){
@@ -59,10 +60,10 @@ public class GeometryDashRecordDelete implements Command {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(levels,writer);
             if (ownDelete){
-                event.reply("Your completion of " + targetLevel.getName() + " has been deleted from the records").setEphemeral(true).queue();
+                event.reply("Your completion of " + targetLevel.name + " has been deleted from the records").setEphemeral(true).queue();
             }
             else{
-                event.reply( submitter.getEffectiveName() + "'s " + targetLevel.getName() + " completion has been deleted from the records").queue();
+                event.reply( submitter.getEffectiveName() + "'s " + targetLevel.name + " completion has been deleted from the records").queue();
             }
         }
         catch (IOException e){

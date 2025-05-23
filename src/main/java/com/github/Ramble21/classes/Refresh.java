@@ -49,7 +49,7 @@ public class Refresh {
         return dataMap;
     }
     public static GeometryDashLevel refreshLevel(GeometryDashLevel old){
-        return new GeometryDashLevel(old.getId(), old.getAttempts(), old.getSubmitterId(), old.getBiasLevel());
+        return new GeometryDashLevel((int) old.id);
     }
     public static void refreshAllLevels(){
         Gson gson = new GsonBuilder()

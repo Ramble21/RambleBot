@@ -13,10 +13,8 @@ import java.util.*;
 public class GeometryDashRecord {
 
     public final GeometryDashLevel level;
-    public final int attempts;
+    public int attempts;
     public final String submitterID;
-
-    public final static Queue<GeometryDashLevel> moderatorQueue = new LinkedList<>();
 
     public GeometryDashRecord(GeometryDashLevel level, int attempts, String submitterID) {
         this.level = level;
@@ -61,8 +59,8 @@ public class GeometryDashRecord {
         }
         return list;
     }
-    public static ArrayList<GeometryDashLevel> getModeratorQueue() {
-        ArrayList<GeometryDashLevel> list = new ArrayList<>();
+    public static ArrayList<GeometryDashRecord> getModeratorQueue() {
+        ArrayList<GeometryDashRecord> list = new ArrayList<>();
         try {
             String path = "data/json/gd-records/queue.json";
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -98,6 +96,26 @@ public class GeometryDashRecord {
             throw new RuntimeException(e);
         }
     }
+    public void removeFromModeratorQueue() {
+        try {
+            String path = "data/json/gd-records/queue.json";
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            File file = new File(path);
+            ArrayList<GeometryDashRecord> list = new ArrayList<>();
+            if (file.exists()) {
+                Reader reader = new FileReader(file);
+                Type listType = new TypeToken<List<GeometryDashRecord>>(){}.getType();
+                list = gson.fromJson(reader, listType);
+                reader.close();
+            }
+            list.remove(this);
+            Writer writer = new FileWriter(file);
+            gson.toJson(list, writer);
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static HashSet<GeometryDashLevel> getGuildLevels(Guild guild, boolean platformer) {
         HashSet<GeometryDashLevel> levels = new HashSet<>();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -118,5 +136,16 @@ public class GeometryDashRecord {
             }
         }
         return levels;
+    }
+    public static GeometryDashRecord getFirstQueuedInGuild(Guild guild) {
+        ArrayList<GeometryDashRecord> queue = getModeratorQueue();
+        for (GeometryDashRecord record : queue) {
+            for (Member member : guild.getMembers()) {
+                if (member.getId().equals(record.submitterID)) {
+                    return record;
+                }
+            }
+        }
+        return null;
     }
 }

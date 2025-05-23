@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.GeometryDashRecord;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -31,12 +32,14 @@ public class GeometryDashStats implements Command {
         embed.setTitle(member.getEffectiveName() + "'s Profile Stats");
         embed.setThumbnail(member.getUser().getEffectiveAvatarUrl());
 
-        ArrayList<GeometryDashLevel> levels = GeometryDashLevel.getPersonalJsonList(member.getUser(), true);
-        if (levels == null) levels = new ArrayList<>();
+        ArrayList<GeometryDashRecord> levels = GeometryDashRecord.getPersonalJSON(member.getUser().getId(), true);
+        if (levels == null) {
+            levels = new ArrayList<>();
+        }
         try {
-            levels.addAll(GeometryDashLevel.getPersonalJsonList(member.getUser(), false));
+            levels.addAll(GeometryDashRecord.getPersonalJSON(member.getUser().getId(), false));
         } catch (Exception e){
-            levels = GeometryDashLevel.getPersonalJsonList(member.getUser(), true);
+            levels = GeometryDashRecord.getPersonalJSON(member.getUser().getId(), true);
         }
 
         String description;
@@ -53,17 +56,17 @@ public class GeometryDashStats implements Command {
                     getDemonsSubmittedAsString(true, member)+ "\n\n";
 
         }
-        ArrayList<GeometryDashLevel> plats = GeometryDashLevel.getPersonalJsonList(member.getUser(), true);
-        ArrayList<GeometryDashLevel> classics = GeometryDashLevel.getPersonalJsonList(member.getUser(), false);
+        ArrayList<GeometryDashRecord> plats = GeometryDashRecord.getPersonalJSON(member.getUser().getId(), true);
+        ArrayList<GeometryDashRecord> classics = GeometryDashRecord.getPersonalJSON(member.getUser().getId(), false);
         String string1 = "Hardest Classic Completion: N/A\n";
         String string2 = "Hardest Platformer Completion: N/A\n";
         if (!(classics == null || classics.isEmpty())){
-            GeometryDashLevel hardestClassic = Ramble21.getHardest(member.getUser(), false);
-            string1 = "Hardest Classic Completion:** " + Ramble21.getEmojiName(hardestClassic.getDifficulty()) + " " + hardestClassic.getName() + "** " + "(#" + Ramble21.getLeaderboardPosition(hardestClassic, event.getGuild(), false) + ")\n";
+            GeometryDashRecord hardestClassic = Ramble21.getHardest(member.getUser(), false);
+            string1 = "Hardest Classic Completion:** " + Ramble21.getEmojiName(hardestClassic.level.difficulty) + " " + hardestClassic.level.name + "** " + "(#" + Ramble21.getLeaderboardPosition(hardestClassic.level, event.getGuild(), false) + ")\n";
         }
         if (!(plats == null || plats.isEmpty())){
-            GeometryDashLevel hardestPlat = Ramble21.getHardest(member.getUser(), true);
-            string2 = "Hardest Platformer Completion:** " + Ramble21.getEmojiName(hardestPlat.getDifficulty()) + " " + hardestPlat.getName() + "** " + "(#" + Ramble21.getLeaderboardPosition(hardestPlat, event.getGuild(), true) + ")\n";
+            GeometryDashRecord hardestPlat = Ramble21.getHardest(member.getUser(), true);
+            string2 = "Hardest Platformer Completion:** " + Ramble21.getEmojiName(hardestPlat.level.difficulty) + " " + hardestPlat.level.name + "** " + "(#" + Ramble21.getLeaderboardPosition(hardestPlat.level, event.getGuild(), true) + ")\n";
         }
         description += string1 + string2 + "\n <:star:1307518203122942024> **Attempt Records**:\n";
         description +=
@@ -91,7 +94,7 @@ public class GeometryDashStats implements Command {
         String emojiURL = isPlatformer ? "<:moon:1320906679008886784>" : "<:star:1307518203122942024>";
         String easyURL = "<:icon_demon_easy:1307789634415104000>";
 
-        ArrayList<GeometryDashLevel> levels = GeometryDashLevel.getPersonalJsonList(member.getUser(), isPlatformer);
+        ArrayList<GeometryDashRecord> levels = GeometryDashRecord.getPersonalJSON(member.getUser().getId(), isPlatformer);
         if (levels == null || levels.isEmpty()) return emojiURL + ": " + "N/A";
 
         String mediumURL = "<:icon_demon_medium:1307789652010467465>";
@@ -103,11 +106,11 @@ public class GeometryDashStats implements Command {
         int hardCount = 0;
         int insaneCount = 0;
         int extremeCount = 0;
-        for (GeometryDashLevel level : levels){
-            if (level.getDifficultyAsInt() == 5) easyCount++;
-            else if (level.getDifficultyAsInt() == 4) mediumCount++;
-            else if (level.getDifficultyAsInt() == 3) hardCount++;
-            else if (level.getDifficultyAsInt() == 2) insaneCount++;
+        for (GeometryDashRecord record : levels){
+            if (record.level.getDifficultyAsInt() == 5) easyCount++;
+            else if (record.level.getDifficultyAsInt() == 4) mediumCount++;
+            else if (record.level.getDifficultyAsInt() == 3) hardCount++;
+            else if (record.level.getDifficultyAsInt() == 2) insaneCount++;
             else extremeCount++;
         }
         return emojiURL + ": " + extremeURL + "x" + extremeCount + ", " + insaneURL + "x" + insaneCount + ", " + hardURL + "x" + hardCount + ", " + mediumURL + "x" + mediumCount + ", " + easyURL + "x" + easyCount;

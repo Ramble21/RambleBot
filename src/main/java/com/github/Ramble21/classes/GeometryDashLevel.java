@@ -14,6 +14,7 @@ public class GeometryDashLevel {
 
     public String name;
     public long id;
+    public int stars;
     public String author;
     public String difficulty;
     public int gddlTier;
@@ -151,6 +152,7 @@ public class GeometryDashLevel {
         this.platformer = data.platformer;
         this.epicValue = data.epicValue;
         this.featured = data.featured;
+        this.stars = data.stars;
     }
     public static ArrayList<GeometryDashLevel> getCachedLevels() {
         ArrayList<GeometryDashLevel> list = new ArrayList<>();

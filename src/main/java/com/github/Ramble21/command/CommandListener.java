@@ -84,10 +84,6 @@ public class CommandListener extends ListenerAdapter {
                                                         .addChoice("Platformer", "platformer")
                                                         .setRequired(true)),
                                                 (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", false)),
-                                                (new OptionData(OptionType.STRING, "difficulty", "Difficulty of the level")
-                                                        .addChoice("Underrated", "underrated")
-                                                        .addChoice("Overrated", "overrated")
-                                                        .setRequired(false)),
                                                 (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being edited", false))
                                         ),
                                                 new SubcommandData("deleterecord", "Delete a previously submitted Geometry Dash completion record")

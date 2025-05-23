@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.GeometryDashRecord;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.GeometryDashReviewButtonListener;
@@ -44,32 +45,22 @@ public class GeometryDashReview implements Command {
             event.reply("There are no levels in this server to review!").setEphemeral(true).queue();
             return;
         }
-        sendEmbed(embed, event, event.getChannel(), GeometryDashLevel.getFirstInGuild(event.getGuild()));
+        sendEmbed(embed, event, GeometryDashRecord.getFirstQueuedInGuild(event.getGuild()));
     }
     public EmbedBuilder generateNewEmbed(Guild guild){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Approve completions for server " + guild.getName());
         embed.setColor(Color.yellow);
-        GeometryDashLevel currentLevel = GeometryDashLevel.getFirstInGuild(guild);
-        lastLevel = currentLevel;
-        if (currentLevel == null){
-            return null;
-        }
+        GeometryDashRecord record = GeometryDashRecord.getFirstQueuedInGuild(guild);
         embed.setDescription(
-                "\uD83D\uDC64 Submitter: **<@" + currentLevel.getSubmitterId() + ">**\n" +
-                        "<:play:1307500271911309322> Name: **" + currentLevel.getName() + "**\n" +
-                        "<:star:1307518203122942024> Difficulty: **" + currentLevel.getDifficulty() + "**\n" +
-                        "<:length:1307507840864227468> Attempts: **" + currentLevel.getAttempts() + "**\n");
+                "\uD83D\uDC64 Submitter: **<@" + record.submitterID + ">**\n" +
+                        "<:play:1307500271911309322> Name: **" + record.level.name + "**\n" +
+                        "<:star:1307518203122942024> Difficulty: **" + record.level.difficulty + "**\n" +
+                        "<:length:1307507840864227468> Attempts: **" + record.attempts + "**\n");
         return embed;
     }
 
-    private GeometryDashLevel lastLevel;
-
-    public GeometryDashLevel getLastLevel() {
-        return lastLevel;
-    }
-
-    public void sendEmbed(EmbedBuilder embed, SlashCommandInteractionEvent event, MessageChannel channel, GeometryDashLevel level){
+    public void sendEmbed(EmbedBuilder embed, SlashCommandInteractionEvent event, GeometryDashRecord record){
         final GeometryDashReviewButtonListener[] geometryDashReviewButtonListener = {null}; // again it has to be an array bc dumb java
            event.deferReply().queue(hook -> {
                hook.sendMessageEmbeds(embed.build())
@@ -78,7 +69,7 @@ public class GeometryDashReview implements Command {
                                 Button.danger("rejectButton", "Reject"))
                         .queue(message -> {
                             this.originalMessageId = message.getId();
-                            geometryDashReviewButtonListener[0] = new GeometryDashReviewButtonListener(this, level);
+                            geometryDashReviewButtonListener[0] = new GeometryDashReviewButtonListener(this, record);
                             event.getJDA().addEventListener(geometryDashReviewButtonListener[0]);
                });
                Timer buttonTimeout = new Timer();

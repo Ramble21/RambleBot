@@ -11,7 +11,7 @@ public class GeometryDashManager implements Command {
     private final Map<String, Command> subcommands = new HashMap<>();
 
     public GeometryDashManager() {
-        subcommands.put("submitrecord", new GeometryDashRecord());
+        subcommands.put("submitrecord", new GeometryDashRecordCommand());
         subcommands.put("editrecord", new GeometryDashRecordEdit());
         subcommands.put("deleterecord", new GeometryDashRecordDelete());
         subcommands.put("profile", new GeometryDashProfile());
