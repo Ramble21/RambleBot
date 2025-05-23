@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.GeometryDashRecord;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.PaginatorListener;
@@ -44,7 +45,7 @@ public class GeometryDashProfile implements Command {
             member = Objects.requireNonNull(event.getOption("member")).getAsMember();
         }
         assert member != null;
-        ArrayList<GeometryDashLevel> list = GeometryDashLevel.getPersonalJsonList(member.getUser(), isPlatformer);
+        ArrayList<GeometryDashRecord> list = GeometryDashRecord.getPersonalJSON(member.getId(), isPlatformer);
 
         EmbedBuilder embed = new EmbedBuilder();
         if (isPlatformer){
@@ -100,13 +101,13 @@ public class GeometryDashProfile implements Command {
             });
         }
     }
-    public static String makePageProfileDescription(ArrayList<GeometryDashLevel> list, int perPage, int pageNo){
+    public static String makePageProfileDescription(ArrayList<GeometryDashRecord> list, int perPage, int pageNo){
         Ramble21.sortByEstimatedDiff(list, false);
         String description = "";
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){
             String emoji = Ramble21.getEmojiName(list.get(i).getDifficulty());
             description += (
-                    i+1 + " - " + emoji + " **" + list.get(i).getName() + "** by " + list.get(i).getAuthor() + "\n" +
+                    i+1 + " - " + emoji + " **" + list.get(i).getName() + "** by " + list.get(i).s + "\n" +
                             "<:length:1307507840864227468> *Attempts: " + list.get(i).getAttempts() + "*\n\n"
             );
         }

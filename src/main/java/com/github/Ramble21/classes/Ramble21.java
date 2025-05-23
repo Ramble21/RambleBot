@@ -2,6 +2,7 @@ package com.github.Ramble21.classes;
 
 import com.github.Ramble21.RambleBot;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -96,210 +97,163 @@ public class Ramble21 {
         };
     }
 
-    public static void sortByEstimatedDiff (ArrayList<GeometryDashLevel> list, boolean isObjective){
-        if (isObjective){
-            list.sort(
-                    Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
-                            .thenComparingInt(GeometryDashLevel::getGddlTier)
-                            .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
-            );
-        }
-        else{
-            list.sort(
-                    Comparator.comparingInt(GeometryDashLevel::getDifficultyAsInt).reversed()
-                            .thenComparingInt(GeometryDashLevel::getGddlTier)
-                            .thenComparingInt(GeometryDashLevel::getBiasLevel)
-                            .thenComparingInt(GeometryDashLevel::getAttempts).reversed()
-            );
-        }
+    public static void sortByEstimatedDiff (ArrayList<GeometryDashRecord> list){
+        Comparator<Object> comparator =
+                Comparator.comparingInt(record -> ((GeometryDashRecord)record).level.getDifficultyAsInt()).reversed()
+                .thenComparingInt(record -> ((GeometryDashRecord)record).level.gddlTier)
+                .thenComparingInt(record -> ((GeometryDashRecord)record).attempts).reversed();
+        list.sort(comparator);
+    }
+    public static void sortByEstimatedDiff (ArrayList<GeometryDashLevel> list, boolean iHateJava){
+        Comparator<Object> comparator =
+                Comparator.comparingInt(level -> ((GeometryDashLevel)level).getDifficultyAsInt()).reversed()
+                        .thenComparingInt(level -> ((GeometryDashLevel)level).gddlTier);
+        list.sort(comparator);
     }
 
-
-    public static String getVictorsAsMention (GeometryDashLevel level, Guild guild, boolean isPlatformer){
-        ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
-        toReturn.replaceAll(string -> "<@" + string + ">");
-        StringBuilder amongUsPotionAtThreeAM = new StringBuilder(toReturn.get(0));
-        for (int i = 1; i < toReturn.size(); i++){
-            amongUsPotionAtThreeAM.append(", ").append(toReturn.get(i));
+    public static String getVictorsAsMention(GeometryDashLevel level, Guild guild, boolean isPlatformer){
+        HashSet<String> result = getVictorIDs(level, guild, isPlatformer);
+        StringBuilder builder = new StringBuilder();
+        for (String id : result) {
+            builder.append("<@").append(id).append(">, ");
         }
-        return amongUsPotionAtThreeAM.toString();
+        return builder.substring(0, builder.length()-2);
     }
-    public static int getAverageAttempts (GeometryDashLevel level, Guild guild, boolean isPlatformer){
-        ArrayList<String> toReturn = getVictors(level, guild, isPlatformer);
+    public static int getAverageAttempts(GeometryDashLevel level, Guild guild, boolean isPlatformer){
         int total = 0;
         int iterations = 0;
-        for (String memberId : toReturn){
-            String rizz;
-            if (isPlatformer){
-                rizz = "platformer";
-            }
-            else{
-                rizz = "classic";
-            }
-            String path = "data/json/completions/" + rizz + "/" + memberId + ".json";
-            try (FileReader reader = new FileReader(path)){
-                Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
-                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
-                for (GeometryDashLevel level2 : completions){
-                    if (level2.getId() == level.getId()){
-                        total += level2.getAttempts();
+        for (String victorID : getVictorIDs(level, guild, isPlatformer)) {
+            String path = "data/json/gd-records/" + (isPlatformer ? "platformer" : "classic") + "/" + victorID;
+            try (FileReader reader = new FileReader(path)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Type type = new TypeToken<ArrayList<GeometryDashRecord>>(){}.getType();
+                ArrayList<GeometryDashRecord> records = gson.fromJson(reader, type);
+                for (GeometryDashRecord record : records) {
+                    if (record.level.equals(level)) {
+                        total += record.attempts;
                         iterations++;
+                        break;
                     }
                 }
-            } catch (IOException ignored){
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
-        return total/iterations;
+        return total / iterations;
     }
-    public static ArrayList<String> getVictors(GeometryDashLevel level, Guild guild, boolean isPlatformer) {
-        ArrayList<String> toReturn = new ArrayList<>();
-        for (Member member : guild.getMembers()){
-            String rizz;
-            if (isPlatformer){
-                rizz = "platformer";
-            }
-            else{
-                rizz = "classic";
-            }
-            String path = "data/json/completions/" + rizz + "/" + member.getId() + ".json";
-            try (FileReader reader = new FileReader(path)){
-                Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
-                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
-                for (GeometryDashLevel level2 : completions){
-                    if (level2.getId() == level.getId()){
-                        toReturn.add(member.getId());
+    public static HashSet<String> getVictorIDs(GeometryDashLevel level, Guild guild, boolean isPlatformer) {
+        HashSet<String> victorIDs = new HashSet<>();
+        for (Member member : guild.getMembers()) {
+            String path = "data/json/gd-records/" + (isPlatformer ? "platformer" : "classic") + "/" + member.getId() + ".json";
+            try (FileReader reader = new FileReader(path)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Type type = new TypeToken<ArrayList<GeometryDashLevel>>(){}.getType();
+                ArrayList<GeometryDashRecord> completions = gson.fromJson(reader, type);
+                for (GeometryDashRecord completion : completions) {
+                    if (completion.level.equals(level)) {
+                        victorIDs.add(member.getId());
+                        break;
                     }
                 }
-            } catch (IOException ignored){
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
-        return toReturn;
+        return victorIDs;
     }
     public static String getHardestsAsString(GeometryDashLevel level, Guild guild, boolean isPlatformer){
-        ArrayList<String> victorIds = new ArrayList<>();
-        String rizz;
-        if (isPlatformer){
-            rizz = "platformer";
-        }
-        else{
-            rizz = "classic";
-        }
-        for (Member member : guild.getMembers()){
-            String path = "data/json/completions/" + rizz + "/" + member.getId() + ".json";
-            try (FileReader reader = new FileReader(path)){
-                Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
-                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
-                for (GeometryDashLevel level2 : completions){
-                    if (level2.getId() == level.getId()){
-                        victorIds.add(member.getId());
-                    }
-                }
-            } catch (IOException ignored){
+        ArrayList<String> hardestsAsMentions = new ArrayList<>();
+        String levelType = isPlatformer ? "platformer" : "classic";
+        for (String victorID : getVictorIDs(level, guild, isPlatformer)) {
+            ArrayList<GeometryDashRecord> records = GeometryDashRecord.getPersonalJSON(victorID, isPlatformer);
+            sortByEstimatedDiff(records);
+            if (records.get(0).level.equals(level)) {
+                hardestsAsMentions.add("<@" + victorID + ">");
             }
         }
-        ArrayList<String> hardestIdsAsMention = new ArrayList<>();
-        for (String id : victorIds){
-            String path = "data/json/completions/" + rizz + "/" + id + ".json";
-            try (FileReader reader = new FileReader(path)){
-                Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
-                ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
-                sortByEstimatedDiff(completions, false);
-                if (completions.get(0).getName().equals(level.getName()) && completions.get(0).getAuthor().equals(level.getAuthor())){
-                    hardestIdsAsMention.add("<@" + id + ">");
-                }
-            } catch (IOException ignored){
-            }
-        }
-        if (hardestIdsAsMention.isEmpty()){
+        if (hardestsAsMentions.isEmpty()) {
             return "";
         }
-        else if (hardestIdsAsMention.size() == 1){
-            return "This is the hardest " + rizz + " level beaten by " + hardestIdsAsMention.get(0) + "!";
+        else if (hardestsAsMentions.size() == 1) {
+            return "This is the hardest " + levelType + " level beaten by " + hardestsAsMentions.get(0) + "!";
         }
-        StringBuilder finalString = new StringBuilder();
-        for (int i = 0; i < hardestIdsAsMention.size()-1; i++){
-            if (i == hardestIdsAsMention.size()-2){
-                finalString.append(hardestIdsAsMention.get(i)).append(" and ").append(hardestIdsAsMention.get(i + 1));
+        else {
+            StringBuilder longString = new StringBuilder();
+            for (int i = 0; i < hardestsAsMentions.size()-1; i++) {
+                if (i == hardestsAsMentions.size()-2){
+                    longString.append(hardestsAsMentions.get(i)).append(" and ").append(hardestsAsMentions.get(i + 1));
+                }
+                else{
+                    longString.append(hardestsAsMentions.get(i)).append(", ");
+                }
             }
-            else{
-                finalString.append(hardestIdsAsMention.get(i)).append(", ");
-            }
+            return "This is the hardest " + levelType + " level beaten by " + longString + "!";
         }
-        return "This is the hardest " + rizz + " level beaten by " + finalString + "!";
     }
     public static String getDifficultyPngName(GeometryDashLevel level){
-        String[] parts = level.getDifficulty().toLowerCase().split(" ", 2);
+        String[] parts = level.difficulty.toLowerCase().split(" ", 2);
         String name = parts[0];
-        if (level.getRating().equals("featured")){
-            name += "_feature";
-        }
-        else if (!level.getRating().isEmpty()){
-            name += "_" + level.getRating();
+        if (!level.getRateType().isEmpty()){
+            name += "_" + level.getRateType();
         }
         return "images/diff_faces/" + name + ".png";
     }
     public static boolean memberIsModerator(Member member){
         return getTrustedUserIDs().contains(member.getId());
     }
-    public static GeometryDashLevel getHardest(User user, boolean isPlatformer) throws IOException {
-        String rizz = "platformer";
-        if (!isPlatformer) rizz = "classic";
-        String path =  "data/json/completions/" + rizz + "/" + user.getId() + ".json";
+    public static GeometryDashRecord getHardest(User user, boolean isPlatformer) throws IOException {
+        String rizz = isPlatformer ? "platformer" : "classic";
+        String path =  "data/json/gd-records/" + rizz + "/" + user.getId() + ".json";
         try (FileReader reader = new FileReader(path)){
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
-            ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
-            sortByEstimatedDiff(completions, false);
+            ArrayList<GeometryDashRecord> completions = gson.fromJson(reader, type);
+            sortByEstimatedDiff(completions);
             return completions.get(0);
         } catch (IOException e){
             throw new IOException(e);
         }
     }
-    public static GeometryDashLevel getAttemptExtrema(User user, String difficulty, boolean high) {
-        try (FileReader reader = new FileReader("data/json/completions/classic/" + user.getId() + ".json")){
+    public static GeometryDashRecord getAttemptExtrema(User user, String difficulty, boolean high) {
+        try (FileReader reader = new FileReader("data/json/gd-records/classic/" + user.getId() + ".json")){
             Gson gson = new Gson();
-            Type type = new TypeToken<ArrayList<GeometryDashLevel>>() {}.getType();
-            ArrayList<GeometryDashLevel> completions = gson.fromJson(reader, type);
+            Type type = new TypeToken<ArrayList<GeometryDashRecord>>() {}.getType();
+            ArrayList<GeometryDashRecord> completions = gson.fromJson(reader, type);
             int max = 0;
             int min = Integer.MAX_VALUE;
-            GeometryDashLevel maxLevel = null;
-            GeometryDashLevel minLevel = null;
-            for (GeometryDashLevel level : completions){
-                if (!level.getDifficulty().equals(difficulty)) continue;
-                if (level.getAttempts() < min){
-                    min = level.getAttempts();
-                    minLevel = level;
+            GeometryDashRecord maxLevel = null;
+            GeometryDashRecord minLevel = null;
+            for (GeometryDashRecord record : completions){
+                if (!record.level.difficulty.equals(difficulty)) {
+                    continue;
                 }
-                if (level.getAttempts() > max){
-                    max = level.getAttempts();
-                    maxLevel = level;
+                if (record.attempts < min){
+                    min = record.attempts;
+                    minLevel = record;
+                }
+                if (record.attempts > max){
+                    max = record.attempts;
+                    maxLevel = record;
                 }
             }
-            if (high){
-                return maxLevel;
-            }
-            return minLevel;
+            return high ? maxLevel : minLevel;
         } catch (IOException e){
             return null;
         }
     }
-    public static String makeExtremaString(GeometryDashLevel level){
-        if (level == null){
+    public static String makeExtremaString(GeometryDashRecord record){
+        if (record == null){
             return "N/A\n";
         }
         else{
-            return "**" + level.getName() + "** (" + level.getAttempts() + " atts)\n";
+            return "**" + record.level.name + "** (" + record.attempts + " atts)\n";
         }
     }
     public static int getLeaderboardPosition(GeometryDashLevel level, Guild guild, boolean isPlatformer){
-        ArrayList<GeometryDashLevel> levels = GeometryDashLevel.getGuildJsonList(guild, isPlatformer);
+        ArrayList<GeometryDashLevel> levels = new ArrayList<>(GeometryDashRecord.getGuildLevels(guild, isPlatformer));
         sortByEstimatedDiff(levels, true);
         for (int i = 0; i < Objects.requireNonNull(levels).size(); i++){
-            if (Objects.equals(levels.get(i).getName(), level.getName()) && Objects.equals(levels.get(i).getAuthor(), level.getAuthor())){
+            if (Objects.equals(levels.get(i).name, level.name) && Objects.equals(levels.get(i).author, level.author)){
                 return i+1;
             }
         }
