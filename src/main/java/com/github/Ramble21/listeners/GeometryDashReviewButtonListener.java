@@ -25,8 +25,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent buttonEvent) {
 
-        if (!(Objects.requireNonNull(buttonEvent.getMember()).hasPermission(Permission.MANAGE_SERVER))
-                && !(Ramble21.isBotOwner(buttonEvent.getUser()))){
+        if (!Ramble21.memberIsModerator(Objects.requireNonNull(buttonEvent.getMember()))){
             return;
         }
 
