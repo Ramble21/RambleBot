@@ -45,7 +45,7 @@ public class RambleBot {
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
 
         // Register listeners
-        builder.addEventListeners(new CommandListener(), new TextCommand(), new mewhen2(), new Test());
+        builder.addEventListeners(new CommandListener(), new TextCommand(), new mewhen2(), new Test(), new HotLavaAndChicken());
 
         // Add jda variable
         jda = JDABuilder.createDefault(token).build();
