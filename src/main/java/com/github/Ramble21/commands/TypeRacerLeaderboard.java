@@ -34,13 +34,15 @@ public class TypeRacerLeaderboard implements Command {
             return;
         }
 
-        if (rawScores.size() > 10) rawScores.subList(10, rawScores.size()).clear();
+        rawScores.sort(Comparator.comparingDouble(WpmScore::getWpm).reversed());
+        if (rawScores.size() > 10) {
+            rawScores.subList(10, rawScores.size()).clear();
+        }
 
         WpmScore[] scores = new WpmScore[rawScores.size()];
         for (int i = 0; i < rawScores.size(); i++){
             scores[i] = rawScores.get(i);
         }
-        Arrays.sort(scores, Comparator.comparingDouble(WpmScore::getWpm).reversed());
 
         addDescriptionToEmbed(scores, embed);
         assert trophy != null;
