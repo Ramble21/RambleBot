@@ -13,7 +13,7 @@ public class CommandManager{
     public CommandManager(){
         commands.put("grab-ip", new GrabIp());
         commands.put("rizz-rater", new RizzRater());
-        commands.put("state-flags", new StateFlags());
+        commands.put("guess-flags", new GuessFlags());
         commands.put("typeracer", new TypeRacerManager());
         commands.put("gd", new GeometryDashManager());
         commands.put("vocab", new Vocab());

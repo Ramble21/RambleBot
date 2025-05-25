@@ -4,7 +4,6 @@ import com.github.Ramble21.classes.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.commands.geometrydash.GeometryDashReview;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,6 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
         if (!Ramble21.memberIsModerator(Objects.requireNonNull(buttonEvent.getMember()))){
             return;
         }
-
         if (Objects.equals(buttonEvent.getComponent().getId(), "acceptButtonGD")){
             buttonEvent.getJDA().removeEventListener(this);
             System.out.println("Received button: acceptButtonGD");

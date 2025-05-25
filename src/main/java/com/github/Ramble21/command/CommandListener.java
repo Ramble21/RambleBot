@@ -28,9 +28,9 @@ public class CommandListener extends ListenerAdapter {
         commandData.add(Commands.slash("rizz-rater", "Rate's a server member's rizz on a scale of 1 to 10")
                 .addOption(OptionType.USER, "member", "Member to get rizz level of", false));
 
-        commandData.add(Commands.slash("state-flags", "Test your state flag knowledge by guessing a random flag")
+        commandData.add(Commands.slash("guess-flags", "Test your world flag knowledge by guessing a random flag!")
             .addOptions(
-                    (new OptionData(OptionType.STRING, "country", "Choose a country to guess flags from (default: US)")
+                    (new OptionData(OptionType.STRING, "country", "Choose a specific country to guess flags from (default: world)")
                             .addChoice("United States", "us")
                             .addChoice("Spain", "es")
                             .setRequired(false)
