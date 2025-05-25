@@ -8,8 +8,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 
-import java.util.Arrays;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.StringJoiner;
@@ -45,6 +43,7 @@ public class TypeRacerLeaderboard implements Command {
         }
 
         addDescriptionToEmbed(scores, embed);
+        embed.setColor(RambleBot.killbotEnjoyer);
         assert trophy != null;
         event.getInteraction().replyEmbeds(embed.build())
                 .addFiles(FileUpload.fromData(trophy, "trophy.png")

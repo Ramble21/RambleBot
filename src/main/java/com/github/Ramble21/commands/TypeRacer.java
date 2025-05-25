@@ -7,18 +7,18 @@ import com.github.Ramble21.classes.WpmScore;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.TypeRacerButtonListener;
 import com.github.Ramble21.listeners.TypeRacerMessageListener;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.awt.*;
@@ -38,9 +38,6 @@ public class TypeRacer implements Command  {
     private final Stopwatch stopwatch = new Stopwatch();
 
     public static List<TypeRacer> games = new ArrayList<>();
-
-    private final Color red = new Color(255,0, 0);
-    private final Color yellow = new Color(255, 255, 0);
 
     private User user = null;
 
@@ -92,8 +89,6 @@ public class TypeRacer implements Command  {
 
         games.add(this);
         user = event.getUser();
-        String username = user.getEffectiveName();
-        String pfpurl = user.getAvatarUrl();
 
         originalTextChannel = event.getChannel().asTextChannel();
 
@@ -106,7 +101,7 @@ public class TypeRacer implements Command  {
             eb.setTitle("TypeRacer");
             eb.setDescription(event.getUser().getAsMention() + " wants to play TypeRacer! The first person to type a random group of 20 words wins!");
             eb.setColor(RambleBot.killbotEnjoyer);
-            eb.setFooter(username, pfpurl);
+            eb.setFooter(user.getEffectiveName(), user.getAvatarUrl());
 
             TypeRacerButtonListener typeRacerButtonListener = new TypeRacerButtonListener(this);
             event.getJDA().addEventListener(typeRacerButtonListener);
@@ -124,7 +119,7 @@ public class TypeRacer implements Command  {
     public void cancelGame(User buttonUser){
         System.out.println(originalMessageId + " cancel");
         EmbedBuilder cancelEmbed = new EmbedBuilder();
-        cancelEmbed.setColor(red);
+        cancelEmbed.setColor(Color.red);
         cancelEmbed.setTitle("TypeRacer");
         cancelEmbed.setDescription("Game cancelled");
         cancelEmbed.setFooter(buttonUser.getEffectiveName(), buttonUser.getAvatarUrl());
@@ -141,7 +136,7 @@ public class TypeRacer implements Command  {
         this.player2 = player2;
 
         EmbedBuilder startEmbed = new EmbedBuilder();
-        startEmbed.setColor(yellow);
+        startEmbed.setColor(Color.yellow);
         startEmbed.setTitle("TypeRacer");
         startEmbed.setDescription("**" + player2.getAsMention() + " accepted your TypeRacer challenge!** Generating words in 5 seconds!");
         startEmbed.setFooter(player1.getEffectiveName(), player1.getAvatarUrl());
