@@ -2,6 +2,7 @@ package com.github.Ramble21.commands;
 
 import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Country;
+import com.github.Ramble21.classes.Diacritics;
 import com.github.Ramble21.classes.SpainCommunity;
 import com.github.Ramble21.classes.State;
 import com.github.Ramble21.command.Command;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +48,7 @@ public class GuessFlags implements Command {
 
         if (event.getOption("country") == null){
             Map.Entry<String, List<String>> country = Country.getRandomCountry();
-            privateFileName = country.getKey().toLowerCase();
+            privateFileName = country.getKey().toUpperCase();
             flagGuesses = country.getValue();
             countrySymbol = "wo";
         }
@@ -63,22 +65,31 @@ public class GuessFlags implements Command {
             countrySymbol = "us";
         }
 
-        gameIsInProgress = true;
-        currentChannel = event.getChannel();
-        thisInstance = this;
-
-
         final InputStream fileStream;
         EmbedBuilder embed = getEmbed(countrySymbol);
 
-        String path = "images/flags/" + countrySymbol + "/" + privateFileName + ".png";
+        String path = "com/github/Ramble21/images/flags/" + countrySymbol + "/" + privateFileName + ".png";
 
-        fileStream = RambleBot.class.getResourceAsStream(path);
+        fileStream = RambleBot.class.getClassLoader().getResourceAsStream(path);
         embed.setImage("attachment://mystery.png");
 
         System.out.println("/guess-flags answers: " + flagGuesses);
 
-        assert fileStream != null;
+        if (fileStream == null) {
+            System.out.println("Resource not found: " + path);
+            try {
+                URL flagsDir = RambleBot.class.getClassLoader().getResource("com/github/Ramble21/images/flags/");
+                System.out.println("Flags directory URL: " + flagsDir);
+            } catch (Exception e) {
+                System.out.println("Could not find flags directory");
+            }
+            event.reply("The bot is having a stupid bug again").setEphemeral(true).queue();
+            return;
+        }
+
+        gameIsInProgress = true;
+        currentChannel = event.getChannel();
+        thisInstance = this;
         event.replyEmbeds(embed.build())
                 .addFiles(FileUpload.fromData(fileStream, "mystery.png"))
                 .queue(hook -> storedHook = hook);
@@ -94,7 +105,7 @@ public class GuessFlags implements Command {
 
             @Override
             public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-                String guess = event.getMessage().getContentRaw().toLowerCase();
+                String guess = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
 
                 timeoutTask = scheduler.schedule(() -> {
                     if (gameIsInProgress) {

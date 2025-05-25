@@ -10,11 +10,11 @@ public class SpainCommunity {
             "Basque Country"
     };
     private static String[] spanishNames = {
-            "Valencia", "Madrid", "Cataluña", "Aragon", "Murcia",
-            "Andalucía", "Extremadura", "Castilla y León", "Navarra",
+            "Valencia", "Madrid", "Cataluna", "Aragon", "Murcia",
+            "Andalucia", "Extremadura", "Castilla y Leon", "Navarra",
             "Asturias", "Galicia", "Islas Canarias", "Ceuta", "Melilla",
             "Cantabria", "La Rioja", "Castilla La Mancha", "Islas Baleares",
-            "País Vasco"
+            "Pais Vasco"
     };
     private static String[] namesSnakeCase = {
             "valencia", "madrid", "catalonia", "aragon", "murcia",
