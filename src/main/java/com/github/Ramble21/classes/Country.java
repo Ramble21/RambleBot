@@ -1,9 +1,6 @@
 package com.github.Ramble21.classes;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.*;
 
 public class Country {
@@ -43,14 +40,9 @@ public class Country {
         COUNTRY_CODES.entrySet().removeIf(entry -> !fileExistsInResources(entry.getKey().toUpperCase() + ".png"));
     }
     private static boolean fileExistsInResources(String fileName) {
-        try {
-            URL resourceUrl = Country.class.getClassLoader().getResource("com/github/Ramble21/images/flags/wo");
-            if (resourceUrl == null) {
-                return false;
-            }
-            Path directoryPathObj = Paths.get(resourceUrl.toURI());
-            Path filePath = directoryPathObj.resolve(fileName);
-            return Files.exists(filePath);
+        String resourcePath = "com/github/Ramble21/images/flags/wo/" + fileName;
+        try (InputStream inputStream = Country.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            return inputStream != null;
         } catch (Exception e) {
             return false;
         }
