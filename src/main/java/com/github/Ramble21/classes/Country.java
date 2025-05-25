@@ -1,5 +1,9 @@
 package com.github.Ramble21.classes;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Country {
@@ -28,27 +32,27 @@ public class Country {
         addSynonyms("AE", "United Arab Emirates", "UAE");
         addSynonyms("GB", "United Kingdom", "UK", "Britain");
         addSynonyms("US", "United States", "USA", "America");
-        addSynonyms("VA", "Vatican City", "Holy See");
-        addSynonyms("RU", "Russia", "Russian Federation");
-        addSynonyms("KR", "South Korea", "Republic of Korea", "ROK");
-        addSynonyms("KP", "North Korea", "Democratic People's Republic of Korea", "DPRK");
-        addSynonyms("VE", "Venezuela", "Bolivarian Republic of Venezuela");
-        addSynonyms("IR", "Iran", "Islamic Republic of Iran");
-        addSynonyms("SY", "Syria", "Syrian Arab Republic");
-        addSynonyms("TZ", "Tanzania", "United Republic of Tanzania");
-        addSynonyms("LA", "Laos", "Lao People's Democratic Republic");
+        addSynonyms("VA", "Vatican City", "Holy See", "Vatican");
+        addSynonyms("KR", "South Korea", "ROK");
+        addSynonyms("KP", "North Korea", "DPRK");
         addSynonyms("CD", "DRC", "Democratic Republic of the Congo");
-        addSynonyms("CG", "Republic of the Congo");
+        addSynonyms("CG", "Republic of the Congo", "Republic of Congo");
         addSynonyms("EH", "Western Sahara", "Sahrawi Arab Democratic Republic");
-        addSynonyms("BQ", "Bonaire, Sint Eustatius and Saba");
-        addSynonyms("MF", "Saint Martin");
-        addSynonyms("SX", "Sint Maarten");
         addSynonyms("XK", "Kosovo");
 
-        COUNTRY_CODES.put("GB-ENG", List.of("England"));
-        COUNTRY_CODES.put("GB-SCT", List.of("Scotland"));
-        COUNTRY_CODES.put("GB-WLS", List.of("Wales"));
-        COUNTRY_CODES.put("GB-NIR", List.of("Northern Ireland"));
-        COUNTRY_CODES.put("EU",     List.of("European Union"));
+        COUNTRY_CODES.entrySet().removeIf(entry -> !fileExistsInResources(entry.getKey().toUpperCase() + ".png"));
+    }
+    private static boolean fileExistsInResources(String fileName) {
+        try {
+            URL resourceUrl = Country.class.getClassLoader().getResource("com/github/Ramble21/images/flags/wo");
+            if (resourceUrl == null) {
+                return false;
+            }
+            Path directoryPathObj = Paths.get(resourceUrl.toURI());
+            Path filePath = directoryPathObj.resolve(fileName);
+            return Files.exists(filePath);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

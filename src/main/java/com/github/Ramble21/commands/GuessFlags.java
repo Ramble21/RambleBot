@@ -40,10 +40,6 @@ public class GuessFlags implements Command {
             }
         }
 
-        Color red = new Color(255, 0, 0);
-        Color green = new Color(0, 255, 0);
-        Color blue = new Color(0, 122, 255);
-
         String privateFileName;
         List<String> flagGuesses;
         String countrySymbol;
@@ -81,7 +77,6 @@ public class GuessFlags implements Command {
         embed.setImage("attachment://mystery.png");
 
         System.out.println("/guess-flags answers: " + flagGuesses);
-        System.out.println("File location: " + path);
 
         assert fileStream != null;
         event.replyEmbeds(embed.build())
@@ -108,7 +103,7 @@ public class GuessFlags implements Command {
                         timeoutEmbed.setDescription("Nobody answered correctly during the time limit, losers");
                         streak = 0;
                         lastUser = null;
-                        timeoutEmbed.setColor(red);
+                        timeoutEmbed.setColor(Color.red);
                         timeoutEmbed.setImage("attachment://mystery.png");
 
                         storedHook.editOriginalEmbeds(timeoutEmbed.build()).queue();
@@ -126,7 +121,7 @@ public class GuessFlags implements Command {
 
                     EmbedBuilder embed2 = getEmbed(countrySymbol);
                     embed2.setDescription("**Answered correctly by <@" + event.getAuthor().getId() + "> in " + time + " seconds!**");
-                    embed2.setColor(green);
+                    embed2.setColor(Color.green);
                     embed2.setImage("attachment://mystery.png");
 
                     storedHook.editOriginalEmbeds(embed2.build()).queue();
