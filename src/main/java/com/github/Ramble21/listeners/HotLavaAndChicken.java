@@ -10,12 +10,12 @@ import java.util.regex.Pattern;
 
 public class HotLavaAndChicken extends ListenerAdapter {
     private static final Pattern[] regexes = {
-            Pattern.compile("^l[a]?[\\s\\-]*l[a]?[\\s\\-]*l[a]?[\\s\\-]*lava$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^ch[i]?[\\s\\-]*ch[i]?[\\s\\-]*ch[i]?[\\s\\-]*chicken$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^la?[\\s\\-]*la?[\\s\\-]*la?[\\s\\-]*lava$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^chi?[\\s\\-]*chi?[\\s\\-]*chi?[\\s\\-]*chicken$", Pattern.CASE_INSENSITIVE),
             Pattern.compile("^steve['`´]?s\\s+lava\\s+chicken,?\\s+yeah,?\\s+it['`´]?s\\s+tasty\\s+as\\s+hell$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^[o]?oh,?\\s+mamacita,?\\s+now\\s+(you['`´]?re|your|ur)\\s+ringin['`´g]?\\s+the\\s+bell$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^o?oh,?\\s+mamacita,?\\s+now\\s+(you['`´]?re|your|ur)\\s+ringin['`´g]?\\s+(the|a)\\s+bell$", Pattern.CASE_INSENSITIVE),
             Pattern.compile("^crispy\\s+and\\s+juicy,?\\s+now\\s+(you['`´]?re|your|ur)\\s+havin['`´g]?\\s+a\\s+(snack|stack)$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^[o]?oh,?\\s+super\\s+spicy,?\\s+it['`´]?s\\s+a\\s+lava\\s+attack$", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("^o?oh,?\\s+super\\s+spicy,?\\s+it['`´]?s\\s+a\\s+lava\\s+attack+$", Pattern.CASE_INSENSITIVE)
     };
     private static final String[] originalLyrics = {
             "Lalalalava",
@@ -23,7 +23,7 @@ public class HotLavaAndChicken extends ListenerAdapter {
             "Steve's Lava Chicken, yeah, it's tasty as hell",
             "Ooh, mamacita, now you're ringin' the bell",
             "Crispy and juicy, now you're havin' a stack",
-            "Ooh, super spicy, it's a lava attack"
+            "Ooh, super spicy, it's a lava attackkkkk"
     };
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
