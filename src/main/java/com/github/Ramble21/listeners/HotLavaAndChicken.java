@@ -10,16 +10,15 @@ import java.util.regex.Pattern;
 
 public class HotLavaAndChicken extends ListenerAdapter {
     private static final Pattern[] regexes = {
-            Pattern.compile("^la?[\\s\\-]*la?[\\s\\-]*la?[\\s\\-]*lava$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^chi?[\\s\\-]*chi?[\\s\\-]*chi?[\\s\\-]*chicken$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^steve['`´]?s\\s+lava\\s+chicken,?\\s+yeah,?\\s+it['`´]?s\\s+tasty\\s+as\\s+hell$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^o?oh,?\\s+mamacita,?\\s+now\\s+(you['`´]?re|your|ur)\\s+ringin['`´g]?\\s+(the|a)\\s+bell$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^crispy\\s+and\\s+juicy,?\\s+now\\s+(you['`´]?re|your|ur)\\s+havin['`´g]?\\s+a\\s+(snack|stack)$", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("^o?oh,?\\s+super\\s+spicy,?\\s+it['`´]?s\\s+a\\s+lava\\s+attack+$", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("^la?[\\s\\-]*la?[\\s\\-]*la?[\\s\\-]*lava+$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^chi?[\\s\\-]*chi?[\\s\\-]*chi?[\\s\\-]*chicken+$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^steve['’ʼ‘`´]?s\\s+lava\\s+chicken,?\\s+yea?h?,?\\s+it['’ʼ‘`´]?s\\s+tasty\\s+as\\s+hell+$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^o*oh,?\\s+mamacita,?\\s+now\\s+(you['’ʼ‘`´]?re|your|ur)\\s+ringin['`´g]?\\s+(the|a)\\s+bell+$", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("^crispy\\s+and\\s+juicy,?\\s+now\\s+(you['’ʼ‘`´]?re|your|ur)\\s+havin['’ʼ‘`´g]?\\s+a\\s+(snac|stac)k+$", Pattern.CASE_INSENSITIVE),
     };
     private static final String[] originalLyrics = {
-            "Lalalalava",
-            "Chichichichicken",
+            "La-la-la-lava",
+            "Chi-chi-chi-chicken",
             "Steve's Lava Chicken, yeah, it's tasty as hell",
             "Ooh, mamacita, now you're ringin' the bell",
             "Crispy and juicy, now you're havin' a stack",
@@ -33,7 +32,7 @@ public class HotLavaAndChicken extends ListenerAdapter {
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
         boolean allCaps = message.toUpperCase().equals(Diacritics.removeDiacritics(event.getMessage().getContentRaw()));
         boolean allLower = message.toLowerCase().equals(Diacritics.removeDiacritics(event.getMessage().getContentRaw()));
-        for (int i = 0; i < regexes.length - 1; i++) {
+        for (int i = 0; i < regexes.length; i++) {
             if (regexes[i].matcher(message).matches()) {
                 if (allCaps) {
                     event.getChannel().sendMessage(originalLyrics[i+1].toUpperCase()).queue();
