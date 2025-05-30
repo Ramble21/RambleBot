@@ -27,6 +27,9 @@ public class WordBombMessageListener extends ListenerAdapter {
         if (!event.getAuthor().getId().equals(game.getCurrentPlayer().user.getId())) {
             return;
         }
+        if (!event.getChannel().getId().equals(game.channel.getId())) {
+            return;
+        }
 
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase().split("\\s+")[0]);
         if (message.contains(prompt) && game.wordIsValid(message) && !game.usedWords.contains(message)) {
