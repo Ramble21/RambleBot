@@ -24,6 +24,7 @@ public class TypeRacerLeaderboard implements Command {
         embed.setTitle(guild.getName() + " WPM Leaderboard");
         final var trophy = RambleBot.class.getResourceAsStream("images/trophy.png");
         embed.setThumbnail("attachment://trophy.png");
+        embed.setColor(RambleBot.killbotEnjoyer);
 
         ArrayList<WpmScore> rawScores = TypeRacer.getServerScores(guild);
         if (rawScores == null || rawScores.isEmpty()){
@@ -43,7 +44,6 @@ public class TypeRacerLeaderboard implements Command {
         }
 
         addDescriptionToEmbed(scores, embed);
-        embed.setColor(RambleBot.killbotEnjoyer);
         assert trophy != null;
         event.getInteraction().replyEmbeds(embed.build())
                 .addFiles(FileUpload.fromData(trophy, "trophy.png")

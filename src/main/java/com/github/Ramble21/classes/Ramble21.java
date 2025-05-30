@@ -17,25 +17,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Ramble21 {
-    public static String rateRizz(int rizz, User user) {
-        return switch (rizz) {
-            case 1 -> "rizz count is 1/10. Ain't no party like a " + user.getGlobalName() + " party!";
-            case 2 -> "rizz count is 2/10. Maybe they should stop watching so much anime and touch some grass";
-            case 3 ->
-                    "rizz count is 3/10. It would've been higher if they didn't piss their pants every time they see their crush";
-            case 4 -> "rizz count is 4/10. I would check that out if I were them";
-            case 5 -> "rizz count is 5/10. Booooooooring";
-            case 6 -> "rizz count is 6/10. I'm honestly shocked that its even this high";
-            case 7 ->
-                    "rizz count is 7/10. They only know how to rizz up dudes though, maybe they should try to vary it up";
-            case 8 ->
-                    "rizz count is 8/10. If only they didn't scare all of their dates away by yapping endlessly about Balatro";
-            case 9 -> "rizz count is 9/10. Maybe this is a result of them finally not playing geometry dash anymore";
-            case 10 ->
-                    "rizz count is 10/10. Holy shit. We have found the skibidi sigma rizzler themself. Maybe even the future CEO of Ohio";
-            default -> "rizz count is -1/12 because there's a bug in this bot's stupid code";
-        };
-    }
+
     public static ArrayList<String> getTrustedUserIDs() {
         String url = "trusted_users.txt";
         final var dictInputStream = RambleBot.class.getResourceAsStream(url);
@@ -53,10 +35,6 @@ public class Ramble21 {
     }
     public static int generateSeed(String userId) {
         return Integer.parseInt(userId.substring(14)) * LocalDate.now().getMonthValue();
-    }
-
-    public static int generateRizz(int seed) {
-        return new Random(seed).nextInt(10) + 1;
     }
 
     public static String generateIp(int seed) {

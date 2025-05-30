@@ -4,7 +4,6 @@ import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.WordBombPlayer;
 import com.github.Ramble21.commands.WordBomb;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class WordBombButtonListener extends ListenerAdapter {
     private final WordBomb game;
@@ -57,6 +54,8 @@ public class WordBombButtonListener extends ListenerAdapter {
                     } catch (InterruptedException ignored) {}
                     game.currentPlayerIndex = (int)(Math.random()*game.players.size());
                     buttonEvent.getJDA().removeEventListener(this);
+                    game.NUM_PLAYERS = game.players.size();
+                    game.NUM_TURNS = 0;
                     game.promptTurn();
                 }
                 break;
@@ -108,5 +107,16 @@ public class WordBombButtonListener extends ListenerAdapter {
             default:
                 throw new RuntimeException();
         }
+    }
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        WordBombButtonListener other = (WordBombButtonListener) obj;
+        return other.game.channel.getId().equals(game.channel.getId());
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(game.channel.getId());
     }
 }

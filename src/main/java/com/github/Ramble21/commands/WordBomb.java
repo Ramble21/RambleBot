@@ -8,6 +8,7 @@ import com.github.Ramble21.listeners.WordBombMessageListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -34,13 +35,18 @@ public class WordBomb implements Command {
     public int currentPlayerIndex;
     public User host;
     public MessageChannel channel;
+    public Guild guild;
 
 
     public final int STARTING_LIVES = 3;
     private final int TURN_TIME = 10;
+
     private int DIFFICULTY_CODE;
     private int LANGUAGE_CODE;
+    public int NUM_TURNS;
+    public int NUM_PLAYERS;
     private boolean PRACTICE_MODE;
+
     private final InputStream img = RambleBot.class.getResourceAsStream("images/wordbomb.png");
 
     private final String defaultDescription = (
@@ -96,6 +102,7 @@ public class WordBomb implements Command {
         DIFFICULTY_CODE = event.getOption("difficulty") == null ? 1 : Objects.requireNonNull(event.getOption("difficulty")).getAsInt();
         PRACTICE_MODE = event.getOption("practice") != null && Objects.requireNonNull(event.getOption("practice")).getAsBoolean();
         channel = event.getChannel();
+        guild = event.getGuild();
         dictionary = (LANGUAGE_CODE == 0) ? new HashSet<>(decodeJSON("dictionary_en")) : new HashSet<>(decodeJSON("dictionary_es"));
         prompts = (DIFFICULTY_CODE == 1) ? decodeJSON("easy") : (DIFFICULTY_CODE == 2) ? decodeJSON("medium") : decodeJSON("hard");
         activeChannelIDs.add(channel.getId());
@@ -151,22 +158,33 @@ public class WordBomb implements Command {
     }
     public void endGame() {
         EmbedBuilder eb = new EmbedBuilder();
+        User winner = players.get(0).user;
+        int numPoints = getNumPoints();
+
         eb.setColor(Color.green);
-        eb.setTitle(players.get(0).user.getEffectiveName() + ", you are the winner! :tada:");
-        eb.setDescription("Congratulations " + players.get(0).user.getAsMention() + ", you earned " + getNumPoints() + " points.");
-        eb.setImage(players.get(0).user.getEffectiveAvatarUrl());
+        eb.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
+        eb.setDescription("Congratulations " + winner.getAsMention() + ", you earned " + numPoints + " points.");
+        eb.setImage(winner.getEffectiveAvatarUrl());
         channel.sendMessageEmbeds(eb.build()).queue();
+
         activeChannelIDs.remove(channel.getId());
+        WordBombLeaderboard.addServerScore(guild.getId(), winner.getId(), numPoints);
     }
     public int getNumPoints() {
-        Random random = new Random();
-        double mean = 100;
-        double stdDeviation = 30;
-        double gaussian = random.nextGaussian();
+        double playerFactor = 1 + (NUM_PLAYERS - 2) * 0.2; // +20% per player above 2
+        double turnFactor = 1 + (NUM_TURNS - (NUM_PLAYERS * 3)) * 0.02; // +2% per turn above the minimum turns in a game
+        double difficultyFactor = 1 + (DIFFICULTY_CODE - 1) * 0.25; // +25% per additional difficulty level
+
+        double mean = 100 * playerFactor * turnFactor * difficultyFactor;
+        double stdDeviation = mean * 0.15;
+
+        double gaussian = new Random().nextGaussian();
         double value = mean + stdDeviation * gaussian;
-        double mult = (double) DIFFICULTY_CODE / 1.5;
-        value = Math.max(0, Math.min(200, value));
-        return (int) Math.round(value * mult);
+
+        double maxCap = 200 * playerFactor * turnFactor;
+        value = Math.round(Math.max(0, Math.min(maxCap, value)));
+
+        return (int) value;
     }
     public void passTurn() {
         if (players.size() == 1) {
@@ -186,6 +204,7 @@ public class WordBomb implements Command {
         eb.setDescription("It's " + player.user.getAsMention() + "'s turn!\n\n" + player);
         eb.setThumbnail(player.user.getEffectiveAvatarUrl());
         channel.sendMessageEmbeds(eb.build()).queue();
+        NUM_TURNS++;
 
         Timer timer = new Timer();
         WordBombMessageListener listener = new WordBombMessageListener(this, prompt, timer);

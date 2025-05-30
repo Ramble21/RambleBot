@@ -18,7 +18,7 @@ public class CommandManager{
         commands.put("gd", new GeometryDashManager());
         commands.put("vocab", new Vocab());
         commands.put("update-logs", new UpdateLogs());
-        commands.put("wordbomb", new WordBomb());
+        commands.put("wordbomb", new WordBombManager());
     }
 
     public Command getCommand(String name){
