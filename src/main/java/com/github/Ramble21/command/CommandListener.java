@@ -37,6 +37,18 @@ public class CommandListener extends ListenerAdapter {
                     )
             )
         );
+        commandData.add(Commands.slash("1984-list", "[ADMIN] Make the bot 1984 certain words/phrases")
+                .addSubcommands(
+                        new SubcommandData("add", "[ADMIN] Add a word/phrase to the word censor list").addOptions(
+                                (new OptionData(OptionType.STRING, "phrase", "Word or phrase to remove").setRequired(true)),
+                                (new OptionData(OptionType.BOOLEAN, "word-only", "For single words, only remove the word *by itself* (i.e don't remove the \"ass\" in \"assessment\")").setRequired(true))
+                        ),
+                        new SubcommandData("remove", "[ADMIN] Remove a word/phrase from the word censor list").addOptions(
+                                (new OptionData(OptionType.STRING, "phrase", "Word or phrase to remove").setRequired(true))
+                        ),
+                        new SubcommandData("list", "[ADMIN] List all currently censored words/phrases")
+                )
+        );
         commandData.add(Commands.slash("wordbomb", "Play WordBomb on Discord!")
                 .addSubcommands(
                         new SubcommandData("play", "Play WordBomb on Discord!").addOptions(

@@ -23,7 +23,7 @@ public class WordBombManager implements Command {
         if (subcommand != null) {
             subcommand.execute(event);
         } else {
-            event.reply("Unknown subcommand. Please use `/typeracer play` or `/typeracer leaderboard`.").queue();
+            event.reply("Unknown subcommand. Please use `/wordbomb play` or `/wordbomb leaderboard`.").queue();
         }
     }
 }

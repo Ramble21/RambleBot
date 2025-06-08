@@ -19,6 +19,7 @@ public class CommandManager{
         commands.put("vocab", new Vocab());
         commands.put("update-logs", new UpdateLogs());
         commands.put("wordbomb", new WordBombManager());
+        commands.put("1984-list", new WordCensorManager());
     }
 
     public Command getCommand(String name){
