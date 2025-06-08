@@ -23,6 +23,7 @@ public class RambleBot {
     private final ShardManager shardManager;
     private final Dotenv config;
     public static final Color killbotEnjoyer = new Color(174, 221, 0);
+    public static final Color scaryOrange = new Color(240, 76, 0);
     private static JDA jda = null;
 
     private static boolean maintenanceMode;
@@ -45,7 +46,7 @@ public class RambleBot {
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
 
         // Register listeners
-        builder.addEventListeners(new CommandListener(), new TextCommand(), new mewhen2(), new Test(), new HotLavaAndChicken(), new WordCensorListener());
+        builder.addEventListeners(new CommandListener(), new TextCommand(), new mewhen2(), new Test(), new HotLavaAndChicken(), new WordCensorListener(), new TheCounter());
 
         // Add jda variable
         jda = JDABuilder.createDefault(token).build();

@@ -31,7 +31,7 @@ public class WordCensorManager implements Command {
             }
         }
         else {
-            event.reply("You do not have permission to run this command!").queue();
+            event.reply("You do not have permission to run this command!").setEphemeral(true).queue();
         }
     }
 }

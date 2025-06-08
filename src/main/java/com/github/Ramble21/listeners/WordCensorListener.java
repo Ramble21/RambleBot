@@ -1,5 +1,6 @@
 package com.github.Ramble21.listeners;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Diacritics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -50,7 +51,7 @@ public class WordCensorListener extends ListenerAdapter {
                 event.getChannel().sendMessage(mention + " **said a naughty word!** Watch your mouth, kiddo.").queue();
                 if (logChannels.containsKey(event.getGuild().getId())) {
                     EmbedBuilder logEmbed = new EmbedBuilder();
-                    logEmbed.setColor(new Color(240, 76, 0));
+                    logEmbed.setColor(RambleBot.scaryOrange);
                     logEmbed.setAuthor(event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                     logEmbed.setDescription("**Message sent by " + mention + " Deleted in " + event.getChannel().getAsMention() + "\n" + "Message: \n**" + event.getMessage().getContentRaw() + "**\n" + "Offending phrase: **`" + censoredWord + "`");
                     logEmbed.setFooter(Objects.requireNonNull(event.getMessage().getTimeCreated()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
