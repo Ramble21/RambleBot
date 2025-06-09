@@ -70,14 +70,8 @@ public class TheCounter extends ListenerAdapter {
         long years = ChronoUnit.YEARS.between(old, curr);
         if (years > 0) return years + (years == 1 ? " year ago" : " years ago");
 
-        long months = ChronoUnit.MONTHS.between(old, curr);
-        if (months > 0) return months + (months == 1 ? " month ago" : " months ago");
-
-        long weeks = ChronoUnit.WEEKS.between(old, curr);
-        if (weeks > 0) return weeks + (weeks == 1 ? " week ago" : " weeks ago");
-
         long days = ChronoUnit.DAYS.between(old, curr);
-        if (days > 0) return days + (days == 1 ? " day ago" : " days ago");
+        if (days > 2) return days + " days ago";
 
         long hours = ChronoUnit.HOURS.between(old, curr);
         if (hours > 0) return hours + (hours == 1 ? " hour ago" : " hours ago");
