@@ -26,7 +26,7 @@ public class RambleBot {
         try {
             JDA testJda = JDABuilder.createDefault(token).build();
             testJda.awaitReady();
-            System.out.println("Token successfully validated " + testJda.getSelfUser().getAsTag());
+            System.out.println("Token successfully validated: " + testJda.getSelfUser().getAsTag());
             testJda.shutdown();
             return true;
 
