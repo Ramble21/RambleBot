@@ -38,7 +38,7 @@ public class TextCommand extends ListenerAdapter {
         else if (message.contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();
         }
-        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isBrainrotServer(event.getGuild())) {
+        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isBrainrotServer(event.getGuild())  && !event.getChannel().getId().equals("1251233910663286958")) {
             event.getChannel().sendMessage("<@" + getBrainrotterID() + "> dame repuestas").queue();
         }
     }
