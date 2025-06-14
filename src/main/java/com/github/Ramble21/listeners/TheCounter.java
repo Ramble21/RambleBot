@@ -114,10 +114,10 @@ public class TheCounter extends ListenerAdapter {
         if (years > 0) return years + (years == 1 ? " year ago" : " years ago");
 
         long days = ChronoUnit.DAYS.between(old, curr);
-        if (days > 2) return days + " days ago";
+        if (days >= 2) return days + " days ago";
 
         long hours = ChronoUnit.HOURS.between(old, curr);
-        if (hours > 0) return hours + (hours == 1 ? " hour ago" : " hours ago");
+        if (hours > 0) return hours + (hours == 1 ? " hour ago" :  " hours ago");
 
         long minutes = ChronoUnit.MINUTES.between(old, curr);
         if (minutes > 0) return minutes + (minutes == 1 ? " minute ago" : " minutes ago");
