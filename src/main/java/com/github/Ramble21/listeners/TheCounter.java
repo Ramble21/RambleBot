@@ -129,7 +129,7 @@ public class TheCounter extends ListenerAdapter {
             return minutes + " minutes";
         }
         long hours = minutes / 60;
-        if (hours < 24) {
+        if (hours < 48) {
             return hours + " hours";
         }
         long days = hours / 24;
