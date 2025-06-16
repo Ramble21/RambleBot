@@ -16,6 +16,7 @@ public class HotLavaAndChicken extends ListenerAdapter {
             Pattern.compile("^o*oh,?\\s+mamacita,?\\s+now\\s+(you['’ʼ‘`´]?re|your|ur)\\s+ringin['`´g]?\\s+(the|a)\\s+bell+$", Pattern.CASE_INSENSITIVE),
             Pattern.compile("^crispy\\s+and\\s+juicy,?\\s+now\\s+(you['’ʼ‘`´]?re|your|ur)\\s+havin['’ʼ‘`´g]?\\s+a\\s+(snac|stac)k+$", Pattern.CASE_INSENSITIVE),
     };
+    private static final Pattern minecraft = Pattern.compile("first\\s+we\\s+mine,?\\s+then\\s+we\\s+craft.?", Pattern.CASE_INSENSITIVE);
     private static final String[] originalLyrics = {
             "La-la-la-lava",
             "Chi-chi-chi-chicken",
@@ -32,6 +33,10 @@ public class HotLavaAndChicken extends ListenerAdapter {
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
         boolean allCaps = message.toUpperCase().equals(Diacritics.removeDiacritics(event.getMessage().getContentRaw()));
         boolean allLower = message.toLowerCase().equals(Diacritics.removeDiacritics(event.getMessage().getContentRaw()));
+        if (minecraft.matcher(message).matches()) {
+            event.getChannel().sendMessage("LET'S MINECRAFT!").queue();
+            return;
+        }
         for (int i = 0; i < regexes.length; i++) {
             if (regexes[i].matcher(message).matches()) {
                 if (allCaps) {
