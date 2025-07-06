@@ -23,9 +23,25 @@ import java.time.temporal.ChronoUnit;
 public class TheCounter extends ListenerAdapter {
 
     private boolean triggersCounter(String message) {
-        String[] triggerWords = {"penis", "cock", "dick"};
+        String[] triggerWords = {
+                "penis", "cock", "dick"
+        };
+        String[] exceptions = {
+                "cockroach", "dickhead", "cocktail", "peacock",
+                "cockatoo", "dickinson", "dickens", "penistone"
+        };
         for (String trigger : triggerWords) {
             if (message.contains(trigger) && !message.equals(trigger)) {
+                for (String exception : exceptions) {
+                    if (message.contains(exception) && exception.contains(trigger)) {
+                        for (int i = 0; i < message.length(); i++) {
+                            if (message.startsWith(trigger, i) && !message.startsWith(exception, i)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                }
                 return true;
             }
         }
