@@ -1,5 +1,6 @@
 package com.github.Ramble21.commands.geometrydash;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
@@ -86,7 +87,7 @@ public class GeometryDashRecordEdit implements Command {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(levels,writer);
             if (ownEdit){
-                event.reply("Your completion of " + targetLevel.getName() + " has been successfully edited!").setEphemeral(true).queue();
+                event.reply(RambleBot.your() + " completion of " + targetLevel.getName() + " has been successfully edited!").setEphemeral(true).queue();
             }
             else{
                 event.reply( submitter.getEffectiveName() + "'s " + targetLevel.getName() + " completion has been successfully edited!").queue();

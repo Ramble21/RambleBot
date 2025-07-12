@@ -90,7 +90,7 @@ public class GeometryDashRecord implements Command {
     public EmbedBuilder generateEmbed(GeometryDashLevel level){
         String emoji = Ramble21.getEmojiName(level.getDifficulty());
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("Completion successfully added to your profile!");
+        embed.setTitle("Completion successfully added to " + RambleBot.your() + " profile!");
         embed.setColor(Color.green);
         embed.setDescription(
                 "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
@@ -103,7 +103,7 @@ public class GeometryDashRecord implements Command {
         embed.setTitle("Completion successfully added to moderator queue!");
         embed.setColor(RambleBot.killbotEnjoyer);
         embed.setDescription(
-                "Extreme Demon completions have to be approved by a server moderator before getting added to your profile. \n\n" +
+                "Extreme Demon completions have to be approved by a server moderator before getting added to " + RambleBot.your() + " profile. \n\n" +
                         "Submission: \n" +
                         "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
                         "<:star:1307518203122942024> Difficulty: **" + level.getDifficulty() + "**\n" +
@@ -115,7 +115,7 @@ public class GeometryDashRecord implements Command {
         embed.setTitle("Completion successfully added to moderator queue!");
         embed.setColor(RambleBot.killbotEnjoyer);
         embed.setDescription(
-                "Due to being blacklisted, all of your submissions must be approved by a server moderator before getting added to your profile. \n\n" +
+                "Due to being blacklisted, all of " + RambleBot.your() + " submissions must be approved by a server moderator before getting added to your profile. \n\n" +
                         "Submission: \n" +
                         "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
                         "<:star:1307518203122942024> Difficulty: **" + level.getDifficulty() + "**\n" +

@@ -35,6 +35,15 @@ public class RambleBot {
             return false;
         }
     }
+    public static String your() {
+        int random = 1 + (int)(Math.random() * 100);
+        if (random == 1) {
+            return "you're";
+        }
+        return "your";
+    }
+
+
     public static void main(String[] args) {
 
         // Load bot token

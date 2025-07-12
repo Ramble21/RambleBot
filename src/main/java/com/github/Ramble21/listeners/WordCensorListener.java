@@ -48,7 +48,7 @@ public class WordCensorListener extends ListenerAdapter {
             if (containsWord(wordOnly, message, censoredWord)) {
                 String mention = event.getAuthor().getAsMention();
                 event.getMessage().delete().queue();
-                event.getChannel().sendMessage(mention + " **said a naughty word!** Watch your mouth, kiddo.").queue();
+                event.getChannel().sendMessage(mention + " **said a naughty word!** Watch " + RambleBot.your() + " mouth, kiddo.").queue();
                 if (logChannels.containsKey(event.getGuild().getId())) {
                     EmbedBuilder logEmbed = new EmbedBuilder();
                     logEmbed.setColor(RambleBot.scaryOrange);

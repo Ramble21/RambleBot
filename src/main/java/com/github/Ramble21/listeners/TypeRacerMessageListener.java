@@ -1,5 +1,6 @@
 package com.github.Ramble21.listeners;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Anticheat;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.classes.Sentence;
@@ -51,7 +52,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
 
             EmbedBuilder winEmbed = new EmbedBuilder();
             winEmbed.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
-            winEmbed.setDescription("You typed the sentence faster than your opponent, at a speed of " + wpm + " WPM! Congratulations!");
+            winEmbed.setDescription("You typed the sentence faster than " + RambleBot.your() + " opponent, at a speed of " + wpm + " WPM! Congratulations!");
             winEmbed.setColor(Color.green);
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
@@ -79,7 +80,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             typeRacer.getStopwatch().stop();
             EmbedBuilder winEmbed = new EmbedBuilder();
             winEmbed.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
-            winEmbed.setDescription("Your dirty opponent " + loser.getAsMention() + " tried to use copy and paste to cheat the contest, so you won for free!");
+            winEmbed.setDescription(RambleBot.your() + " dirty opponent " + loser.getAsMention() + " tried to use copy and paste to cheat the contest, so you won for free!");
             winEmbed.setColor(Color.green);
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
