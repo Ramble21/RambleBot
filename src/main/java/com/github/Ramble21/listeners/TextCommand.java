@@ -14,6 +14,7 @@ public class TextCommand extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
+        String messageUnedited = event.getMessage().getContentRaw();
         User user = event.getAuthor();
 
         if (message.equals("r!maint.on") && isBotOwner(user)) {
@@ -61,7 +62,7 @@ public class TextCommand extends ListenerAdapter {
         else if (message.startsWith("r!say ") && isBotOwner(event.getAuthor())) {
             event.getMessage().delete().queue();
             if (message.length() > 6) {
-                event.getChannel().sendMessage(message.substring(6)).queue();
+                event.getChannel().sendMessage(messageUnedited.substring(6)).queue();
             }
         }
     }
