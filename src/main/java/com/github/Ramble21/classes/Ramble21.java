@@ -2,16 +2,14 @@ package com.github.Ramble21.classes;
 
 import com.github.Ramble21.RambleBot;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.*;
@@ -295,5 +293,50 @@ public class Ramble21 {
     }
     public static boolean isRambleBot(User u) {
         return u.getId().equals("1295872060341616640");
+    }
+    public static boolean isRepuestaServer(Guild g) {
+        try (FileReader reader = new FileReader("data/json/misc/repuestas.json")) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+            ArrayList<String> list = gson.fromJson(reader, type);
+            return list != null && list.contains(g.getId());
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static boolean modifyRepuestaServers(Guild g, boolean remove) {
+        // returns true if worked as intended, false if nothing occurs, throws error if there is a missing file
+        String guildID = g.getId();
+        String filePath = "data/json/misc/repuestas.json";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        ArrayList<String> ids;
+        try (FileReader reader = new FileReader(filePath)) {
+            ids = gson.fromJson(reader, type);
+            if (ids == null) {
+                ids = new ArrayList<>();
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if ((ids.contains(guildID) && !remove) || (!ids.contains(guildID) && remove)) {
+            return false;
+        }
+        else {
+            if (!remove) {
+                ids.add(guildID);
+            }
+            else {
+                ids.remove(guildID);
+            }
+            try (FileWriter writer = new FileWriter(filePath)) {
+                gson.toJson(ids, writer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
     }
 }

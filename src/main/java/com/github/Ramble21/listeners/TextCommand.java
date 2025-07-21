@@ -2,7 +2,6 @@ package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Diacritics;
-import com.github.Ramble21.classes.Ramble21;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -35,10 +34,28 @@ public class TextCommand extends ListenerAdapter {
                 event.getChannel().sendMessage("Maintenance mode successfully turned off.").queue();
             }
         }
+        else if (message.equals("r!repues.on") && isBotOwner(user)) {
+            boolean rva = modifyRepuestaServers(event.getGuild(), false);
+            if (rva) {
+                event.getChannel().sendMessage("Settings successfully modified for guild " + event.getGuild().getName()).queue();
+            }
+            else {
+                event.getChannel().sendMessage("This setting was already enabled in this guild!").queue();
+            }
+        }
+        else if (message.equals("r!repues.off") && isBotOwner(user)) {
+            boolean rva = modifyRepuestaServers(event.getGuild(), true);
+            if (rva) {
+                event.getChannel().sendMessage("Settings successfully modified for guild " + event.getGuild().getName()).queue();
+            }
+            else {
+                event.getChannel().sendMessage("This setting was already disabled in this guild!").queue();
+            }
+        }
         else if (message.contains("sigma sigma on the wall")){
             event.getChannel().sendMessage("who's the skibidiest of them all").queue();
         }
-        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isBrainrotServer(event.getGuild())  && !event.getChannel().getId().equals("1251233910663286958")) {
+        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isRepuestaServer(event.getGuild())) {
             event.getChannel().sendMessage("<@" + getBrainrotterID() + "> dame repuestas").queue();
         }
     }
