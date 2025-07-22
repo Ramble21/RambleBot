@@ -2,6 +2,7 @@ package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Diacritics;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -64,6 +65,23 @@ public class TextCommand extends ListenerAdapter {
             if (message.length() > 6) {
                 event.getChannel().sendMessage(messageUnedited.substring(6)).queue();
             }
+        }
+        else if (message.equals("r!angrybirds") && event.getGuild().getId().equals("931838136223412235")) {
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle
+                    ("""
+                    !! GOON ALERT. GOON ALERT !!
+                  
+                    GLISTERMELON HAS LOST THEIR STREAK OF __10 DAYS__ OF NO GOONING DUE TO ; ANGRY BIRD FEET PORN"""
+                    );
+            embed.setColor(RambleBot.scaryOrange);
+            embed.setFooter("r!angrybirds to activate");
+            long userId = 674819147963564054L;
+            event.getJDA().retrieveUserById(userId).queue(g -> {
+                String avatarUrl = g.getEffectiveAvatarUrl();
+                embed.setThumbnail(avatarUrl);
+            });
+            event.getChannel().sendMessageEmbeds(embed.build()).queue();
         }
     }
 }
