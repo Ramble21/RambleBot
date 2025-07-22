@@ -76,7 +76,7 @@ public class TextCommand extends ListenerAdapter {
                     GLISTERMELON HAS LOST THEIR STREAK OF __10 DAYS__ OF NO GOONING DUE TO ; `ANGRY BIRD FEET PORN`"""
                     );
             embed.setColor(RambleBot.scaryOrange);
-            embed.setFooter("r!angrybirds");
+            embed.setFooter("Powered by Amazon Web Services' \"JerkTracker\"");
             long userId = 674819147963564054L;
             event.getJDA().retrieveUserById(userId).queue(g -> {
                 String avatarUrl = g.getEffectiveAvatarUrl();
