@@ -67,15 +67,16 @@ public class TextCommand extends ListenerAdapter {
             }
         }
         else if (message.equals("r!angrybirds") && event.getGuild().getId().equals("931838136223412235")) {
+            event.getMessage().delete().queue();
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle
                     ("""
                     !! GOON ALERT. GOON ALERT !!
                   
-                    GLISTERMELON HAS LOST THEIR STREAK OF __10 DAYS__ OF NO GOONING DUE TO ; ANGRY BIRD FEET PORN"""
+                    GLISTERMELON HAS LOST THEIR STREAK OF __10 DAYS__ OF NO GOONING DUE TO ; `ANGRY BIRD FEET PORN`"""
                     );
             embed.setColor(RambleBot.scaryOrange);
-            embed.setFooter("r!angrybirds to activate");
+            embed.setFooter("r!angrybirds");
             long userId = 674819147963564054L;
             event.getJDA().retrieveUserById(userId).queue(g -> {
                 String avatarUrl = g.getEffectiveAvatarUrl();
