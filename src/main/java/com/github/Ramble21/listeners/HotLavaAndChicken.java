@@ -2,6 +2,7 @@ package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.classes.Diacritics;
 import com.github.Ramble21.classes.Ramble21;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,10 @@ public class HotLavaAndChicken extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (Ramble21.isRambleBot(event.getAuthor())) {
+            return;
+        }
+        boolean canSendMessages = event.getGuild().getSelfMember().hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
+        if (!canSendMessages) {
             return;
         }
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
