@@ -27,8 +27,8 @@ public class TheCounter extends ListenerAdapter {
                 "penis", "cock", "dick"
         };
         String[] exceptions = {
-                "cockroach", "dickhead", "cocktail", "peacock",
-                "cockatoo", "dickinson", "dickens", "penistone"
+                "cockroach", "dickhead", "cocktail", "peacock", "cockpit",
+                "cockatoo", "dickinson", "dickens", "penistone", "dickwad"
         };
         for (String trigger : triggerWords) {
             if (message.contains(trigger) && !message.equals(trigger)) {
