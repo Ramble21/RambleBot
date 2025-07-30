@@ -60,12 +60,6 @@ public class TextCommand extends ListenerAdapter {
                 event.getChannel().sendMessage("This setting was already disabled in this guild!").queue();
             }
         }
-        else if (message.contains("sigma sigma on the wall")){
-            event.getChannel().sendMessage("who's the skibidiest of them all").queue();
-        }
-        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isRepuestaServer(event.getGuild())) {
-            event.getChannel().sendMessage("<@" + getBrainrotterID() + "> dame repuestas").queue();
-        }
         else if (message.startsWith("r!say ") && isBotOwner(event.getAuthor())) {
             event.getMessage().delete().queue();
             if (message.length() > 6) {
@@ -89,6 +83,12 @@ public class TextCommand extends ListenerAdapter {
                 embed.setThumbnail(avatarUrl);
             });
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
+        }
+        else if (message.contains("sigma sigma on the wall")){
+            event.getChannel().sendMessage("who's the skibidiest of them all").queue();
+        }
+        else if (message.contains("repuesta") && !isRambleBot(event.getAuthor()) && isRepuestaServer(event.getGuild())) {
+            event.getChannel().sendMessage("<@" + getBrainrotterID() + "> dame repuestas").queue();
         }
     }
 }

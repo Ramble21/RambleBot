@@ -24,7 +24,7 @@ public class TheCounter extends ListenerAdapter {
 
     private boolean triggersCounter(String message) {
         String[] triggerWords = {
-                "penis", "cock", "dick"
+                "penis", "cock", "dick", "peanits",
         };
         String[] exceptions = {
                 "cockroach", "dickhead", "cocktail", "peacock", "cockpit",
