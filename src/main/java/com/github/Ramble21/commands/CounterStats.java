@@ -43,10 +43,10 @@ public class CounterStats implements Command {
         sb.append("**Counter trigger words:** [\"penis\", \"cock\", \"dick\", \"peanits\", \"pingas\"]\n");
         sb.append("**Counter trigger exceptions:** [\"cockroach\", \"dickhead\", \"cocktail\", \"peacock\", \"cockpit\", \"cockatoo\", \"dickinson\", \"dickens\", \"penistone\", \"dickwad\"]\n\n");
         sb.append("**Counter trigger most common culprits:**\n");
-        for (int i = 0; i < Math.max(10, uT.size()); i++) {
+        for (int i = 0; i < Math.min(10, uT.size()); i++) {
             String id = topOffenders.get(i);
             String decimal = String.format("%.2f%%", nm.get(id));
-            String toAppend = "**" + (i+1) + ":** <@" + id + "> — " + uT.get(id) + " triggers (" + decimal + ")\n";
+            String toAppend = "**" + (i+1) + ":** <@" + id + "> — " + uT.get(id) + " trigger" + (uT.get(id) > 1 ? "s" : "") + " (" + decimal + ")\n";
             sb.append(toAppend);
         }
         return sb.toString();
