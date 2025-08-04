@@ -2,6 +2,7 @@ package com.github.Ramble21.command;
 
 import com.github.Ramble21.commands.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.w3c.dom.css.Counter;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,6 +21,7 @@ public class CommandManager{
         commands.put("update-logs", new UpdateLogs());
         commands.put("wordbomb", new WordBombManager());
         commands.put("1984-list", new WordCensorManager());
+        commands.put("counter-stats", new CounterStats());
     }
 
     public Command getCommand(String name){

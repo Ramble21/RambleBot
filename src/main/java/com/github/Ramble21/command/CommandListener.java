@@ -149,6 +149,7 @@ public class CommandListener extends ListenerAdapter {
                                 .setRequired(false))
                 )
         );
+        commandData.add(Commands.slash("counter-stats", "Show data about the penis counter in this server (if it is enabled)"));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }

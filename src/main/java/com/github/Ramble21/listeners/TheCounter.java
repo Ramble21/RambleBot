@@ -145,7 +145,7 @@ public class TheCounter extends ListenerAdapter {
         }
         return allTimeHigh;
     }
-    public HashMap<String, Double> normalize(HashMap<String, Integer> raw) {
+    public static HashMap<String, Double> normalize(HashMap<String, Integer> raw) {
         HashMap<String, Double> normalized = new HashMap<>();
         int total = raw.values().stream().mapToInt(Integer::intValue).sum();
         if (total == 0) return normalized;
