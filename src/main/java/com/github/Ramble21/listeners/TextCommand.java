@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
+
 import static com.github.Ramble21.classes.Ramble21.*;
 
 
@@ -20,8 +23,19 @@ public class TextCommand extends ListenerAdapter {
         User user = event.getAuthor();
 
         boolean canSendMessages = event.getGuild().getSelfMember().hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
-        if (!canSendMessages) {
+        if (!canSendMessages || user.isBot()) {
             return;
+        }
+        if (message.startsWith("r!")) {
+            if (RambleBot.maintenanceMode() && !isBotOwner(user)) {
+                event.getChannel().sendMessage("Cannot run command, bot is currently in maintenance. Sorry!").queue();
+            }
+        }
+
+        if (message.equals("r!ping")) {
+            OffsetDateTime sentTime = event.getMessage().getTimeCreated();
+            long ping = Duration.between(sentTime, OffsetDateTime.now()).toMillis();
+            event.getChannel().sendMessage("Ping: " + ping + "ms").queue();
         }
 
         if (message.equals("r!maint.on") && isBotOwner(user)) {
