@@ -1,1 +1,29 @@
-To the sigmas of Australia, I say that this goofy ahh government have been capping. Not just now, but for a long time. A few of you may remember when they said “they’ll be no fanum tax under the government I lead.” They’re capaholics! They’re also yapaholics; they yap non-stop about how their cost of living measures are changing lives for all Australians. Just put the fries in the bag, lil bro. They tell us that they’re locked in on improving the housing situation in this country. They must have brainrot from watching too much Kai Cenat and forgot about their plans to ban social media for kids under fourteen. If that becomes law, you can forgor 💀 all about watching Duke Dennis or catching a W with the bros on Fort. Chat, is this prime minister serious? Even though he’s the prime minister of Australia, sometimes it feels like he’s the CEO of Ohio! I would be taking an L if I did not mention the ops, who want to cut WA’s Gyatts and Services tax. The decision voters will be making in a few months time will be between a mid government, a dogwater opposition, or a crossbench that will mog both of them! Though some of you cannot yet vote, I hope when you do, it will be in a more GOATed Australia for a government with more aura. Skibidi.
+<img src="https://github.com/Ramble21/RambleBot/blob/main/pfp.png" alt="drawing" width="200"/>
+General purpose discord bot with many commands for games, moderation, etc. with a special focus on Geometry Dash players
+
+RambleBot miscellaneous commands:
+| Command Name | Description | Subcommands |
+|:------------:|:-----------:|:-----------:|
+|/vocab|Study vocabulary terms in a foreign language!|french, spanish|
+|/typeracer|Challenge your friends to a typing speed race! Play TypeRacer on Discord|play, leaderboard|
+|/wordbomb|Challenge your friends to the explosive word game WordBomb!|play, leaderboard|
+|/1984-list|Add words and/or phrases to the censor list for moderation (Admin only)|add, remove, list|
+|/counter|Configure a server "counter" that will keep track of how long your server can last before saying a certain word or phrase|configure, stats|
+|/guess-flags|Test your world knowledge by guessing national or international flags!|N/A|
+|/grab-ip|Totally real IP-grabber to prank your friends|N/A|
+|/rizz-rater|Rates the rizz of one of your server members on a scale of 1 to 10|N/A|
+
+RambleBot Geometry Dash-specific commands (all under the /gd header)
+- These commands allow each member in your server to have a "personal demonlist" tracking the hardest levels that they have beaten!
+
+| Subcommand Name | Description |
+|:---------------:|:-----------:|
+|submitrecord|Submit a completion record|
+|editrecord|Edit a previously submitted record|
+|deleterecord|Delete a previously submitted record|
+|profile|See one's "personal demonlist"|
+|stats|View summarized stats about you or another member's profile|
+|leaderboard|Show a collective leaderboard of the levels completed in the entire server|
+|review|Accept/deny Extreme Demon completion records (note: this command can only be used by trusted members)|
+|refresh|Refresh in-game difficulties and GDDL ratings to be up to date|
+|level|View statistics about a specific submitted level|
