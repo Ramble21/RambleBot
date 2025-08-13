@@ -4,9 +4,9 @@ General purpose discord bot with many commands for games, moderation, etc. with 
 RambleBot miscellaneous commands:
 | Command Name | Description | Subcommands |
 |:------------:|:-----------:|:-----------:|
-|/vocab|Study vocabulary terms in a foreign language!|french, spanish|
-|/typeracer|Challenge your friends to a typing speed race! Play TypeRacer on Discord|play, leaderboard|
-|/wordbomb|Challenge your friends to the explosive word game WordBomb!|play, leaderboard|
+|/vocab|Study vocabulary terms in a foreign language|french, spanish|
+|/typeracer|Challenge your friends to a typing speed race|play, leaderboard|
+|/wordbomb|Challenge your friends to the explosive word game WordBomb|play, leaderboard|
 |/1984-list|Add words and/or phrases to the censor list for moderation (Admin only)|add, remove, list|
 |/counter|Configure a server "counter" that will keep track of how long your server can last before saying a certain word or phrase|configure, stats|
 |/guess-flags|Test your world knowledge by guessing national or international flags!|N/A|
