@@ -1,7 +1,7 @@
 <img src="https://github.com/Ramble21/RambleBot/blob/main/pfp.png" alt="drawing" width="200"/>
 General purpose discord bot with many commands for games, moderation, etc. with a special focus on Geometry Dash players
 
-
+ㅤㅤㅤㅤㅤ<br>
 RambleBot Geometry Dash-specific commands (all under the /gd header)
 - These commands allow each member in your server to have a "personal demonlist" tracking the hardest levels that they have beaten!
 
