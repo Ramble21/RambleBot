@@ -53,6 +53,9 @@ public class TheCounter extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (event.getAuthor().isBot()) {
+            return;
+        }
         String path = "data/json/the-counter/" + event.getGuild().getId() + ".json";
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw()).toLowerCase();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
