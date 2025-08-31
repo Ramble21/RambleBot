@@ -78,7 +78,9 @@ public class TextCommand extends ListenerAdapter {
             }
         }
         else if (message.startsWith("r!rc ") && isBotOwner(event.getAuthor())) {
-            event.getMessage().delete().queue();
+            if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+                event.getMessage().delete().queue();
+            }
             String[] parts = message.split("\\s+");
             if (parts.length == 3) {
                 ArrayList<MessageChannel> messageChannels = new ArrayList<>();
