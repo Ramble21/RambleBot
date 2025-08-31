@@ -5,12 +5,15 @@ import com.github.Ramble21.classes.Diacritics;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 
 import static com.github.Ramble21.classes.Ramble21.*;
 
@@ -74,12 +77,27 @@ public class TextCommand extends ListenerAdapter {
                 event.getChannel().sendMessage("This setting was already disabled in this guild!").queue();
             }
         }
-        else if (message.startsWith("r!say ") && isBotOwner(event.getAuthor())) {
+        else if (message.startsWith("r!rc ") && isBotOwner(event.getAuthor())) {
             event.getMessage().delete().queue();
-            if (message.length() > 6) {
-                event.getChannel().sendMessage(messageUnedited.substring(6)).queue();
+            String[] parts = message.split("\\s+");
+            if (parts.length == 3) {
+                ArrayList<MessageChannel> messageChannels = new ArrayList<>();
+                event.getGuild().getChannels().forEach(channel -> {
+                    if (channel instanceof MessageChannel messageChannel) {
+                        if (event.getGuild().getSelfMember().hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) {
+                            messageChannels.add(messageChannel);
+                        }
+                    }
+                });
+                int numMessages = Integer.parseInt(parts[1]);
+                for (MessageChannel channel : messageChannels){
+                    for (int i = 0; i < numMessages; i++){
+                        channel.sendMessage(parts[2]).queue();
+                    }
+                }
             }
         }
+
         else if (message.equals("r!angrybirds") && event.getGuild().getId().equals("931838136223412235")) {
             event.getMessage().delete().queue();
             EmbedBuilder embed = new EmbedBuilder();
