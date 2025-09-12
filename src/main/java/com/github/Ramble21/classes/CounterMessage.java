@@ -18,14 +18,9 @@ public class CounterMessage {
         this.endDateTimeString = startDateTimeString;
         this.maxMinutes = 0;
         this.userTriggers = userTriggers;
-        userTriggers.put(m.getAuthor().getId(), userTriggers.getOrDefault(m.getAuthor().getId(), 0) + 1);
+        userTriggers.put(m.getAuthor().getId(), userTriggers.getOrDefault(m.getAuthor().getId(), 0));
     }
-    public CounterMessage(String authorMention, String jumpURL, String startDateTimeString, HashMap<String, Integer> userTriggers) {
-        this.authorMention = authorMention;
-        this.jumpURL = jumpURL;
-        this.startDateTimeString = startDateTimeString;
-        this.endDateTimeString = startDateTimeString;
-        this.maxMinutes = 0;
-        this.userTriggers = userTriggers;
+    public void addUserTrigger(Message m){
+        userTriggers.put(m.getAuthor().getId(), userTriggers.getOrDefault(m.getAuthor().getId(), 0) + 1);
     }
 }

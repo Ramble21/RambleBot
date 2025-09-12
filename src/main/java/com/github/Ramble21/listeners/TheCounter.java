@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -102,6 +101,7 @@ public class TheCounter extends ListenerAdapter {
                     long minutes = ChronoUnit.MINUTES.between(old, curr);
 
                     if (minutes >= 5) {
+                        currentMessage.addUserTrigger(event.getMessage());
                         currentMessage.maxMinutes = Math.max(previousMessage.maxMinutes, ChronoUnit.MINUTES.between(old, curr));
                         HashMap<String, Double> percentages = normalize(currentMessage.userTriggers);
                         Map.Entry<String, Double> allTimeHigh = getAllTimeHigh(percentages);
