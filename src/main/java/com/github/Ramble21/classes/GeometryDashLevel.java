@@ -243,6 +243,7 @@ public class GeometryDashLevel {
             throw new RuntimeException(e);
         }
     }
+
     public void parseJson(String jsonResponse){
         Gson gson = new Gson();
         GeometryDashLevel data = gson.fromJson(jsonResponse, GeometryDashLevel.class);

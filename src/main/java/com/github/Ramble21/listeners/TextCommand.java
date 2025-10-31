@@ -5,7 +5,6 @@ import com.github.Ramble21.classes.Diacritics;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -22,7 +21,6 @@ public class TextCommand extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
-        String messageUnedited = event.getMessage().getContentRaw();
         User user = event.getAuthor();
 
         boolean canSendMessages = event.getGuild().getSelfMember().hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
