@@ -62,7 +62,7 @@ public class GeometryDashLevel {
             parseJson(jsonResponse);
         }
         else {
-            this.id = -1;
+            this.stars = -1;
         }
         makeRating();
         gddlTier = GeometryDashLevel.gddlTiers.getOrDefault(id, 0);

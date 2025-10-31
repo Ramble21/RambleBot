@@ -47,7 +47,7 @@ public class GeometryDashRecord implements Command {
                     event.getUser().getId(), 0
             );
         }
-        if (level.getId() == -1){
+        if (level.getId() <= -1){
             event.reply("Invalid level ID!").setEphemeral(true).queue();
             return;
         }

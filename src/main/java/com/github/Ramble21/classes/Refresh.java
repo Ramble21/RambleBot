@@ -50,7 +50,7 @@ public class Refresh {
     }
     public static GeometryDashLevel refreshLevel(GeometryDashLevel old){
         GeometryDashLevel updated = new GeometryDashLevel(old.getId(), old.getAttempts(), old.getSubmitterId(), old.getBiasLevel());
-        return updated.getId() == -1 ? old : updated;
+        return updated.getStars() == -1 ? old : updated;
     }
     public static void refreshAllLevels(){
         Gson gson = new GsonBuilder()
