@@ -10,7 +10,7 @@ public class Test extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getMessage().getContentRaw().equals("r!test") && Ramble21.isBotOwner(event.getAuthor())){
-
+            GDDatabase.createDatabase();
         }
     }
 }

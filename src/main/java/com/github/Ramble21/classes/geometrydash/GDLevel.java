@@ -1,6 +1,5 @@
 package com.github.Ramble21.classes.geometrydash;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -14,15 +13,15 @@ import java.net.URL;
 
 public class GDLevel {
     private String name;
-    private int id;
+    private long id;
     private int stars;
     private String author;
     private String difficulty;
     private final int gddlTier;
     private boolean platformer;
-    private String rating; // feature epic etc, just a star rate is ""
+    private String rating; // feature epic etc., just a star rate is ""
 
-    public static GDLevel getLevelFromID(int levelID) {
+    public static GDLevel getLevelFromID(long levelID) {
         GDLevel databaseLevel = GDDatabase.getLevel(levelID);
         if (databaseLevel != null) {
             return databaseLevel;
@@ -30,18 +29,16 @@ public class GDLevel {
         return new GDLevel(levelID);
     }
 
-    public GDLevel(int levelID){
+    public GDLevel(long levelID){
         if (levelID < 4) {
-            name = switch (levelID) {
-                case 1 -> "clubstep";
-                case 2 -> "theory of everything 2";
-                case 3 -> "deadlocked";
+            name = switch ((int) levelID) {
+                case 1 -> "Clubstep";
+                case 2 -> "Theory of Everything 2";
+                case 3 -> "Deadlocked";
                 default -> throw new RuntimeException(levelID + " is not a RobTop level");
             };
-            gddlTier = fetchGDDLRating(id);
             stars = 10;
             author = "RobTop";
-            difficulty = "Easy Demon";
             platformer = false;
             rating = "featured";
         }
@@ -53,11 +50,19 @@ public class GDLevel {
             else {
                 this.stars = -1;
             }
-            gddlTier = fetchGDDLRating(id);
+        }
+        GDDifficulty gdD = fetchGDDLRating(id);
+        if (gdD == null) {
+            this.difficulty = null;
+            this.gddlTier = 0;
+        }
+        else {
+            this.difficulty = gdD.difficulty();
+            this.gddlTier = gdD.gddlTier();
         }
     }
 
-    public GDLevel(String name, int id, int stars, String author,
+    public GDLevel(String name, long id, int stars, String author,
                    String difficulty, int gddlTier, boolean platformer, String rating) {
         this.name = name;
         this.id = id;
@@ -72,7 +77,7 @@ public class GDLevel {
     public String getName() {
         return name;
     }
-    public int getId() {
+    public long getId() {
         return id;
     }
     public int getStars() {
@@ -88,6 +93,7 @@ public class GDLevel {
         if (difficulty == null)
             throw new NullPointerException(toString());
         return switch (difficulty){
+            case "Non-Demon" -> 6;
             case "Easy Demon" -> 5;
             case "Medium Demon" -> 4;
             case "Hard Demon" -> 3;
@@ -139,9 +145,9 @@ public class GDLevel {
         return "";
     }
 
-    public static int fetchGDDLRating(int levelId) {
-        int maxRetries = 3;
-        int retryDelayMs = 1000;
+    public static GDDifficulty fetchGDDLRating(long levelId) {
+        int maxRetries = 4;
+        int retryDelayMs = 800;
         int connectionTimeoutMs = 5000;
         int readTimeoutMs = 10000;
 
@@ -171,40 +177,48 @@ public class GDLevel {
                     }
                     try {
                         JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
-
-                        if (json.has("Rating")) {
-                            String rating = json.get("Rating").getAsString();
-                            return (int) Math.round(Double.parseDouble(rating));
-                        } else {
-                            System.out.println("No Rating field found in response");
-                            return -1;
+                        if (json.has("Rating") && json.has("Difficulty")) {
+                            double rating = json.get("Rating").getAsDouble();
+                            int gddlTier = (int) Math.round(rating);
+                            String difficulty = json.get("Difficulty").getAsString();
+                            difficulty = switch (difficulty) {
+                                case "Official", "Easy" -> "Easy Demon";
+                                case "Medium" -> "Medium Demon";
+                                case "Hard" -> "Hard Demon";
+                                case "Insane" -> "Insane Demon";
+                                case "Extreme" -> "Extreme Demon";
+                                default -> "Non-Demon";
+                            };
+                            return new GDDifficulty(difficulty, gddlTier);
+                        }
+                        else {
+                            System.out.println("No Rating and/or Difficulty field found in response");
+                            return null;
                         }
                     } catch (JsonSyntaxException e) {
                         System.out.println("Invalid JSON response: " + e.getMessage());
-                        return -1;
+                        return null;
                     } catch (NumberFormatException e) {
                         System.out.println("Rating value is not a valid number: " + e.getMessage());
-                        return -1;
+                        return null;
                     }
                 }
                 else if (responseCode == 429) { // Rate limited
                     System.out.println("Rate limited on gdladder.com. Retrying in " + retryDelayMs + "ms... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
                     Thread.sleep(retryDelayMs);
                     retryDelayMs *= 2; // Exponential backoff
-                    continue;
                 }
                 else if (responseCode >= 500 && responseCode < 600) { // Server error
                     System.out.println("GDLadder server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
                     Thread.sleep(retryDelayMs);
-                    continue;
                 }
                 else if (responseCode == 404) {
                     System.out.println("Level rating not found (404) for level ID: " + levelId);
-                    return -1;
+                    return null;
                 }
                 else {
                     System.out.println("Failed to fetch rating. Response code: " + responseCode);
-                    return -1;
+                    return null;
                 }
             }
             catch (SocketTimeoutException e) {
@@ -213,7 +227,7 @@ public class GDLevel {
                     Thread.sleep(retryDelayMs);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    return -1;
+                    return null;
                 }
             }
             catch (IOException e) {
@@ -222,17 +236,17 @@ public class GDLevel {
                     Thread.sleep(retryDelayMs);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    return -1;
+                    return null;
                 }
             }
             catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.out.println("Request interrupted while fetching rating");
-                return -1;
+                return null;
             }
             catch (Exception e) {
                 System.out.println("Unexpected error fetching rating: " + e.getMessage());
-                return -1;
+                return null;
             }
             finally {
                 try {
@@ -246,12 +260,12 @@ public class GDLevel {
         }
 
         System.out.println("Max retries exceeded while fetching rating for level " + levelId);
-        return -1;
+        return null;
     }
 
-    public static String fetchAPIResponse(int levelId) {
-        int maxRetries = 3;
-        int retryDelayMs = 1000;
+    public static String fetchAPIResponse(long levelId) {
+        int maxRetries = 4;
+        int retryDelayMs = 800;
         int connectionTimeoutMs = 5000;
         int readTimeoutMs = 10000;
 

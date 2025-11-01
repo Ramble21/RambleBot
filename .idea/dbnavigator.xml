@@ -271,7 +271,7 @@ WHERE table_type = 'BASE TABLE';]]></console>
     </connections>
     <browser-settings>
       <general>
-        <display-mode value="TABBED" />
+        <display-mode value="SIMPLE" />
         <navigation-history-size value="100" />
         <show-object-details value="false" />
         <enable-sticky-paths value="true" />
