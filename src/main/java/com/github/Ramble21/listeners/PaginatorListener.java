@@ -1,6 +1,6 @@
 package com.github.Ramble21.listeners;
 
-import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.commands.geometrydash.GeometryDashLeaderboard;
 import com.github.Ramble21.commands.geometrydash.GeometryDashProfile;

@@ -1,6 +1,7 @@
 package com.github.Ramble21.classes;
 
 import com.github.Ramble21.RambleBot;
+import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

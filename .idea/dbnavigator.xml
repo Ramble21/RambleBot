@@ -14,6 +14,9 @@
       <assistant-state connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
         <conversations />
       </assistant-state>
+      <assistant-state connection-id="4f4279af-51db-42d8-8b75-35b460776954" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
+        <conversations />
+      </assistant-state>
     </assistants>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
@@ -24,10 +27,12 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="4f4279af-51db-42d8-8b75-35b460776954">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
+      <console name="Connection" type="STANDARD" schema="" session="Main"><![CDATA[SELECT table_name, table_schema
+FROM information_schema.tables
+WHERE table_type = 'BASE TABLE';]]></console>
     </connection>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7">
-      <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
+      <console name="ramblebot" type="STANDARD" schema="postgres" session="Main"><![CDATA[SELECT current_database();]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -160,7 +165,7 @@
       </connection>
       <connection source-id="" id="7c740d92-abaa-4876-920a-1c98f0570ff7" active="true" signed="true">
         <database>
-          <name value="RambleBot" />
+          <name value="ramblebot" />
           <description value="database for storing /gd levels and records" />
           <database-type value="POSTGRES" />
           <config-type value="BASIC" />
@@ -171,7 +176,7 @@
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="5432" />
-          <database value="postgres" />
+          <database value="ramblebot" />
           <tns-folder value="" />
           <tns-profile value="" />
           <server-type value="" />
@@ -687,5 +692,9 @@
         </visibility-settings>
       </environment>
     </general-settings>
+  </component>
+  <component name="DBNavigator.Project.StatementExecutionManager">
+    <execution-variables />
+    <execution-variable-types />
   </component>
 </project>

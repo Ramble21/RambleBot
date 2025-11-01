@@ -22,6 +22,7 @@ public class RambleBot {
     public static final Color killbotEnjoyer = new Color(174, 221, 0);
     public static final Color scaryOrange = new Color(240, 76, 0);
     private static boolean maintenanceMode;
+    private static boolean runningLocally;
     public static boolean validateToken(String token) {
         try {
             JDA testJda = JDABuilder.createDefault(token).build();
@@ -80,7 +81,8 @@ public class RambleBot {
         shardManager = builder.build();
 
         // Declare global variables
-        maintenanceMode = new File("local.flag").exists();
+        runningLocally = new File("local.flag").exists();
+        maintenanceMode = runningLocally;
         if (maintenanceMode) {
             System.out.println("Bot turned on locally, maintenance mode automatically activated");
         }
@@ -94,6 +96,9 @@ public class RambleBot {
     }
     public static boolean maintenanceMode() {
         return maintenanceMode;
+    }
+    public static boolean isRunningLocally() {
+        return runningLocally;
     }
 
 }

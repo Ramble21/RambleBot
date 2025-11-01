@@ -1,7 +1,7 @@
 package com.github.Ramble21.commands.geometrydash;
 
 import com.github.Ramble21.RambleBot;
-import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.google.gson.Gson;

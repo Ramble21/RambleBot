@@ -1,6 +1,6 @@
 package com.github.Ramble21.commands.geometrydash;
 
-import com.github.Ramble21.classes.Refresh;
+import com.github.Ramble21.classes.geometrydash.Refresh;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.io.IOException;

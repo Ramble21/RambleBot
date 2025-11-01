@@ -1,4 +1,4 @@
-package com.github.Ramble21.classes;
+package com.github.Ramble21.classes.geometrydash;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -1,11 +1,10 @@
 package com.github.Ramble21.commands.geometrydash;
 
-import com.github.Ramble21.classes.GeometryDashLevel;
+import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.GeometryDashReviewButtonListener;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
