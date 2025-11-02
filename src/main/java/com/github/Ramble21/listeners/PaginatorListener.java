@@ -1,7 +1,7 @@
 package com.github.Ramble21.listeners;
 
-import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
-import com.github.Ramble21.classes.Ramble21;
+import com.github.Ramble21.classes.geometrydash.GDLevel;
+import com.github.Ramble21.classes.geometrydash.GDRecord;
 import com.github.Ramble21.commands.geometrydash.GeometryDashLeaderboard;
 import com.github.Ramble21.commands.geometrydash.GeometryDashProfile;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -53,116 +53,65 @@ public class PaginatorListener extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent buttonEvent) {
-
         if (!(buttonEvent.getMessageId().equals(messageId))){
             return;
         }
-        switch(Objects.requireNonNull(buttonEvent.getComponent().getId())) {
-            case "next_profile":
-            {
+        int entriesPerPage = 10;
 
-
-                ArrayList<GeometryDashLevel> list;
-                String description;
-                if (isGDProfile){
-                    list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser(), gdProfileInstance.isPlatformer());
-                    assert list != null;
-                    Ramble21.sortByEstimatedDiff(list, false);
-                    if (pageNo < list.size()/10) pageNo++;
-                    description = GeometryDashProfile.makePageProfileDescription(list, 10, pageNo);
-                }
-                else if (isGDLeaderboard){
-                    list = GeometryDashLevel.getGuildJsonList(gdLeaderboardInstance.getGuild(), gdLeaderboardInstance.isPlatformer());
-                    assert list != null;
-                    Ramble21.sortByEstimatedDiff(list, true);
-                    if (pageNo < list.size()/10) pageNo++;
-                    description = GeometryDashLeaderboard.makePageLeaderboardDescription(list, 10, pageNo, buttonEvent.getGuild(), gdLeaderboardInstance.isPlatformer());
-                }
-                else{
+        String description = switch(Objects.requireNonNull(buttonEvent.getComponent().getId())) {
+            case "next_profile" -> {
+                if (isGDProfile) {
+                    ArrayList<GDRecord> list = gdProfileInstance.getRecords();
+                    if (pageNo < list.size() / entriesPerPage) {
+                        pageNo++;
+                    }
+                    yield GeometryDashProfile.makePageProfileDescription(list, entriesPerPage, pageNo);
+                } else if (isGDLeaderboard) {
+                    ArrayList<GDLevel> list = gdLeaderboardInstance.getLeaderboard().levels();
+                    if (pageNo < list.size() / entriesPerPage) {
+                        pageNo++;
+                    }
+                    yield GeometryDashLeaderboard.makePageLeaderboardDescription(list, entriesPerPage, pageNo, Objects.requireNonNull(buttonEvent.getGuild()).getIdLong());
+                } else {
                     throw new RuntimeException();
                 }
-
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-
-                String originalTitle = buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getTitle();
-                embedBuilder.setTitle(originalTitle);
-
-                if (description.isEmpty()){
-                    embedBuilder.setDescription(buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getDescription());
-                }
-                else{
-                    embedBuilder.setDescription(description);
-                }
-                embedBuilder.setColor(Color.yellow);
-                buttonEvent.editMessageEmbeds(embedBuilder.build()).queue();
-
-                buttonEvent.getJDA().removeEventListener(this);
-
-                PaginatorListener replacement;
-                if (isGDProfile){
-                    replacement = new PaginatorListener(gdProfileInstance, messageId, pageNo);
-                }
-                else {
-                    replacement = new PaginatorListener(gdLeaderboardInstance, messageId, pageNo);
-                }
-                buttonEvent.getJDA().addEventListener(replacement);
-                break;
             }
-            case "previous_profile":
-            {
-                if (pageNo > 0){
+            case "previous_profile" -> {
+                if (pageNo > 0) {
                     pageNo--;
                 }
-
-                ArrayList<GeometryDashLevel> list;
-                String description;
-                if (isGDProfile){
-                    list = GeometryDashLevel.getPersonalJsonList(gdProfileInstance.getMember().getUser(), gdProfileInstance.isPlatformer());
-                    assert list != null;
-                    Ramble21.sortByEstimatedDiff(list, false);
-                    description = GeometryDashProfile.makePageProfileDescription(list, 10, pageNo);
-                }
-                else if (isGDLeaderboard){
-                    list = GeometryDashLevel.getGuildJsonList(gdLeaderboardInstance.getGuild(), gdLeaderboardInstance.isPlatformer());
-                    assert list != null;
-                    Ramble21.sortByEstimatedDiff(list, true);
-                    description = GeometryDashLeaderboard.makePageLeaderboardDescription(list, 10, pageNo, buttonEvent.getGuild(), gdLeaderboardInstance.isPlatformer());
-                }
-                else{
+                if (isGDProfile) {
+                    ArrayList<GDRecord> list = gdProfileInstance.getRecords();
+                    yield GeometryDashProfile.makePageProfileDescription(list, entriesPerPage, pageNo);
+                } else if (isGDLeaderboard) {
+                    ArrayList<GDLevel> list = gdLeaderboardInstance.getLeaderboard().levels();
+                    yield GeometryDashLeaderboard.makePageLeaderboardDescription(list, entriesPerPage, pageNo, Objects.requireNonNull(buttonEvent.getGuild()).getIdLong());
+                } else {
                     throw new RuntimeException();
                 }
-
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-
-                String originalTitle = buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getTitle();
-                embedBuilder.setTitle(originalTitle);
-
-                if (description.isEmpty()){
-                    embedBuilder.setDescription(buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getDescription());
-                }
-                else{
-                    embedBuilder.setDescription(description);
-                }
-
-                embedBuilder.setColor(Color.yellow);
-                buttonEvent.editMessageEmbeds(embedBuilder.build()).queue();
-
-                buttonEvent.getJDA().removeEventListener(this);
-                PaginatorListener replacement;
-                if (isGDProfile){
-                    replacement = new PaginatorListener(gdProfileInstance, messageId, pageNo);
-                }
-                else {
-                    replacement = new PaginatorListener(gdLeaderboardInstance, messageId, pageNo);
-                }
-                buttonEvent.getJDA().addEventListener(replacement);
-                break;
             }
-            default:
-            {
-                System.out.println("Unhandled button ID: " + buttonEvent.getComponent().getId());
-                break;
-            }
+            default -> throw new RuntimeException();
+        };
+        
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        String originalTitle = buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getTitle();
+        embedBuilder.setTitle(originalTitle);
+        if (description.isEmpty()){
+            embedBuilder.setDescription(buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getDescription());
         }
+        else{
+            embedBuilder.setDescription(description);
+        }
+        buttonEvent.editMessageEmbeds(embedBuilder.build()).queue();
+        buttonEvent.getJDA().removeEventListener(this);
+
+        PaginatorListener replacement;
+        if (isGDProfile){
+            replacement = new PaginatorListener(gdProfileInstance, messageId, pageNo);
+        }
+        else {
+            replacement = new PaginatorListener(gdLeaderboardInstance, messageId, pageNo);
+        }
+        buttonEvent.getJDA().addEventListener(replacement);
     }
 }

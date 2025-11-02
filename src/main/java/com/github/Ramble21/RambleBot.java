@@ -36,12 +36,12 @@ public class RambleBot {
             return false;
         }
     }
-    public static String your() {
+    public static String your(boolean capitalize) {
         int random = 1 + (int)(Math.random() * 100);
         if (random == 1) {
-            return "you're";
+            return capitalize ? "You're" : "you're";
         }
-        return "your";
+        return capitalize ? "Your" : "your";
     }
 
 

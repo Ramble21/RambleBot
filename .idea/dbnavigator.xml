@@ -46,6 +46,21 @@ WHERE table_type = 'BASE TABLE';]]></console>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.guilds" active-filter-id="d21211d1-d22b-48ff-81c7-68928e1c4b77">
+      <filter id="d21211d1-d22b-48ff-81c7-68928e1c4b77" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.levels" active-filter-id="88cf4665-0ade-465e-98e5-838f0caed0d7">
+      <filter id="88cf4665-0ade-465e-98e5-838f0caed0d7" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.members" active-filter-id="dcd38f51-2be3-4d88-913a-419e19dc756d">
+      <filter id="dcd38f51-2be3-4d88-913a-419e19dc756d" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.records" active-filter-id="085214a5-0209-4e89-8e73-766f2d5c092a">
+      <filter id="085214a5-0209-4e89-8e73-766f2d5c092a" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.guild_members" active-filter-id="63547dca-8e3a-4752-b77c-c7894e835d00">
+      <filter id="63547dca-8e3a-4752-b77c-c7894e835d00" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
     <filter-actions connection-id="4f4279af-51db-42d8-8b75-35b460776954" dataset="main.messages" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">

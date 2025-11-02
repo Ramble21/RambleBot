@@ -1,6 +1,6 @@
 package com.github.Ramble21.commands.geometrydash;
 
-import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
+import com.github.Ramble21.classes.geometrydash.*;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.PaginatorListener;
@@ -19,60 +19,58 @@ public class GeometryDashLeaderboard implements Command {
     private Guild guild;
     private String originalMessageId;
     private boolean isPlatformer = true;
+    private GDGuildLB leaderboard;
 
     public Guild getGuild() {
         return guild;
     }
-    public String getOriginalMessageId() {
-        return originalMessageId;
-    }
     public boolean isPlatformer() {
         return isPlatformer;
+    }
+    public GDGuildLB getLeaderboard() {
+        return leaderboard;
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event){
-        if (event.getOption("platformer") == null || !Objects.requireNonNull(event.getOption("platformer")).getAsBoolean()){
+        if (event.getOption("platformer") == null || !Objects.requireNonNull(event.getOption("platformer")).getAsBoolean()) {
             isPlatformer = false;
         }
         guild = event.getGuild();
         assert guild != null;
-        ArrayList<GeometryDashLevel> list = GeometryDashLevel.getGuildJsonList(guild, isPlatformer);
 
+        leaderboard = new GDGuildLB(guild.getIdLong(), isPlatformer);
         EmbedBuilder embed = new EmbedBuilder();
-        if (isPlatformer){
+        if (isPlatformer) {
             embed.setTitle("Hardest Platformer Completions in Server " + guild.getName());
         }
-        else{
+        else {
             embed.setTitle("Hardest Completions in Server " + guild.getName());
         }
 
         String description;
         boolean includeButtons = true;
-        if (list == null || list.isEmpty()){
+        if (leaderboard.levels().isEmpty()) {
             description = "There have been no completions submitted to this server yet!";
             includeButtons = false;
         }
-        else{
-            Ramble21.sortByEstimatedDiff(list, true);
-            description = makePageLeaderboardDescription(list, 10, 0, guild, isPlatformer);
+        else {
+            description = makePageLeaderboardDescription(leaderboard.levels(), 10, 0, guild.getIdLong());
         }
 
         embed.setDescription(description);
         embed.setColor(Color.yellow);
         if (includeButtons){
             final PaginatorListener[] paginatorListener = {null}; // it has to be a 1 element array bc of some dumb java shit
-            event.deferReply().queue(hook -> {
-                hook.sendMessageEmbeds(embed.build())
-                        .addActionRow(
-                                Button.secondary("previous_profile", "Previous"),
-                                Button.secondary("next_profile", "Next"))
-                        .queue(message -> {
-                            this.originalMessageId = message.getId();
-                            paginatorListener[0] = new PaginatorListener(this, originalMessageId);
-                            event.getJDA().addEventListener(paginatorListener[0]);
-                        });
-            });
+            event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build())
+                    .addActionRow(
+                            Button.secondary("previous_profile", "Previous"),
+                            Button.secondary("next_profile", "Next"))
+                    .queue(message -> {
+                        this.originalMessageId = message.getId();
+                        paginatorListener[0] = new PaginatorListener(this, originalMessageId);
+                        event.getJDA().addEventListener(paginatorListener[0]);
+                    }));
             Timer buttonTimeout = new Timer();
             TimerTask removeButtons = new TimerTask() {
                 @Override
@@ -88,24 +86,22 @@ public class GeometryDashLeaderboard implements Command {
             buttonTimeout.schedule(removeButtons, 300000);
         }
         else{
-            event.deferReply().queue(hook -> {
-                hook.sendMessageEmbeds(embed.build()).queue();
-            });
+            event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build()).queue());
         }
 
     }
-    public static String makePageLeaderboardDescription(ArrayList<GeometryDashLevel> list, int perPage, int pageNo, Guild guild, Boolean isPlatformer){
-        Ramble21.sortByEstimatedDiff(list, true);
-        System.out.println(list);
-        String description = "";
+    public static String makePageLeaderboardDescription(ArrayList<GDLevel> list, int perPage, int pageNo, long guildID){
+        StringBuilder description = new StringBuilder();
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){
+            ArrayList<GDRecord> victorRecords = GDDatabase.getLevelRecords(list.get(i).getId(), guildID);
             String emoji = Ramble21.getEmojiName(list.get(i).getDifficulty());
-            description += (
+            String recordDesc = (
                     i+1 + " - " + emoji + " **" + list.get(i).getName() + "** by " + list.get(i).getAuthor() + "\n" +
-                            "<:star:1307518203122942024> *Victors:* " + Ramble21.getVictorsAsMention(list.get(i), guild, isPlatformer) + "\n" +
-                            "<:length:1307507840864227468> *Average Attempt Count: " + Ramble21.getAverageAttempts(list.get(i), guild, isPlatformer) + "*\n\n"
+                    "<:star:1307518203122942024> *Victors:* " + GDMisc.getVictorsAsMention(victorRecords) + "\n" +
+                    "<:length:1307507840864227468> *Average Attempt Count: " + GDMisc.getAverageAttempts(victorRecords) + "*\n\n"
             );
+            description.append(recordDesc);
         }
-        return description;
+        return description.toString();
     }
 }

@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.Objects;
 
 public class GDLevel {
     private String name;
@@ -21,7 +22,7 @@ public class GDLevel {
     private boolean platformer;
     private String rating; // feature epic etc., just a star rate is ""
 
-    public static GDLevel getLevelFromID(long levelID) {
+    public static GDLevel fromID(long levelID) {
         GDLevel databaseLevel = GDDatabase.getLevel(levelID);
         if (databaseLevel != null) {
             return databaseLevel;
@@ -37,6 +38,7 @@ public class GDLevel {
                 case 3 -> "Deadlocked";
                 default -> throw new RuntimeException(levelID + " is not a RobTop level");
             };
+            id = levelID;
             stars = 10;
             author = "RobTop";
             platformer = false;
@@ -60,6 +62,7 @@ public class GDLevel {
             this.difficulty = gdD.difficulty();
             this.gddlTier = gdD.gddlTier();
         }
+        System.out.println(this);
     }
 
     public GDLevel(String name, long id, int stars, String author,
@@ -145,6 +148,18 @@ public class GDLevel {
         return "";
     }
 
+    public String getDifficultyPngName(){
+        String[] parts = difficulty.toLowerCase().split(" ", 2);
+        String name = parts[0];
+        if (rating.equals("featured")){
+            name += "_feature";
+        }
+        else if (!rating.isEmpty()){
+            name += "_" + rating;
+        }
+        return "images/diff_faces/" + name + ".png";
+    }
+
     public static GDDifficulty fetchGDDLRating(long levelId) {
         int maxRetries = 4;
         int retryDelayMs = 800;
@@ -177,10 +192,10 @@ public class GDLevel {
                     }
                     try {
                         JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
-                        if (json.has("Rating") && json.has("Difficulty")) {
+                        if (json.has("Rating") && json.has("Meta") && json.getAsJsonObject("Meta").has("Difficulty")) {
                             double rating = json.get("Rating").getAsDouble();
                             int gddlTier = (int) Math.round(rating);
-                            String difficulty = json.get("Difficulty").getAsString();
+                            String difficulty = json.getAsJsonObject("Meta").get("Difficulty").getAsString();
                             difficulty = switch (difficulty) {
                                 case "Official", "Easy" -> "Easy Demon";
                                 case "Medium" -> "Medium Demon";
@@ -349,4 +364,30 @@ public class GDLevel {
         System.out.println("Max retries exceeded");
         return null;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        GDLevel other = (GDLevel) obj;
+        return id == other.id;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+    @Override
+    public String toString() {
+        return "{\n" +
+            "  \"id\": " + id + ",\n" +
+            "  \"name\": \"" + name + "\",\n" +
+            "  \"stars\": " + stars + ",\n" +
+            "  \"author\": \"" + author + "\",\n" +
+            "  \"difficulty\": \"" + difficulty + "\",\n" +
+            "  \"gddlTier\": " + gddlTier + ",\n" +
+            "  \"platformer\": " + platformer + ",\n" +
+            "  \"rating\": \"" + rating + "\"\n" +
+            "}";
+    }
+
 }

@@ -1,6 +1,9 @@
 package com.github.Ramble21.commands.geometrydash;
 
-import com.github.Ramble21.classes.geometrydash.GeometryDashLevel;
+import com.github.Ramble21.classes.geometrydash.GDDatabase;
+import com.github.Ramble21.classes.geometrydash.GDLevel;
+import com.github.Ramble21.classes.geometrydash.GDMisc;
+import com.github.Ramble21.classes.geometrydash.GDRecord;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.PaginatorListener;
@@ -18,18 +21,15 @@ import java.util.TimerTask;
 
 public class GeometryDashProfile implements Command {
 
-    private Member member;
     private String originalMessageId;
     private boolean isPlatformer = true;
+    private ArrayList<GDRecord> records;
 
-    public Member getMember() {
-        return member;
-    }
-    public String getOriginalMessageId() {
-        return originalMessageId;
-    }
     public boolean isPlatformer() {
         return isPlatformer;
+    }
+    public ArrayList<GDRecord> getRecords() {
+        return records;
     }
 
     @Override
@@ -37,14 +37,14 @@ public class GeometryDashProfile implements Command {
         if (event.getOption("platformer") == null || !Objects.requireNonNull(event.getOption("platformer")).getAsBoolean()){
             isPlatformer = false;
         }
-        if (event.getOption("member") == null){
-            member = event.getMember();
-        }
-        else{
+        Member member = event.getMember();
+        if (event.getOption("member") != null){
             member = Objects.requireNonNull(event.getOption("member")).getAsMember();
         }
         assert member != null;
-        ArrayList<GeometryDashLevel> list = GeometryDashLevel.getPersonalJsonList(member.getUser(), isPlatformer);
+
+        records = GDDatabase.getMemberRecords(member.getIdLong(), isPlatformer);
+        GDMisc.sortUserRecordsByDiff(records);
 
         EmbedBuilder embed = new EmbedBuilder();
         if (isPlatformer){
@@ -56,30 +56,27 @@ public class GeometryDashProfile implements Command {
 
         String description;
         boolean includeButtons = true;
-        if (list == null || list.isEmpty()){
+        if (records.isEmpty()){
             description = member.getAsMention() + " has not submitted any completions yet!";
             includeButtons = false;
         }
         else{
-            Ramble21.sortByEstimatedDiff(list, false);
-            description = makePageProfileDescription(list, 10, 0);
+            description = makePageProfileDescription(records, 10, 0);
         }
 
         embed.setDescription(description);
         embed.setColor(Color.yellow);
         if (includeButtons){
             final PaginatorListener[] paginatorListener = {null}; // it has to be a 1 element array bc of some dumb java shit
-            event.deferReply().queue(hook -> {
-                hook.sendMessageEmbeds(embed.build())
-                        .addActionRow(
-                                Button.secondary("previous_profile", "Previous"),
-                                Button.secondary("next_profile", "Next"))
-                        .queue(message -> {
-                            this.originalMessageId = message.getId();
-                            paginatorListener[0] = new PaginatorListener(this, originalMessageId);
-                            event.getJDA().addEventListener(paginatorListener[0]);
-                        });
-            });
+            event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build())
+                    .addActionRow(
+                            Button.secondary("previous_profile", "Previous"),
+                            Button.secondary("next_profile", "Next"))
+                    .queue(message -> {
+                        this.originalMessageId = message.getId();
+                        paginatorListener[0] = new PaginatorListener(this, originalMessageId);
+                        event.getJDA().addEventListener(paginatorListener[0]);
+                    }));
             Timer buttonTimeout = new Timer();
             TimerTask removeButtons = new TimerTask() {
                 @Override
@@ -95,21 +92,20 @@ public class GeometryDashProfile implements Command {
             buttonTimeout.schedule(removeButtons, 300000);
         }
         else{
-            event.deferReply().queue(hook -> {
-                hook.sendMessageEmbeds(embed.build()).queue();
-            });
+            event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build()).queue());
         }
     }
-    public static String makePageProfileDescription(ArrayList<GeometryDashLevel> list, int perPage, int pageNo){
-        Ramble21.sortByEstimatedDiff(list, false);
-        String description = "";
+    public static String makePageProfileDescription(ArrayList<GDRecord> list, int perPage, int pageNo){
+        StringBuilder s = new StringBuilder();
         for (int i = pageNo*perPage; i < perPage+(pageNo*perPage) && i < list.size(); i++){
-            String emoji = Ramble21.getEmojiName(list.get(i).getDifficulty());
-            description += (
-                    i+1 + " - " + emoji + " **" + list.get(i).getName() + "** by " + list.get(i).getAuthor() + "\n" +
-                            "<:length:1307507840864227468> *Attempts: " + list.get(i).getAttempts() + "*\n\n"
+            GDLevel level = list.get(i).level();
+            String emoji = Ramble21.getEmojiName(level.getDifficulty());
+            String recordDesc = (
+                    i+1 + " - " + emoji + " **" + level.getName() + "** by " + level.getAuthor() + "\n" +
+                            "<:length:1307507840864227468> *Attempts: " + list.get(i).attempts() + "*\n\n"
             );
+            s.append(recordDesc);
         }
-        return description;
+        return s.toString();
     }
 }

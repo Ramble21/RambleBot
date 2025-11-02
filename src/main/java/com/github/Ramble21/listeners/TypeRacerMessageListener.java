@@ -52,7 +52,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
 
             EmbedBuilder winEmbed = new EmbedBuilder();
             winEmbed.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
-            winEmbed.setDescription("You typed the sentence faster than " + RambleBot.your() + " opponent, at a speed of " + wpm + " WPM! Congratulations!");
+            winEmbed.setDescription("You typed the sentence faster than " + RambleBot.your(false) + " opponent, at a speed of " + wpm + " WPM! Congratulations!");
             winEmbed.setColor(Color.green);
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();
@@ -80,7 +80,7 @@ public class TypeRacerMessageListener extends ListenerAdapter {
             typeRacer.getStopwatch().stop();
             EmbedBuilder winEmbed = new EmbedBuilder();
             winEmbed.setTitle(winner.getEffectiveName() + ", you are the winner! :tada:");
-            winEmbed.setDescription(RambleBot.your() + " dirty opponent " + loser.getAsMention() + " tried to use copy and paste to cheat the contest, so you won for free!");
+            winEmbed.setDescription(RambleBot.your(true) + " dirty opponent " + loser.getAsMention() + " tried to use copy and paste to cheat the contest, so you won for free!");
             winEmbed.setColor(Color.green);
             winEmbed.setImage(winner.getAvatarUrl());
             textChannel.sendMessageEmbeds(winEmbed.build()).queue();

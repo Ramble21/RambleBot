@@ -138,7 +138,7 @@ public class TypeRacer implements Command  {
         EmbedBuilder startEmbed = new EmbedBuilder();
         startEmbed.setColor(Color.yellow);
         startEmbed.setTitle("TypeRacer");
-        startEmbed.setDescription("**" + player2.getAsMention() + " accepted " + RambleBot.your() + " TypeRacer challenge!** Generating words in 5 seconds!");
+        startEmbed.setDescription("**" + player2.getAsMention() + " accepted " + RambleBot.your(false) + " TypeRacer challenge!** Generating words in 5 seconds!");
         startEmbed.setFooter(player1.getEffectiveName(), player1.getAvatarUrl());
         startEmbed.setThumbnail("attachment://checkered-flag.png");
 

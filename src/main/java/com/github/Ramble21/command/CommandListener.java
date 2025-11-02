@@ -94,14 +94,10 @@ public class CommandListener extends ListenerAdapter {
                                         .addOptions(
                                                 (new OptionData(OptionType.STRING, "name", "Name of the level to edit record of", true)),
                                                 (new OptionData(OptionType.STRING, "creator", "Creator of the level to edit record of", true)),
-                                                (new OptionData(OptionType.STRING, "type", "Type of level")
-                                                        .addChoice("Classic", "classic")
-                                                        .addChoice("Platformer", "platformer")
-                                                        .setRequired(true)),
                                                 (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", false)),
                                                 (new OptionData(OptionType.STRING, "difficulty", "Difficulty of the level")
-                                                        .addChoice("Underrated", "underrated")
-                                                        .addChoice("Overrated", "overrated")
+                                                        .addChoice("Underrated", "1")
+                                                        .addChoice("Overrated", "-1")
                                                         .setRequired(false)),
                                                 (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being edited", false))
                                         ),
@@ -109,10 +105,6 @@ public class CommandListener extends ListenerAdapter {
                                         .addOptions(
                                                 (new OptionData(OptionType.STRING, "name", "Name of the level to delete", true)),
                                                 (new OptionData(OptionType.STRING, "creator", "Creator of the level to delete", true)),
-                                                (new OptionData(OptionType.STRING, "type", "Type of level")
-                                                        .addChoice("Classic", "classic")
-                                                        .addChoice("Platformer", "platformer")
-                                                        .setRequired(true)),
                                                 (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being deleted", false))
                                         ),
 
