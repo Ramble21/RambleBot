@@ -6,6 +6,7 @@ import com.github.Ramble21.classes.geometrydash.GDLevel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -73,9 +74,11 @@ public class Test extends ListenerAdapter {
                                 String diff = diffMatcher.group(1).trim();
                                 int atts = Integer.parseInt(attsMatcher.group(1).trim());
                                 GDLevel level = GDLevel.fromNameAndDiff(name, diff);
-                                long submitterID = Objects.requireNonNull(msg.getInteractionMetadata()).getUser().getIdLong();
-                                System.out.println(level);
+                                User member = Objects.requireNonNull(msg.getInteractionMetadata()).getUser();
+                                long submitterID = member.getIdLong();
 
+                                GDDatabase.addMemberToDatabase(member, msg.getGuild());
+                                System.out.println(level);
                                 if (level.getStars() != -1) {
                                     GDDatabase.addRecord(submitterID, atts, 0, true, level);
                                 }

@@ -86,6 +86,14 @@ public class RambleBot {
         if (maintenanceMode) {
             System.out.println("Bot turned on locally, maintenance mode automatically activated");
         }
+
+        // Test PostgreSQL driver
+        try {
+            Class.forName("org.postgresql.Driver");
+            System.out.println("PostgreSQL JDBC driver is PRESENT!");
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC driver NOT found!");
+        }
     }
 
     public static JDA getJda() {

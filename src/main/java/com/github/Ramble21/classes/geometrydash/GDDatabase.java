@@ -4,6 +4,7 @@ import com.github.Ramble21.RambleBot;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -392,7 +393,7 @@ public class GDDatabase {
             throw new RuntimeException(e);
         }
         // if code reaches here, member is not in the database, so add them
-        addMemberToDatabase(member);
+        addMemberToDatabase(member.getUser(), member.getGuild());
         return "member";
     }
 
@@ -416,7 +417,7 @@ public class GDDatabase {
         }
     }
 
-    public static void addMemberToDatabase(Member member) {
+    public static void addMemberToDatabase(User member, Guild guild) {
         String membersQuery =
             """
             INSERT INTO members (user_id, username)
@@ -428,13 +429,12 @@ public class GDDatabase {
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(membersQuery)) {
             stmt.setLong(1, member.getIdLong());
-            stmt.setString(2, member.getUser().getName());
+            stmt.setString(2, member.getName());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        Guild guild = member.getGuild();
         String guildsQuery =
             """
             INSERT INTO guilds (guild_id, name)
@@ -464,7 +464,7 @@ public class GDDatabase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(member.getUser().getName() + " successfully added to database");
+        System.out.println(member.getName() + " successfully added to database");
     }
 
     public static void deleteRecord(long submitterID, long levelID) {

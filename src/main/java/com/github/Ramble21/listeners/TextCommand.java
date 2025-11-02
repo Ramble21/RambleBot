@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.github.Ramble21.classes.Ramble21.*;
 
@@ -23,7 +24,8 @@ public class TextCommand extends ListenerAdapter {
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw().toLowerCase());
         User user = event.getAuthor();
 
-        boolean canSendMessages = event.getGuild().getSelfMember().hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
+        boolean canSendMessages = Objects.requireNonNull(event.getGuild().getMember(event.getGuild().getJDA().getSelfUser()))
+                .hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
         if (!canSendMessages || user.isBot()) {
             return;
         }
@@ -122,7 +124,8 @@ public class TextCommand extends ListenerAdapter {
             }
         }
         else if (message.startsWith("r!rc ") && isBotOwner(event.getAuthor())) {
-            if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+            if (Objects.requireNonNull(event.getGuild().getMember(event.getGuild().getJDA().getSelfUser()))
+                    .hasPermission(Permission.MESSAGE_MANAGE)) {
                 event.getMessage().delete().queue();
             }
             String[] parts = message.split("\\s+");
@@ -130,7 +133,8 @@ public class TextCommand extends ListenerAdapter {
                 ArrayList<MessageChannel> messageChannels = new ArrayList<>();
                 event.getGuild().getChannels().forEach(channel -> {
                     if (channel instanceof MessageChannel messageChannel) {
-                        if (event.getGuild().getSelfMember().hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) {
+                        if (Objects.requireNonNull(event.getGuild().getMember(event.getGuild().getJDA().getSelfUser()))
+                                .hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) {
                             messageChannels.add(messageChannel);
                         }
                     }

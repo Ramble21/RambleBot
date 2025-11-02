@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class HotLavaAndChicken extends ListenerAdapter {
@@ -31,7 +32,8 @@ public class HotLavaAndChicken extends ListenerAdapter {
         if (Ramble21.isRambleBot(event.getAuthor())) {
             return;
         }
-        boolean canSendMessages = event.getGuild().getSelfMember().hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
+        boolean canSendMessages = Objects.requireNonNull(event.getGuild().getMember(event.getGuild().getJDA().getSelfUser()))
+                .hasPermission(event.getChannel().asGuildMessageChannel(), Permission.MESSAGE_SEND);
         if (!canSendMessages) {
             return;
         }
