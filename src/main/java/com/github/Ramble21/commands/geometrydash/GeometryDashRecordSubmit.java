@@ -25,7 +25,7 @@ public record GeometryDashRecordSubmit(boolean bySearch) implements Command {
         long submitterID = Objects.requireNonNull(event.getMember()).getIdLong();
         int attempts = Objects.requireNonNull(event.getOption("attempts")).getAsInt();
         if (attempts < 10) {
-            event.reply("Nice try, but I know you spent more than " + attempts + " attempts beating that.").setEphemeral(true).queue();
+            event.getHook().sendMessage("Nice try, but I know you spent more than " + attempts + " attempts beating that.").setEphemeral(true).queue();
             return;
         }
 

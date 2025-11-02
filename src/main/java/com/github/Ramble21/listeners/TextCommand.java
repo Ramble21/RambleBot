@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
 import static com.github.Ramble21.classes.Ramble21.*;
@@ -80,9 +79,10 @@ public class TextCommand extends ListenerAdapter {
         }
 
         if (message.equals("r!ping")) {
-            OffsetDateTime sentTime = event.getMessage().getTimeCreated();
-            long ping = Duration.between(sentTime, OffsetDateTime.now()).toMillis();
-            event.getChannel().sendMessage("Ping: " + ping + "ms").queue();
+            event.getChannel().sendMessage("Pinging...").queue(sent -> {
+                long ping = Duration.between(event.getMessage().getTimeCreated(), sent.getTimeCreated()).toMillis();
+                sent.editMessage("Ping: " + ping + "ms").queue();
+            });
         }
 
         if (message.equals("r!maint.on") && isBotOwner(user)) {

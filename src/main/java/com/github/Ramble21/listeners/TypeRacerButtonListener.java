@@ -22,7 +22,7 @@ public class TypeRacerButtonListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent buttonEvent) {
 
-        String buttonId = buttonEvent.getComponent().getId();
+        String buttonId = buttonEvent.getComponentId();
         String messageId = buttonEvent.getMessageId();
         User originalUser = typeRacer.getUser();
         User buttonUser = buttonEvent.getUser();

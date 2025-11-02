@@ -35,7 +35,7 @@ FROM information_schema.tables
 WHERE table_type = 'BASE TABLE';]]></console>
     </connection>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7">
-      <console name="ramblebot" type="STANDARD" schema="postgres" session="Main"><![CDATA[SELECT current_database();]]></console>
+      <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">

@@ -8,12 +8,17 @@ import com.github.Ramble21.listeners.WordBombMessageListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.*;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+
 
 import java.awt.*;
 import java.io.IOException;
@@ -45,7 +50,6 @@ public class WordBomb implements Command {
     private int LANGUAGE_CODE;
     public int NUM_TURNS;
     public int NUM_PLAYERS;
-    private boolean PRACTICE_MODE;
 
     private final InputStream img = RambleBot.class.getResourceAsStream("images/wordbomb.png");
 
@@ -100,7 +104,7 @@ public class WordBomb implements Command {
         players.add(new WordBombPlayer(host, STARTING_LIVES));
         LANGUAGE_CODE = event.getOption("language") == null ? 0 : Objects.requireNonNull(event.getOption("language")).getAsInt();
         DIFFICULTY_CODE = event.getOption("difficulty") == null ? 1 : Objects.requireNonNull(event.getOption("difficulty")).getAsInt();
-        PRACTICE_MODE = event.getOption("practice") != null && Objects.requireNonNull(event.getOption("practice")).getAsBoolean();
+        boolean PRACTICE_MODE = event.getOption("practice") != null && Objects.requireNonNull(event.getOption("practice")).getAsBoolean();
         channel = event.getChannel();
         guild = event.getGuild();
         dictionary = (LANGUAGE_CODE == 0) ? new HashSet<>(decodeJSON("dictionary_en")) : new HashSet<>(decodeJSON("dictionary_es"));
@@ -116,36 +120,44 @@ public class WordBomb implements Command {
         event.getJDA().addEventListener(listener);
 
         EmbedBuilder eb = getEmbed();
+
         event.deferReply().queue(hook -> {
             assert img != null;
-            hook.sendMessageEmbeds(eb.build())
-                    .addFiles(FileUpload.fromData(img,"wordbomb.png"))
-                    .addActionRow(
-                            Button.success("start", "Start Game"),
-                            Button.primary("join", "Join Game"),
-                            Button.danger("leave", "Leave Game"),
-                            Button.secondary("help", "Help")
-                    )
-                    .queue(message -> {
-                        Timer timer = new Timer();
-                        TimerTask expiration = new TimerTask() {
-                            @Override
-                            public void run() {
-                                EmbedBuilder eb = new EmbedBuilder();
-                                eb.setTitle("WordBomb");
-                                eb.setColor(Color.red);
-                                eb.setDescription("Timed out due to inactivity");
-                                eb.setFooter(host.getEffectiveName(), host.getAvatarUrl());
-                                message.editMessageEmbeds(eb.build())
-                                        .setAttachments()
-                                        .setComponents()
-                                        .queue();
-                                event.getJDA().removeEventListener(listener);
-                                activeChannelIDs.remove(channel.getId());
-                            }
-                        };
-                        timer.schedule(expiration, 300_000); // 5 minutes until expiration
-                    });
+
+            MessageCreateBuilder create = new MessageCreateBuilder()
+                    .setEmbeds(eb.build())
+                    .addFiles(FileUpload.fromData(img, "wordbomb.png"))
+                    .addComponents(ActionRow.of(
+                            Button.of(ButtonStyle.SUCCESS, "start", "Start Game"),
+                            Button.of(ButtonStyle.PRIMARY, "join", "Join Game"),
+                            Button.of(ButtonStyle.DANGER, "leave", "Leave Game"),
+                            Button.of(ButtonStyle.SECONDARY, "help", "Help")
+                    ));
+
+            hook.sendMessage(create.build()).queue(message -> {
+                Timer timer = new Timer();
+                TimerTask expiration = new TimerTask() {
+                    @Override
+                    public void run() {
+                        EmbedBuilder expired = new EmbedBuilder()
+                                .setTitle("WordBomb")
+                                .setColor(Color.RED)
+                                .setDescription("Timed out due to inactivity")
+                                .setFooter(host.getEffectiveName(), host.getAvatarUrl());
+
+                        MessageEditBuilder edit = new MessageEditBuilder()
+                                .setEmbeds(expired.build())
+                                .setComponents()
+                                .setAttachments();
+
+                        message.editMessage(edit.build()).queue();
+                        event.getJDA().removeEventListener(listener);
+                        activeChannelIDs.remove(channel.getId());
+                    }
+                };
+
+                timer.schedule(expiration, 300_000);
+            });
         });
 
     }

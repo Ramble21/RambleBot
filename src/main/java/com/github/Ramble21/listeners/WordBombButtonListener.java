@@ -39,7 +39,7 @@ public class WordBombButtonListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent buttonEvent) {
         User user = buttonEvent.getUser();
-        switch (Objects.requireNonNull(buttonEvent.getComponent().getId())) {
+        switch (Objects.requireNonNull(buttonEvent.getComponentId())) {
             case "start":
                 if (!user.getId().equals(game.host.getId())) {
                     buttonEvent.reply("Only the host can start the game!").setEphemeral(true).queue();

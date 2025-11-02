@@ -58,7 +58,7 @@ public class PaginatorListener extends ListenerAdapter {
         }
         int entriesPerPage = 10;
 
-        String description = switch(Objects.requireNonNull(buttonEvent.getComponent().getId())) {
+        String description = switch(Objects.requireNonNull(buttonEvent.getComponentId())) {
             case "next_profile" -> {
                 if (isGDProfile) {
                     ArrayList<GDRecord> list = gdProfileInstance.getRecords();

@@ -5,10 +5,13 @@ import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import com.github.Ramble21.listeners.PaginatorListener;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.*;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -24,9 +27,7 @@ public class GeometryDashLeaderboard implements Command {
     public Guild getGuild() {
         return guild;
     }
-    public boolean isPlatformer() {
-        return isPlatformer;
-    }
+
     public GDGuildLB getLeaderboard() {
         return leaderboard;
     }
@@ -63,9 +64,10 @@ public class GeometryDashLeaderboard implements Command {
         if (includeButtons){
             final PaginatorListener[] paginatorListener = {null}; // it has to be a 1 element array bc of some dumb java shit
             event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build())
-                    .addActionRow(
-                            Button.secondary("previous_profile", "Previous"),
-                            Button.secondary("next_profile", "Next"))
+                    .setComponents(ActionRow.of(
+                            Button.of(ButtonStyle.SECONDARY, "previous_profile", "Previous"),
+                            Button.of(ButtonStyle.SECONDARY, "next_profile", "Next"))
+                    )
                     .queue(message -> {
                         this.originalMessageId = message.getId();
                         paginatorListener[0] = new PaginatorListener(this, originalMessageId);
@@ -76,9 +78,10 @@ public class GeometryDashLeaderboard implements Command {
                 @Override
                 public void run() {
                     event.getChannel().editMessageComponentsById(originalMessageId)
-                            .setActionRow(
-                                    Button.secondary("previous_profile", "Previous").asDisabled(),
-                                    Button.secondary("next_profile", "Next").asDisabled())
+                            .setComponents(ActionRow.of(
+                                    Button.of(ButtonStyle.SECONDARY, "previous_profile", "Previous").asDisabled(),
+                                    Button.of(ButtonStyle.SECONDARY, "next_profile", "Next").asDisabled())
+                            )
                             .queue();
                     event.getJDA().removeEventListener(paginatorListener[0]);
                 }

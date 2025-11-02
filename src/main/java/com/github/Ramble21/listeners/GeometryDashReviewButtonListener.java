@@ -33,7 +33,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
             return;
         }
 
-        if (Objects.equals(buttonEvent.getComponent().getId(), "acceptButtonGD")){
+        if (Objects.equals(buttonEvent.getComponentId(), "acceptButtonGD")){
             buttonEvent.getJDA().removeEventListener(this);
             System.out.println("Received button: acceptButtonGD");
             GDDatabase.acceptRecord(record.submitterID(), record.levelID());
@@ -54,7 +54,7 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
             buttonEvent.getJDA().addEventListener(geometryDashReviewButtonListener);
             buttonEvent.deferEdit().queue();
         }
-        else if (Objects.equals(buttonEvent.getComponent().getId(), "rejectButton")){
+        else if (Objects.equals(buttonEvent.getComponentId(), "rejectButton")){
             buttonEvent.getJDA().removeEventListener(this);
             System.out.println("Received button: acceptButtonGD");
             GDDatabase.deleteRecord(record.submitterID(), record.levelID());

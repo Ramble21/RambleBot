@@ -11,9 +11,11 @@ import java.util.ArrayList;
 public class GDDatabase {
     private static final String local_url = Dotenv.configure().load().get("LOCAL_POSTGRES_URL");
     private static final String local_password = Dotenv.configure().load().get("LOCAL_POSTGRES_PW");
-    private static final String user = "postgres";
+    private static final String local_user = Dotenv.configure().load().get("LOCAL_POSTGRES_USER");
     private static final String prod_url = Dotenv.configure().load().get("PROD_POSTGRES_URL");
     private static final String prod_password = Dotenv.configure().load().get("PROD_POSTGRES_PW");
+    private static final String prod_user = Dotenv.configure().load().get("PROD_POSTGRES_USER");
+
 
     public static GDLevel getLevel(long id) {
         String queryTemp =
@@ -24,6 +26,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setLong(1, id);
@@ -59,6 +62,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setString(1, name);
@@ -95,6 +99,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setString(1, name);
@@ -132,6 +137,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setLong(1, levelID);
@@ -178,6 +184,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         ArrayList<GDLevel> levels = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
@@ -218,6 +225,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         ArrayList<GDRecord> records = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
@@ -263,6 +271,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         ArrayList<GDRecord> records = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
@@ -320,7 +329,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
-
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
 
             try (PreparedStatement checkStmt = conn.prepareStatement(checkRecordQuery)) {
@@ -370,6 +379,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setLong(1, submitterID);
@@ -395,6 +405,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setString(1, status);
@@ -413,6 +424,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(membersQuery)) {
             stmt.setLong(1, member.getIdLong());
@@ -464,6 +476,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setLong(1, submitterID);
@@ -484,6 +497,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setLong(1, submitterID);
@@ -504,6 +518,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
             stmt.setInt(1, biasLevel);
@@ -530,7 +545,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
-
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
             ResultSet rs = selectStmt.executeQuery();
@@ -575,6 +590,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         ArrayList<GDRecord> records = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
@@ -662,6 +678,7 @@ public class GDDatabase {
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
         try (Connection conn = DriverManager.getConnection(url, user, password);
             Statement stmt = conn.createStatement()) {
             stmt.execute(databaseCreator);
