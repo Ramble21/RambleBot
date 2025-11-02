@@ -51,12 +51,12 @@ public class GDDatabase {
 
     public static GDLevel getLevelFromNameAuthor(String name, String author) {
         String queryTemp =
-                """
-                SELECT *
-                FROM levels
-                WHERE name = ?
-                    AND author = ?;
-                """;
+            """
+            SELECT *
+            FROM levels
+            WHERE name ILIKE ?
+                AND author ILIKE ?
+            """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
         try (Connection conn = DriverManager.getConnection(url, user, password);
@@ -87,12 +87,12 @@ public class GDDatabase {
 
     public static GDLevel getLevelFromNameDiff(String name, String difficulty) {
         String queryTemp =
-                """
-                SELECT *
-                FROM levels
-                WHERE name = ?
-                    AND difficulty = ?;
-                """;
+            """
+            SELECT *
+            FROM levels
+            WHERE name ILIKE ?
+                AND difficulty ILIKE ?
+            """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
         try (Connection conn = DriverManager.getConnection(url, user, password);

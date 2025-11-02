@@ -34,13 +34,13 @@ public class GeometryDashRecordEdit implements Command {
 
         GDLevel level = GDDatabase.getLevelFromNameAuthor(name, creator);
         if (level == null) {
-            event.reply("This completion does not exist! (Names and creators are case sensitive!)").setEphemeral(true).queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
 
         GDRecord record = GDDatabase.getRecord(level.getId(), submitter.getIdLong());
         if (record == null) {
-            event.reply("This completion does not exist! (Names and creators are case sensitive!)").setEphemeral(true).queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
 

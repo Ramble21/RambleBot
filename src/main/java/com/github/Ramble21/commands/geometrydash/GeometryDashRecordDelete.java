@@ -31,7 +31,7 @@ public class GeometryDashRecordDelete implements Command {
         }
 
         if (level == null) {
-            event.reply("This completion does not exist! (Names and creators are case sensitive!)").setEphemeral(true).queue();
+            event.reply("This completion does not exist!").setEphemeral(true).queue();
             return;
         }
         GDDatabase.deleteRecord(submitter.getIdLong(), level.getId());

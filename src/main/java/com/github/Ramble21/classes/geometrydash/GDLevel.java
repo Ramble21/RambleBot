@@ -16,7 +16,7 @@ public class GDLevel {
     private int stars;
     private String author;
     private String difficulty;
-    private final int gddlTier;
+    private int gddlTier;
     private boolean platformer;
     private String rating; // feature epic etc., just a star rate is ""
 
@@ -58,18 +58,20 @@ public class GDLevel {
                 this.stars = -1;
             }
         }
-        GDDifficulty gdD = fetchGDDLRating(id);
-        if (gdD == null) {
-            this.difficulty = null;
-            this.gddlTier = 0;
-            this.name = name;
+        if (this.stars != -1) {
+            GDDifficulty gdD = fetchGDDLRating(id);
+            if (gdD == null) {
+                this.difficulty = null;
+                this.gddlTier = 0;
+                this.name = name;
+            }
+            else {
+                this.difficulty = gdD.difficulty();
+                this.gddlTier = gdD.gddlTier();
+                this.name = gdD.name();
+            }
+            System.out.println(this);
         }
-        else {
-            this.difficulty = gdD.difficulty();
-            this.gddlTier = gdD.gddlTier();
-            this.name = gdD.name();
-        }
-        System.out.println(this);
     }
 
     public GDLevel(long levelID){
@@ -95,16 +97,18 @@ public class GDLevel {
                 this.stars = -1;
             }
         }
-        GDDifficulty gdD = fetchGDDLRating(id);
-        if (gdD == null) {
-            this.difficulty = null;
-            this.gddlTier = 0;
+        if (this.stars != -1) {
+            GDDifficulty gdD = fetchGDDLRating(id);
+            if (gdD == null) {
+                this.difficulty = null;
+                this.gddlTier = 0;
+            }
+            else {
+                this.difficulty = gdD.difficulty();
+                this.gddlTier = gdD.gddlTier();
+            }
+            System.out.println(this);
         }
-        else {
-            this.difficulty = gdD.difficulty();
-            this.gddlTier = gdD.gddlTier();
-        }
-        System.out.println(this);
     }
 
     public GDLevel(String name, long id, int stars, String author,
@@ -289,7 +293,6 @@ public class GDLevel {
                 }
                 else if (responseCode == 404) {
                     System.out.println("Level rating not found (404) for level ID: " + levelId);
-                    return null;
                 }
                 else {
                     System.out.println("Failed to fetch rating. Response code: " + responseCode);

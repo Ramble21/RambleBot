@@ -9,14 +9,14 @@ WHERE id = ?;
 -- getLevelFromNameAuthor
 SELECT *
 FROM levels
-WHERE name = ?
-    AND author = ?;
+WHERE name ILIKE ?
+    AND author ILIKE ?
 
 -- getLevelFromNameDiff
 SELECT *
 FROM levels
-WHERE name = ?
-    AND difficulty = ?;
+WHERE name ILIKE ?
+    AND difficulty ILIKE ?
 
 -- getRecord
 SELECT r.*, l.*

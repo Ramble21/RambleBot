@@ -16,11 +16,12 @@ import java.util.Objects;
 /**
  * @param bySearch true if searching by name/diff, false if by id
  */
-public record GeometryDashRecord(boolean bySearch) implements Command {
+public record GeometryDashRecordSubmit(boolean bySearch) implements Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) throws ErrorResponseException {
 
+        event.deferReply(false).queue();
         long submitterID = Objects.requireNonNull(event.getMember()).getIdLong();
         int attempts = Objects.requireNonNull(event.getOption("attempts")).getAsInt();
         if (attempts < 10) {
@@ -33,13 +34,23 @@ public record GeometryDashRecord(boolean bySearch) implements Command {
             String name = Objects.requireNonNull(event.getOption("name")).getAsString();
             String difficulty = Objects.requireNonNull(event.getOption("difficulty")).getAsString();
             level = GDLevel.fromNameAndDiff(name, difficulty);
-        } else {
+            if (level.getStars() == -1) {
+                event.getHook().sendMessage("This level does not exist!").setEphemeral(true).queue();
+
+                return;
+            }
+        }
+        else {
             long id = Objects.requireNonNull(event.getOption("id")).getAsLong();
             if (id <= -1) {
-                event.reply("Invalid level ID!").setEphemeral(true).queue();
+                event.getHook().sendMessage("Invalid level ID!").setEphemeral(true).queue();
                 return;
             }
             level = GDLevel.fromID(id);
+            if (level.getStars() == -1) {
+                event.getHook().sendMessage("Invalid level ID!").setEphemeral(true).queue();
+                return;
+            }
         }
 
         String memberStatus = GDDatabase.getMemberStatus(event.getMember());
@@ -49,11 +60,11 @@ public record GeometryDashRecord(boolean bySearch) implements Command {
         boolean autoAccepted = (level.getDifficultyAsInt() < 10 && !memberIsBlacklisted) || memberIsModerator;
         boolean recordAlrExists = !GDDatabase.addRecord(submitterID, attempts, 0, autoAccepted, level);
         if (recordAlrExists) {
-            event.reply("You have already submitted this level!").setEphemeral(true).queue();
+            event.getHook().sendMessage("You have already submitted this level!").setEphemeral(true).queue();
             return;
         }
         else if (level.getStars() < 10) {
-            event.reply("Only rated demon levels are supported, double-check your ID or try another level.").setEphemeral(true).queue();
+            event.getHook().sendMessage("Only rated demon levels are supported, double-check your ID or try another level.").setEphemeral(true).queue();
             return;
         }
 
@@ -67,7 +78,7 @@ public record GeometryDashRecord(boolean bySearch) implements Command {
         else {
             embed = generateEmbed(level, attempts);
         }
-        event.getInteraction().replyEmbeds(embed.build()).queue();
+        event.getHook().editOriginalEmbeds(embed.build()).queue();
     }
 
     public EmbedBuilder generateEmbed(GDLevel level, int attempts) {

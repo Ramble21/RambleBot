@@ -1,6 +1,6 @@
 package com.github.Ramble21.command;
 
-import com.github.Ramble21.commands.geometrydash.GeometryDashRecord;
+import com.github.Ramble21.commands.geometrydash.GeometryDashRecordSubmit;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;
@@ -10,8 +10,8 @@ public class GeometryDashSubmitManager implements Command {
     private final HashMap<String, Command> subcommands = new HashMap<>();
 
     public GeometryDashSubmitManager() {
-        subcommands.put("id", new GeometryDashRecord(false));
-        subcommands.put("search", new GeometryDashRecord(true));
+        subcommands.put("id", new GeometryDashRecordSubmit(false));
+        subcommands.put("search", new GeometryDashRecordSubmit(true));
     }
 
     @Override
