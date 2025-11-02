@@ -265,7 +265,10 @@ public class GDDatabase {
 
         String checkRecordQuery =
             """
-            SELECT 1 FROM records WHERE submitter_id = ? AND level_id = ?;
+            SELECT 1
+            FROM records
+            WHERE submitter_id = ?
+                AND level_id = ?;
             """;
         String insertLevelQuery =
             """
@@ -513,7 +516,7 @@ public class GDDatabase {
             JOIN members m ON r.submitter_id = m.user_id
             JOIN guild_members gm ON r.submitter_id = gm.user_id
             WHERE gm.guild_id = ?
-              AND r.record_accepted = FALSE;
+                AND r.record_accepted = FALSE;
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;

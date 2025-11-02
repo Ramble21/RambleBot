@@ -78,6 +78,9 @@ WHERE table_type = 'BASE TABLE';]]></console>
     <last-used-operator value="EQUAL" />
     <filters />
   </component>
+  <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
+    <recently-used-interfaces />
+  </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
       <connection source-id="" id="4f4279af-51db-42d8-8b75-35b460776954" active="true" signed="true">
