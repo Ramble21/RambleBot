@@ -13,82 +13,106 @@ import java.awt.*;
 import java.util.Objects;
 
 
-public class GeometryDashRecord implements Command {
-
+/**
+ * @param bySearch true if searching by name/diff, false if by id
+ */
+public record GeometryDashRecord(boolean bySearch) implements Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) throws ErrorResponseException {
-        long id = Objects.requireNonNull(event.getOption("id")).getAsLong();
+
         long submitterID = Objects.requireNonNull(event.getMember()).getIdLong();
         int attempts = Objects.requireNonNull(event.getOption("attempts")).getAsInt();
-
-        if (id <= -1){
-            event.reply("Invalid level ID!").setEphemeral(true).queue();
-            return;
-        }
-        else if (attempts < 10){
+        if (attempts < 10) {
             event.reply("Nice try, but I know you spent more than " + attempts + " attempts beating that.").setEphemeral(true).queue();
             return;
         }
 
-        boolean memberIsBlacklisted = GDDatabase.memberIsBlacklisted(event.getMember());
-        GDLevel level = GDLevel.fromID(id);
-        boolean autoAccepted = level.getDifficultyAsInt() > 1 && !memberIsBlacklisted;
+        GDLevel level;
+        if (bySearch) {
+            String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+            String difficulty = Objects.requireNonNull(event.getOption("difficulty")).getAsString();
+            level = GDLevel.fromNameAndDiff(name, difficulty);
+        } else {
+            long id = Objects.requireNonNull(event.getOption("id")).getAsLong();
+            if (id <= -1) {
+                event.reply("Invalid level ID!").setEphemeral(true).queue();
+                return;
+            }
+            level = GDLevel.fromID(id);
+        }
+
+        String memberStatus = GDDatabase.getMemberStatus(event.getMember());
+        boolean memberIsBlacklisted = memberStatus.equals("blacklisted");
+        boolean memberIsModerator = memberStatus.equals("moderator");
+
+        boolean autoAccepted = (level.getDifficultyAsInt() < 10 && !memberIsBlacklisted) || memberIsModerator;
         boolean recordAlrExists = !GDDatabase.addRecord(submitterID, attempts, 0, autoAccepted, level);
         if (recordAlrExists) {
             event.reply("You have already submitted this level!").setEphemeral(true).queue();
             return;
         }
-        else if (level.getStars() < 10){
+        else if (level.getStars() < 10) {
             event.reply("Only rated demon levels are supported, double-check your ID or try another level.").setEphemeral(true).queue();
             return;
         }
 
         EmbedBuilder embed;
-        if (level.getDifficulty().equals("Extreme Demon")) {
+        if (level.getDifficulty().equals("Extreme Demon") && !memberIsModerator) {
             embed = generateExtremeEmbed(level, attempts);
         }
         else if (memberIsBlacklisted) {
             embed = generateBlacklistEmbed(level, attempts);
         }
-        else{
+        else {
             embed = generateEmbed(level, attempts);
         }
         event.getInteraction().replyEmbeds(embed.build()).queue();
     }
-    public EmbedBuilder generateEmbed(GDLevel level, int attempts){
+
+    public EmbedBuilder generateEmbed(GDLevel level, int attempts) {
         String emoji = Ramble21.getEmojiName(level.getDifficulty());
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Completion successfully added to " + RambleBot.your(false) + " profile!");
         embed.setColor(Color.green);
         embed.setDescription(
                 "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
+                "<:creatorpoints:1434551362456129546> Creator: **" + level.getAuthor() + "**\n" +
                 emoji + " Difficulty: **" + level.getDifficulty() + "**\n" +
-                "<:length:1307507840864227468> Attempts: **" + attempts + "**\n");
+                "<:length:1307507840864227468> Attempts: **" + attempts + "**\n"
+        );
         return embed;
     }
-    public EmbedBuilder generateExtremeEmbed(GDLevel level, int attempts){
+
+    public EmbedBuilder generateExtremeEmbed(GDLevel level, int attempts) {
         EmbedBuilder embed = new EmbedBuilder();
+        String emoji = Ramble21.getEmojiName(level.getDifficulty());
         embed.setTitle("Completion successfully added to moderator queue!");
         embed.setColor(RambleBot.killbotEnjoyer);
         embed.setDescription(
-                "Extreme Demon completions have to be approved by a server moderator before getting added to " + RambleBot.your(false) + " profile. \n\n" +
-                        "Submission: \n" +
-                        "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
-                        "<:star:1307518203122942024> Difficulty: **" + level.getDifficulty() + "**\n" +
-                        "<:length:1307507840864227468> Attempts: **" + attempts + "**\n");
+                "Extreme Demon completions have to be approved by a RambleBot moderator before getting added to " + RambleBot.your(false) + " profile. \n\n" +
+                "Submission: \n" +
+                "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
+                "<:creatorpoints:1434551362456129546> Creator: **" + level.getAuthor() + "**\n" +
+                emoji + " Difficulty: **" + level.getDifficulty() + "**\n" +
+                "<:length:1307507840864227468> Attempts: **" + attempts + "**\n"
+        );
         return embed;
     }
-    public EmbedBuilder generateBlacklistEmbed(GDLevel level, int attempts){
+
+    public EmbedBuilder generateBlacklistEmbed(GDLevel level, int attempts) {
         EmbedBuilder embed = new EmbedBuilder();
+        String emoji = Ramble21.getEmojiName(level.getDifficulty());
         embed.setTitle("Completion successfully added to moderator queue!");
         embed.setColor(RambleBot.killbotEnjoyer);
         embed.setDescription(
-                "Due to being blacklisted, all of " + RambleBot.your(false) + " submissions must be approved by a server moderator before getting added to your profile. \n\n" +
-                        "Submission: \n" +
-                        "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
-                        "<:star:1307518203122942024> Difficulty: **" + level.getDifficulty() + "**\n" +
-                        "<:length:1307507840864227468> Attempts: **" + attempts + "**\n");
+                "Due to being blacklisted, all of " + RambleBot.your(false) + " submissions must be approved by a RambleBot moderator before getting added to your profile. \n\n" +
+                "Submission: \n" +
+                "<:play:1307500271911309322> Name: **" + level.getName() + "**\n" +
+                "<:creatorpoints:1434551362456129546> Creator: **" + level.getAuthor() + "**\n" +
+                emoji + " Difficulty: **" + level.getDifficulty() + "**\n" +
+                "<:length:1307507840864227468> Attempts: **" + attempts + "**\n"
+        );
         return embed;
     }
 }

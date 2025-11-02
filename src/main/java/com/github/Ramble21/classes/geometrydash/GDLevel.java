@@ -1,8 +1,6 @@
 package com.github.Ramble21.classes.geometrydash;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +26,50 @@ public class GDLevel {
             return databaseLevel;
         }
         return new GDLevel(levelID);
+    }
+    public static GDLevel fromNameAndDiff(String name, String difficulty) {
+        GDLevel databaseLevel = GDDatabase.getLevelFromNameDiff(name, difficulty);
+        if (databaseLevel != null) {
+            return databaseLevel;
+        }
+        return new GDLevel(name, difficulty);
+    }
+
+    public GDLevel(String name, String difficulty) {
+        name = name.toLowerCase();
+        if (name.equals("clubstep") || name.equals("theory of everything 2") || name.equals("deadlocked")) {
+            id = switch (name) {
+                case "clubstep" -> 1;
+                case "theory of everything 2" -> 2;
+                case "deadlocked" -> 3;
+                default -> throw new RuntimeException(name + " is not a RobTop level");
+            };
+            stars = 10;
+            author = "RobTop";
+            platformer = false;
+            rating = "featured";
+        }
+        else {
+            String jsonResponse = fetchAPIResponseByName(name, difficulty);
+            if (jsonResponse != null){
+                parseJson(jsonResponse);
+            }
+            else {
+                this.stars = -1;
+            }
+        }
+        GDDifficulty gdD = fetchGDDLRating(id);
+        if (gdD == null) {
+            this.difficulty = null;
+            this.gddlTier = 0;
+            this.name = name;
+        }
+        else {
+            this.difficulty = gdD.difficulty();
+            this.gddlTier = gdD.gddlTier();
+            this.name = gdD.name();
+        }
+        System.out.println(this);
     }
 
     public GDLevel(long levelID){
@@ -96,12 +138,25 @@ public class GDLevel {
         if (difficulty == null)
             throw new NullPointerException(toString());
         return switch (difficulty){
-            case "Non-Demon" -> 6;
-            case "Easy Demon" -> 5;
-            case "Medium Demon" -> 4;
-            case "Hard Demon" -> 3;
-            case "Insane Demon" -> 2;
-            case "Extreme Demon" -> 1;
+            // ints match up with GDBrowser API internal nums
+            case "Non-Demon" -> -1;
+            case "Easy Demon" -> 6;
+            case "Medium Demon" -> 7;
+            case "Hard Demon" -> 8;
+            case "Insane Demon" -> 9;
+            case "Extreme Demon" -> 10;
+            default -> throw new IllegalStateException("Unexpected value: " + difficulty);
+        };
+    }
+    public static int getDifficultyAsInt(String difficulty){
+        return switch (difficulty){
+            // ints match up with GDBrowser API internal nums
+            case "Non-Demon" -> -1;
+            case "Easy Demon" -> 6;
+            case "Medium Demon" -> 7;
+            case "Hard Demon" -> 8;
+            case "Insane Demon" -> 9;
+            case "Extreme Demon" -> 10;
             default -> throw new IllegalStateException("Unexpected value: " + difficulty);
         };
     }
@@ -192,9 +247,14 @@ public class GDLevel {
                     }
                     try {
                         JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
-                        if (json.has("Rating") && json.has("Meta") && json.getAsJsonObject("Meta").has("Difficulty")) {
-                            double rating = json.get("Rating").getAsDouble();
+                        if (json.has("Rating") && json.has("Meta")) {
+                            double rating = 0;
+                            JsonElement ratingElement = json.get("Rating");
+                            if (ratingElement != null && !ratingElement.isJsonNull()) {
+                                rating = json.get("Rating").getAsDouble();
+                            }
                             int gddlTier = (int) Math.round(rating);
+                            String name = json.getAsJsonObject("Meta").get("Name").getAsString();
                             String difficulty = json.getAsJsonObject("Meta").get("Difficulty").getAsString();
                             difficulty = switch (difficulty) {
                                 case "Official", "Easy" -> "Easy Demon";
@@ -204,7 +264,7 @@ public class GDLevel {
                                 case "Extreme" -> "Extreme Demon";
                                 default -> "Non-Demon";
                             };
-                            return new GDDifficulty(difficulty, gddlTier);
+                            return new GDDifficulty(name, difficulty, gddlTier);
                         }
                         else {
                             System.out.println("No Rating and/or Difficulty field found in response");
@@ -325,6 +385,101 @@ public class GDLevel {
                 }
                 else {
                     System.out.println("GET request failed for level " + levelId + ". Response code: " + responseCode);
+                    return null;
+                }
+            }
+            catch (SocketTimeoutException e) {
+                System.out.println("Request timed out. Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
+                try {
+                    Thread.sleep(retryDelayMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
+            }
+            catch (IOException e) {
+                System.out.println("Network error: " + e.getMessage() + ". Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
+                try {
+                    Thread.sleep(retryDelayMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
+            }
+            catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Request interrupted");
+                return null;
+            }
+            catch (Exception e) {
+                System.out.println("Unexpected error: " + e.getMessage());
+                return null;
+            }
+            finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }
+        System.out.println("Max retries exceeded");
+        return null;
+    }
+
+    public static String fetchAPIResponseByName(String name, String difficulty) {
+        int maxRetries = 4;
+        int retryDelayMs = 800;
+        int connectionTimeoutMs = 5000;
+        int readTimeoutMs = 10000;
+
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            HttpURLConnection connection = null;
+            try {
+                String apiUrl = "https://gdbrowser.com/api/search/" + name + "?diff=" + getDifficultyAsInt(difficulty);
+                URL url = new URL(apiUrl);
+
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(connectionTimeoutMs);
+                connection.setReadTimeout(readTimeoutMs);
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream())
+                    );
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    JsonArray levelsArray = JsonParser.parseString(response.toString()).getAsJsonArray();
+                    if (!levelsArray.isEmpty()) {
+                        JsonObject firstLevel = levelsArray.get(0).getAsJsonObject();
+                        return firstLevel.toString();
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                else if (responseCode == 429) { // Rate limited
+                    System.out.println("Rate limited on gdbrowser.com. Retrying in " + retryDelayMs + "ms... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
+                    Thread.sleep(retryDelayMs);
+                    retryDelayMs *= 2;
+                }
+                else if (responseCode >= 500 && responseCode < 600) { // Server error
+                    System.out.println("Server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
+                    Thread.sleep(retryDelayMs);
+                }
+                else if (responseCode == 404) { // 404
+                    System.out.println("Level " + name + " not found (404)");
+                    return null;
+                }
+                else {
+                    System.out.println("GET request failed for level " + name + ". Response code: " + responseCode);
                     return null;
                 }
             }

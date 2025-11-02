@@ -12,6 +12,12 @@ FROM levels
 WHERE name = ?
     AND author = ?;
 
+-- getLevelFromNameDiff
+SELECT *
+FROM levels
+WHERE name = ?
+    AND difficulty = ?;
+
 -- getRecord
 SELECT r.*, l.*
 FROM records r
@@ -50,10 +56,15 @@ WHERE r.submitter_id = ?
     INSERT INTO records (submitter_id, attempts, bias_level, record_accepted, level_id)
         VALUES (?, ?, ?, ?, ?);
 
--- memberIsBlacklisted
-    SELECT is_blacklisted
-        FROM members
-        WHERE user_id = ?;
+-- getMemberStatus
+SELECT member_status
+    FROM members
+    WHERE user_id = ?;
+
+-- changeMemberStatus
+UPDATE members
+    SET member_status = ?
+    WHERE user_id = ?
 
 -- addMemberToDatabase
     -- members

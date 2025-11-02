@@ -11,7 +11,7 @@ public class GeometryDashManager implements Command {
     private final Map<String, Command> subcommands = new HashMap<>();
 
     public GeometryDashManager() {
-        subcommands.put("submitrecord", new GeometryDashRecord());
+        subcommands.put("submitrecord", new GeometryDashSubmitManager());
         subcommands.put("editrecord", new GeometryDashRecordEdit());
         subcommands.put("deleterecord", new GeometryDashRecordDelete());
         subcommands.put("profile", new GeometryDashProfile());
@@ -24,9 +24,18 @@ public class GeometryDashManager implements Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) throws IOException {
-        String subcommandName = event.getSubcommandName();
+        String group = event.getSubcommandGroup(); // for nested subcommands
+        String sub = event.getSubcommandName(); // for regular subcommands
 
-        Command subcommand = subcommands.get(subcommandName);
+        if (group != null) {
+            Command groupHandler = subcommands.get(group);
+            if (groupHandler != null) {
+                groupHandler.execute(event);
+                return;
+            }
+        }
+
+        Command subcommand = subcommands.get(sub);
         if (subcommand != null) {
             subcommand.execute(event);
         } else {

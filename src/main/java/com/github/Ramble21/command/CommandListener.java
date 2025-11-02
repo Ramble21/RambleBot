@@ -6,10 +6,7 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -83,50 +80,66 @@ public class CommandListener extends ListenerAdapter {
 
         commandData.add(
                 Commands.slash("gd", "Geometry Dash-related commands")
+                        .addSubcommandGroups(
+                                new SubcommandGroupData("submitrecord", "Submit Geometry Dash completion record")
+                                        .addSubcommands(
+                                                new SubcommandData("id", "Submit record by level ID")
+                                                        .addOptions(
+                                                                new OptionData(OptionType.INTEGER, "id", "Level ID to submit record of", true),
+                                                                new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", true)
+                                                        ),
+                                                new SubcommandData("search", "Submit record by level name and difficulty")
+                                                        .addOptions(
+                                                                new OptionData(OptionType.STRING, "name", "Level name", true),
+                                                                new OptionData(OptionType.STRING, "difficulty", "Difficulty of the level being submitted", true)
+                                                                        .addChoice("Official Demon", "Easy Demon")
+                                                                        .addChoice("Easy Demon", "Easy Demon")
+                                                                        .addChoice("Medium Demon", "Medium Demon")
+                                                                        .addChoice("Hard Demon", "Hard Demon")
+                                                                        .addChoice("Insane Demon", "Insane Demon")
+                                                                        .addChoice("Extreme Demon", "Extreme Demon")
+                                                                        .setRequired(true),
+                                                                new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", true)
+                                                        )
+                                        )
+                        )
                         .addSubcommands(
-                                new SubcommandData("submitrecord", "Submit Geometry Dash completion record")
+                                new SubcommandData("editrecord", "Edit a previously submitted Geometry Dash completion record")
                                         .addOptions(
-                                                (new OptionData(OptionType.INTEGER, "id", "Level ID to submit record of", true)),
-                                                (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete")
-                                                        .setRequired(true))
-                                        ),
-                                                new SubcommandData("editrecord", "Edit a previously submitted Geometry Dash completion record")
-                                        .addOptions(
-                                                (new OptionData(OptionType.STRING, "name", "Name of the level to edit record of", true)),
-                                                (new OptionData(OptionType.STRING, "creator", "Creator of the level to edit record of", true)),
-                                                (new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", false)),
-                                                (new OptionData(OptionType.STRING, "difficulty", "Difficulty of the level")
+                                                new OptionData(OptionType.STRING, "name", "Name of the level to edit record of", true),
+                                                new OptionData(OptionType.STRING, "creator", "Creator of the level to edit record of", true),
+                                                new OptionData(OptionType.INTEGER, "attempts", "Attempts it took you to complete", false),
+                                                new OptionData(OptionType.STRING, "difficulty", "Difficulty of the level")
                                                         .addChoice("Underrated", "1")
                                                         .addChoice("Overrated", "-1")
-                                                        .setRequired(false)),
-                                                (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being edited", false))
+                                                        .setRequired(false),
+                                                new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being edited", false)
                                         ),
-                                                new SubcommandData("deleterecord", "Delete a previously submitted Geometry Dash completion record")
+                                new SubcommandData("deleterecord", "Delete a previously submitted Geometry Dash completion record")
                                         .addOptions(
-                                                (new OptionData(OptionType.STRING, "name", "Name of the level to delete", true)),
-                                                (new OptionData(OptionType.STRING, "creator", "Creator of the level to delete", true)),
-                                                (new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being deleted", false))
+                                                new OptionData(OptionType.STRING, "name", "Name of the level to delete", true),
+                                                new OptionData(OptionType.STRING, "creator", "Creator of the level to delete", true),
+                                                new OptionData(OptionType.USER, "member", "[Moderator only] Member whose completion is being deleted", false)
                                         ),
-
-                                                new SubcommandData("profile", "View hardest levels beaten by a server member")
+                                new SubcommandData("profile", "View hardest levels beaten by a server member")
                                         .addOptions(
-                                                (new OptionData(OptionType.USER, "member", "Member to get profile of", false)),
-                                                (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))
+                                                new OptionData(OptionType.USER, "member", "Member to get profile of", false),
+                                                new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false)
                                         ),
-                                                new SubcommandData("stats", "View stats about a server member")
+                                new SubcommandData("stats", "View stats about a server member")
                                         .addOptions(
-                                                (new OptionData(OptionType.USER, "member", "Member to get stats of", false))
+                                                new OptionData(OptionType.USER, "member", "Member to get stats of", false)
                                         ),
-                                                new SubcommandData("leaderboard", "View hardest levels beaten in the entire server")
+                                new SubcommandData("leaderboard", "View hardest levels beaten in the entire server")
                                         .addOptions(
-                                                (new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false))
+                                                new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false)
                                         ),
-                                                new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions"),
-                                                new SubcommandData("refresh", "Refresh in-game and GDDL ratings for all submitted levels"),
-                                                new SubcommandData("level", "View statistics about a specific level in this server")
+                                new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions"),
+                                new SubcommandData("refresh", "Refresh in-game and GDDL ratings for all submitted levels"),
+                                new SubcommandData("level", "View statistics about a specific level in this server")
                                         .addOptions(
-                                                (new OptionData(OptionType.STRING, "name", "Name of the level in question", true)),
-                                                (new OptionData(OptionType.STRING, "creator", "Creator of the level in question", true))
+                                                new OptionData(OptionType.STRING, "name", "Name of the level in question", true),
+                                                new OptionData(OptionType.STRING, "creator", "Creator of the level in question", true)
                                         )
                         )
         );

@@ -6,8 +6,8 @@ public class GDMisc {
     public static void sortUserRecordsByDiff(ArrayList<GDRecord> records) {
         records.sort(
                 Comparator
-                        .comparingInt((GDRecord r) -> r.level().getDifficultyAsInt())
-                        .thenComparing((GDRecord r) -> r.level().getGddlTier(), Comparator.reverseOrder())
+                        .comparingInt((GDRecord r) -> -r.level().getDifficultyAsInt())
+                        .thenComparing((GDRecord r) -> -r.level().getGddlTier())
                         .thenComparing(GDRecord::biasLevel, Comparator.reverseOrder())
                         .thenComparing(GDRecord::attempts, Comparator.reverseOrder())
         );
@@ -16,7 +16,7 @@ public class GDMisc {
     public static void sortGuildLevelsByDiff(ArrayList<GDLevel> levels, HashMap<GDLevel, Integer> levelsToAvgAttempts) {
         levels.sort(
                 Comparator
-                        .comparingInt(GDLevel::getDifficultyAsInt)
+                        .comparingInt((GDLevel l) -> -l.getDifficultyAsInt())
                         .thenComparing(GDLevel::getGddlTier, Comparator.reverseOrder())
                         .thenComparing(levelsToAvgAttempts::get, Comparator.reverseOrder())
         );

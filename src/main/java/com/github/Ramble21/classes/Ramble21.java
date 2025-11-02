@@ -1,12 +1,10 @@
 package com.github.Ramble21.classes;
 
-import com.github.Ramble21.RambleBot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
 import io.github.cdimascio.dotenv.Dotenv;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
@@ -16,15 +14,6 @@ import java.util.*;
 
 public class Ramble21 {
 
-    public static ArrayList<String> getTrustedUserIDs() {
-        String url = "trusted_users.txt";
-        final var dictInputStream = RambleBot.class.getResourceAsStream(url);
-        assert dictInputStream != null;
-        ArrayList<String> temp = new ArrayList<>(new BufferedReader(new InputStreamReader(dictInputStream)).lines().toList());
-        temp.replaceAll(s -> s.substring(0, s.indexOf("/") - 1));
-        System.out.println(temp);
-        return temp;
-    }
     public static boolean isBrainrotServer(Guild guild){
         final Dotenv config = Dotenv.configure().load();
         String id = config.get("BRAINROT_ID");
@@ -72,9 +61,6 @@ public class Ramble21 {
         };
     }
 
-    public static boolean memberNotTrustedUser(Member member){
-        return !getTrustedUserIDs().contains(member.getId());
-    }
     public static boolean isBotOwner(User u) {
         return u.getId().equals("739978476651544607") || u.getId().equals("786006212415979570");
     }

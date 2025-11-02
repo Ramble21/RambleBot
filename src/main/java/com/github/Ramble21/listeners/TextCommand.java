@@ -2,6 +2,7 @@ package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Diacritics;
+import com.github.Ramble21.classes.geometrydash.GDDatabase;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
@@ -30,7 +31,52 @@ public class TextCommand extends ListenerAdapter {
         if (message.startsWith("r!")) {
             if (RambleBot.maintenanceMode() && !isBotOwner(user)) {
                 event.getChannel().sendMessage("Cannot run command, bot is currently in maintenance. Sorry!").queue();
+                return;
             }
+        }
+        if (message.equals("r!reset_database") && isBotOwner(user)) {
+            GDDatabase.createDatabase();
+            event.getChannel().sendMessage("Database reset successfully!").queue();
+        }
+
+        if (message.startsWith("r!mod") && isBotOwner(user)) {
+            String[] parts = message.split("\\s+");
+            if (parts.length < 2) {
+                event.getChannel().sendMessage("You forgot to send a User ID bro").queue();
+            }
+            long memberID = Long.parseLong(parts[1]);
+            GDDatabase.changeMemberStatus(memberID, "moderator");
+            event.getChannel().sendMessage("<@" + memberID + "> has been successfully added as a RambleBot moderator!").queue();
+        }
+
+        if (message.startsWith("r!blacklist") && isBotOwner(user)) {
+            String[] parts = message.split("\\s+");
+            if (parts.length < 2) {
+                event.getChannel().sendMessage("You forgot to send a User ID bro").queue();
+            }
+            long memberID = Long.parseLong(parts[1]);
+            GDDatabase.changeMemberStatus(memberID, "blacklisted");
+            event.getChannel().sendMessage("<@" + memberID + "> has been successfully blacklisted.").queue();
+        }
+
+        if (message.startsWith("r!unblacklist") && isBotOwner(user)) {
+            String[] parts = message.split("\\s+");
+            if (parts.length < 2) {
+                event.getChannel().sendMessage("You forgot to send a User ID bro").queue();
+            }
+            long memberID = Long.parseLong(parts[1]);
+            GDDatabase.changeMemberStatus(memberID, "member");
+            event.getChannel().sendMessage("<@" + memberID + "> has been successfully removed from the blacklist.").queue();
+        }
+
+        if (message.startsWith("r!unmod") && isBotOwner(user)) {
+            String[] parts = message.split("\\s+");
+            if (parts.length < 2) {
+                event.getChannel().sendMessage("You forgot to send a User ID bro").queue();
+            }
+            long memberID = Long.parseLong(parts[1]);
+            GDDatabase.changeMemberStatus(memberID, "member");
+            event.getChannel().sendMessage("<@" + memberID + "> has been successfully removed as a RambleBot moderator.").queue();
         }
 
         if (message.equals("r!ping")) {

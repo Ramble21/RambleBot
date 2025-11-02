@@ -85,6 +85,42 @@ public class GDDatabase {
         }
     }
 
+    public static GDLevel getLevelFromNameDiff(String name, String difficulty) {
+        String queryTemp =
+                """
+                SELECT *
+                FROM levels
+                WHERE name = ?
+                    AND difficulty = ?;
+                """;
+        String url = RambleBot.isRunningLocally() ? local_url : prod_url;
+        String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
+            stmt.setString(1, name);
+            stmt.setString(2, difficulty);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new GDLevel(
+                            rs.getString("name"),
+                            rs.getInt("id"),
+                            rs.getInt("stars"),
+                            rs.getString("author"),
+                            rs.getString("difficulty"),
+                            rs.getInt("gddl_tier"),
+                            rs.getBoolean("platformer"),
+                            rs.getString("rating")
+                    );
+                }
+                else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static GDRecord getRecord(long levelID, long submitterID) {
         String queryTemp =
             """
@@ -324,11 +360,11 @@ public class GDDatabase {
         }
     }
 
-    public static boolean memberIsBlacklisted(Member member) {
+    public static String getMemberStatus(Member member) {
         long submitterID = member.getIdLong();
         String queryTemp =
             """
-            SELECT is_blacklisted
+            SELECT member_status
             FROM members
             WHERE user_id = ?;
             """;
@@ -339,7 +375,7 @@ public class GDDatabase {
             stmt.setLong(1, submitterID);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getBoolean("is_blacklisted");
+                    return rs.getString("member_status");
                 }
             }
         } catch (SQLException e) {
@@ -347,7 +383,26 @@ public class GDDatabase {
         }
         // if code reaches here, member is not in the database, so add them
         addMemberToDatabase(member);
-        return false;
+        return "member";
+    }
+
+    public static void changeMemberStatus(long userID, String status) {
+        String queryTemp =
+            """
+            UPDATE members
+            SET member_status = ?
+            WHERE user_id = ?
+            """;
+        String url = RambleBot.isRunningLocally() ? local_url : prod_url;
+        String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+            PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
+            stmt.setString(1, status);
+            stmt.setLong(2, userID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void addMemberToDatabase(Member member) {
@@ -575,7 +630,7 @@ public class GDDatabase {
             CREATE TABLE members (
                 user_id BIGINT PRIMARY KEY,
                 username TEXT NOT NULL,
-                is_blacklisted BOOLEAN DEFAULT FALSE
+                member_status TEXT DEFAULT 'member'
             );
             
             CREATE TABLE guilds (

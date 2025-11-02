@@ -2,7 +2,6 @@ package com.github.Ramble21.listeners;
 
 import com.github.Ramble21.classes.geometrydash.GDDatabase;
 import com.github.Ramble21.classes.geometrydash.GDRecord;
-import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.commands.geometrydash.GeometryDashReview;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,9 +26,13 @@ public class GeometryDashReviewButtonListener extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent buttonEvent) {
         Guild guild = Objects.requireNonNull(buttonEvent.getGuild());
 
-        if (Ramble21.memberNotTrustedUser(Objects.requireNonNull(buttonEvent.getMember()))){
+        String memberStatus = GDDatabase.getMemberStatus(Objects.requireNonNull(buttonEvent.getMember()));
+        boolean memberIsModerator = memberStatus.equals("moderator");
+        if (!memberIsModerator) {
+            buttonEvent.reply("You do not have permission to run this command!").setEphemeral(true).queue();
             return;
         }
+
         if (Objects.equals(buttonEvent.getComponent().getId(), "acceptButtonGD")){
             buttonEvent.getJDA().removeEventListener(this);
             System.out.println("Received button: acceptButtonGD");

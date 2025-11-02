@@ -45,13 +45,13 @@ public class GeometryDashLeaderboard implements Command {
             embed.setTitle("Hardest Platformer Completions in Server " + guild.getName());
         }
         else {
-            embed.setTitle("Hardest Completions in Server " + guild.getName());
+            embed.setTitle("Hardest Classic Completions in Server " + guild.getName());
         }
 
         String description;
         boolean includeButtons = true;
         if (leaderboard.levels().isEmpty()) {
-            description = "There have been no completions submitted to this server yet!";
+            description = "There have been no " + (isPlatformer ? "platformer" : "classic") + " completions submitted to this server yet!";
             includeButtons = false;
         }
         else {

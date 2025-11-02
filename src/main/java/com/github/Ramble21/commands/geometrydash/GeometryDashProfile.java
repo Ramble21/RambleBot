@@ -51,13 +51,13 @@ public class GeometryDashProfile implements Command {
             embed.setTitle(member.getEffectiveName() + "'s Hardest Platformer Completions");
         }
         else{
-            embed.setTitle(member.getEffectiveName() + "'s Hardest Completions");
+            embed.setTitle(member.getEffectiveName() + "'s Hardest Classic Completions");
         }
 
         String description;
         boolean includeButtons = true;
         if (records.isEmpty()){
-            description = member.getAsMention() + " has not submitted any completions yet!";
+            description = member.getAsMention() + " has not submitted any " + (isPlatformer ? "platformer" : "classic") + " completions yet!";
             includeButtons = false;
         }
         else{
