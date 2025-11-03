@@ -220,7 +220,7 @@ public class GDLevel {
     }
 
     public static GDDifficulty fetchGDDLRating(long levelId) {
-        int maxRetries = 4;
+        int maxRetries = 6;
         int retryDelayMs = 800;
         int connectionTimeoutMs = 5000;
         int readTimeoutMs = 10000;

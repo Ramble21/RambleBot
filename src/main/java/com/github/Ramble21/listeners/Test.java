@@ -3,10 +3,7 @@ import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.classes.geometrydash.GDDatabase;
 import com.github.Ramble21.classes.geometrydash.GDLevel;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -30,6 +27,18 @@ public class Test extends ListenerAdapter {
             String channelID = parts[1];
             MessageChannel channel = RambleBot.getJda().getTextChannelById(channelID);
             skibidiDopDopDopYesYes(channel);
+        }
+        if (event.getMessage().getContentRaw().equals("r!fill_guild_members")) {
+            System.out.println("Starting");
+            for (Guild guild : RambleBot.getJda().getGuilds()) {
+                System.out.println(guild.getName());
+                for (Member member : guild.getMembers()) {
+                    if (!member.getUser().isBot()) {
+                        GDDatabase.addMemberToDatabase(member.getUser(), member.getGuild());
+                    }
+                }
+            }
+            System.out.println("Done!");
         }
     }
 

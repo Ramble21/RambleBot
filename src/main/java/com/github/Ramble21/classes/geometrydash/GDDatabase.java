@@ -421,7 +421,8 @@ public class GDDatabase {
         String membersQuery =
             """
             INSERT INTO members (user_id, username)
-            VALUES (?, ?);
+            VALUES (?, ?)
+            ON CONFLICT DO NOTHING;
             """;
         String url = RambleBot.isRunningLocally() ? local_url : prod_url;
         String password = RambleBot.isRunningLocally() ? local_password : prod_password;
@@ -454,7 +455,8 @@ public class GDDatabase {
         String guildMembersQuery =
             """
             INSERT INTO guild_members (guild_id, user_id)
-            VALUES (?, ?);
+            VALUES (?, ?)
+            ON CONFLICT DO NOTHING;
             """;
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(guildMembersQuery)) {
@@ -465,6 +467,27 @@ public class GDDatabase {
             throw new RuntimeException(e);
         }
         System.out.println(member.getName() + " successfully added to database");
+    }
+
+    public static void addMemberToGuildMembers(User member, Guild guild) {
+        String url = RambleBot.isRunningLocally() ? local_url : prod_url;
+        String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
+        String guildMembersQuery =
+                """
+                INSERT INTO guild_members (guild_id, user_id)
+                VALUES (?, ?)
+                ON CONFLICT DO NOTHING;
+                """;
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement stmt = conn.prepareStatement(guildMembersQuery)) {
+            stmt.setLong(1, guild.getIdLong());
+            stmt.setLong(2, member.getIdLong());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(member.getName() + " successfully added to guild_members");
     }
 
     public static void deleteRecord(long submitterID, long levelID) {
@@ -550,6 +573,54 @@ public class GDDatabase {
             PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
             ResultSet rs = selectStmt.executeQuery();
             PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+
+            while (rs.next()) {
+                long id = rs.getLong("id");
+                GDDifficulty newGDD = GDLevel.fetchGDDLRating(id);
+                String newDifficulty = rs.getString("difficulty");
+                int newTier = rs.getInt("gddl_tier");
+                if (newGDD != null) {
+                    newDifficulty = newGDD.difficulty();
+                    newTier = newGDD.gddlTier();
+                }
+                else {
+                    System.out.println("API connection error; level " + id + " not updated");
+                }
+
+                updateStmt.setString(1, newDifficulty);
+                updateStmt.setInt(2, newTier);
+                updateStmt.setLong(3, id);
+                updateStmt.addBatch(); // queue up updates
+            }
+
+            updateStmt.executeBatch(); // execute all updates efficiently
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void updateNullLevels() {
+        String selectQuery =
+            """
+            SELECT id, difficulty, gddl_tier
+            FROM levels
+            WHERE difficulty IS NULL
+                OR gddl_tier = 0;
+            """;
+        String updateQuery =
+            """
+            UPDATE levels
+            SET difficulty = ?, gddl_tier = ?
+            WHERE id = ?;
+            """;
+        String url = RambleBot.isRunningLocally() ? local_url : prod_url;
+        String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
+             ResultSet rs = selectStmt.executeQuery();
+             PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
 
             while (rs.next()) {
                 long id = rs.getLong("id");

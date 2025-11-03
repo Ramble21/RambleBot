@@ -135,8 +135,10 @@ public class CommandListener extends ListenerAdapter {
                                                 new OptionData(OptionType.BOOLEAN, "platformer", "Show platformer completions rather than classic ones", false)
                                         ),
                                 new SubcommandData("review", "[Moderator only] Review and accept/deny Extreme Demon completions"),
-                                new SubcommandData("refresh", "Refresh in-game and GDDL ratings for all submitted levels"),
-                                new SubcommandData("level", "View statistics about a specific level in this server")
+                                new SubcommandData("refresh", "[Moderator only] Refresh in-game and GDDL ratings for all submitted levels")
+                                        .addOption(OptionType.BOOLEAN, "onlynulls", "Only refresh bugged levels with null difficulty (faster)", false),
+
+        new SubcommandData("level", "View statistics about a specific level in this server")
                                         .addOptions(
                                                 new OptionData(OptionType.STRING, "name", "Name of the level in question", true),
                                                 new OptionData(OptionType.STRING, "creator", "Creator of the level in question", true)

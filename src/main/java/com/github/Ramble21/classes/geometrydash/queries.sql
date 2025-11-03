@@ -27,12 +27,12 @@ WHERE r.level_id = ?
 
 -- getGuildLevels
 SELECT DISTINCT l.*
-    FROM levels l
-    JOIN records r ON l.id = r.level_id
-    JOIN guild_members gm ON r.submitter_id = gm.user_id
-    WHERE gm.guild_id = ?
-        AND l.platformer = ?
-        AND r.record_accepted = TRUE;
+FROM levels l
+JOIN records r ON l.id = r.level_id
+JOIN guild_members gm ON r.submitter_id = gm.user_id
+WHERE gm.guild_id = ?
+    AND l.platformer = ?
+    AND r.record_accepted = TRUE;
 
 -- getMemberRecords
 SELECT r.*, l.*
@@ -58,18 +58,19 @@ WHERE r.submitter_id = ?
 
 -- getMemberStatus
 SELECT member_status
-    FROM members
-    WHERE user_id = ?;
+FROM members
+WHERE user_id = ?;
 
 -- changeMemberStatus
 UPDATE members
-    SET member_status = ?
-    WHERE user_id = ?
+SET member_status = ?
+WHERE user_id = ?
 
 -- addMemberToDatabase
     -- members
     INSERT INTO members (user_id, username)
-        VALUES (?, ?);
+        VALUES (?, ?)
+        ON CONFLICT DO NOTHING;
     -- guilds
     INSERT INTO guilds (guild_id, name)
         VALUES (?, ?)
@@ -77,7 +78,8 @@ UPDATE members
         DO UPDATE SET name = EXCLUDED.name;
     -- guild_members
     INSERT INTO guild_members (guild_id, user_id)
-            VALUES (?, ?);
+        VALUES (?, ?)
+        ON CONFLICT DO NOTHING;
 
 -- deleteRecord
 DELETE FROM records
@@ -102,17 +104,28 @@ WHERE submitter_id = ?
         FROM levels;
     -- update
     UPDATE levels
-        SET difficulty = ?, gddl_tier = ?
-        WHERE id = ?;
+    SET difficulty = ?, gddl_tier = ?
+    WHERE id = ?;
+
+-- updateNullLevels
+    -- select
+    SELECT id, difficulty, gddl_tier
+    FROM levels
+    WHERE difficulty IS NULL
+        OR gddl_tier = 0;
+    -- update
+    UPDATE levels
+    SET difficulty = ?, gddl_tier = ?
+    WHERE id = ?;
 
 -- getUnverifiedRecords
 SELECT r.*, l.*, m.username
-    FROM records r
-    JOIN levels l ON r.level_id = l.id
-    JOIN members m ON r.submitter_id = m.user_id
-    JOIN guild_members gm ON r.submitter_id = gm.user_id
-    WHERE gm.guild_id = ?
-        AND r.record_accepted = FALSE;
+FROM records r
+JOIN levels l ON r.level_id = l.id
+JOIN members m ON r.submitter_id = m.user_id
+JOIN guild_members gm ON r.submitter_id = gm.user_id
+WHERE gm.guild_id = ?
+    AND r.record_accepted = FALSE;
 
 -- recreate database
 BEGIN;
