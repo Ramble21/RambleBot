@@ -117,7 +117,7 @@ public class GeometryDashStats implements Command {
             else if (level.getDifficultyAsInt() == 7) mediumCount++;
             else if (level.getDifficultyAsInt() == 8) hardCount++;
             else if (level.getDifficultyAsInt() == 9) insaneCount++;
-            else if (level.getDifficultyAsInt() == 10) insaneCount++;
+            else if (level.getDifficultyAsInt() == 10) extremeCount++;
         }
         return emojiURL + ": " + extremeURL + "x" + extremeCount + ", " + insaneURL + "x" + insaneCount + ", " + hardURL + "x" + hardCount + ", " + mediumURL + "x" + mediumCount + ", " + easyURL + "x" + easyCount;
     }

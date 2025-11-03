@@ -94,6 +94,7 @@ public class PaginatorListener extends ListenerAdapter {
         };
         
         EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(Color.yellow);
         String originalTitle = buttonEvent.getMessage().getEmbeds().isEmpty() ? "" : buttonEvent.getMessage().getEmbeds().get(0).getTitle();
         embedBuilder.setTitle(originalTitle);
         if (description.isEmpty()){
