@@ -71,7 +71,6 @@ public class GeometryDashStats implements Command {
                 guildPlatLeaderboard.lbPositionOf(hardestPlatL) + ")\n"
             );
         }
-        System.out.println("test");
         description += string1 + string2 + "\n <:star:1307518203122942024> **Attempt Records**:\n";
         description +=
                 (Ramble21.getEmojiName("Easy Demon") + ": " + GDMisc.makeExtremaString(GDMisc.getAttemptMin(classicRecords, "Easy Demon")) +

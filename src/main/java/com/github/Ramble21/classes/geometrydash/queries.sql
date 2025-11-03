@@ -139,7 +139,7 @@ CREATE TABLE levels (
     stars INT,
     author TEXT NOT NULL,
     difficulty TEXT,
-    gddl_tier INT,
+    gddl_tier DECIMAL,
     platformer BOOLEAN DEFAULT FALSE,
     rating TEXT,
     UNIQUE (name, author)
@@ -148,7 +148,7 @@ CREATE TABLE levels (
 CREATE TABLE members (
     user_id BIGINT PRIMARY KEY,
     username TEXT NOT NULL,
-    is_blacklisted BOOLEAN DEFAULT FALSE
+    member_status STRING DEFAULT ""
 );
 
 CREATE TABLE guilds (
@@ -175,5 +175,16 @@ CREATE TABLE guild_members (
 );
 CREATE INDEX gm_user_index ON guild_members(user_id);
 CREATE INDEX gm_guild_index ON guild_members(guild_id);
+
+CREATE INDEX levels_platformer_index ON levels(platformer);
+CREATE INDEX records_accepted_index ON records(record_accepted);
+
+CREATE INDEX levels_difficulty_index ON levels(difficulty);
+CREATE INDEX levels_gddl_tier_index ON levels(gddl_tier);
+
+CREATE INDEX levels_name_lower_index ON levels(LOWER(name));
+CREATE INDEX levels_author_lower_index ON levels(LOWER(author));
+
+CREATE INDEX records_guild_verification_index ON records(record_accepted, level_id) WHERE record_accepted = FALSE;
 
 COMMIT;

@@ -16,7 +16,7 @@ public class GDLevel {
     private int stars;
     private String author;
     private String difficulty;
-    private int gddlTier;
+    private double gddlTier;
     private boolean platformer;
     private String rating; // feature epic etc., just a star rate is ""
 
@@ -112,7 +112,7 @@ public class GDLevel {
     }
 
     public GDLevel(String name, long id, int stars, String author,
-                   String difficulty, int gddlTier, boolean platformer, String rating) {
+                   String difficulty, double gddlTier, boolean platformer, String rating) {
         this.name = name;
         this.id = id;
         this.stars = stars;
@@ -167,7 +167,7 @@ public class GDLevel {
     public boolean isPlatformer(){
         return platformer;
     }
-    public int getGddlTier(){
+    public double getGddlTier(){
         return gddlTier;
     }
     public String getRating(){
@@ -220,7 +220,7 @@ public class GDLevel {
     }
 
     public static GDDifficulty fetchGDDLRating(long levelId) {
-        int maxRetries = 6;
+        int maxRetries = 7;
         int retryDelayMs = 800;
         int connectionTimeoutMs = 5000;
         int readTimeoutMs = 10000;
@@ -252,12 +252,11 @@ public class GDLevel {
                     try {
                         JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
                         if (json.has("Rating") && json.has("Meta")) {
-                            double rating = 0;
+                            double gddlTier = 0;
                             JsonElement ratingElement = json.get("Rating");
                             if (ratingElement != null && !ratingElement.isJsonNull()) {
-                                rating = json.get("Rating").getAsDouble();
+                                gddlTier = json.get("Rating").getAsDouble();
                             }
-                            int gddlTier = (int) Math.round(rating);
                             String name = json.getAsJsonObject("Meta").get("Name").getAsString();
                             String difficulty = json.getAsJsonObject("Meta").get("Difficulty").getAsString();
                             difficulty = switch (difficulty) {

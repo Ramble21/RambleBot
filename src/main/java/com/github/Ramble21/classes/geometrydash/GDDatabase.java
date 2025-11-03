@@ -39,7 +39,7 @@ public class GDDatabase {
                             rs.getInt("stars"),
                             rs.getString("author"),
                             rs.getString("difficulty"),
-                            rs.getInt("gddl_tier"),
+                            rs.getDouble("gddl_tier"),
                             rs.getBoolean("platformer"),
                             rs.getString("rating")
                     );
@@ -76,7 +76,7 @@ public class GDDatabase {
                             rs.getInt("stars"),
                             rs.getString("author"),
                             rs.getString("difficulty"),
-                            rs.getInt("gddl_tier"),
+                            rs.getDouble("gddl_tier"),
                             rs.getBoolean("platformer"),
                             rs.getString("rating")
                     );
@@ -113,7 +113,7 @@ public class GDDatabase {
                             rs.getInt("stars"),
                             rs.getString("author"),
                             rs.getString("difficulty"),
-                            rs.getInt("gddl_tier"),
+                            rs.getDouble("gddl_tier"),
                             rs.getBoolean("platformer"),
                             rs.getString("rating")
                     );
@@ -157,7 +157,7 @@ public class GDDatabase {
                                     rs.getInt("stars"),
                                     rs.getString("author"),
                                     rs.getString("difficulty"),
-                                    rs.getInt("gddl_tier"),
+                                    rs.getDouble("gddl_tier"),
                                     rs.getBoolean("platformer"),
                                     rs.getString("rating")
                             )
@@ -199,7 +199,7 @@ public class GDDatabase {
                         rs.getInt("stars"),
                         rs.getString("author"),
                         rs.getString("difficulty"),
-                        rs.getInt("gddl_tier"),
+                        rs.getDouble("gddl_tier"),
                         rs.getBoolean("platformer"),
                         rs.getString("rating")
                     );
@@ -246,7 +246,7 @@ public class GDDatabase {
                                     rs.getInt("stars"),
                                     rs.getString("author"),
                                     rs.getString("difficulty"),
-                                    rs.getInt("gddl_tier"),
+                                    rs.getDouble("gddl_tier"),
                                     rs.getBoolean("platformer"),
                                     rs.getString("rating")
                             )
@@ -292,7 +292,7 @@ public class GDDatabase {
                                     rs.getInt("stars"),
                                     rs.getString("author"),
                                     rs.getString("difficulty"),
-                                    rs.getInt("gddl_tier"),
+                                    rs.getDouble("gddl_tier"),
                                     rs.getBoolean("platformer"),
                                     rs.getString("rating")
                             )
@@ -347,7 +347,7 @@ public class GDDatabase {
                 insertLevelStmt.setLong(1, level.getId());
                 insertLevelStmt.setString(2, level.getAuthor());
                 insertLevelStmt.setString(3, level.getDifficulty());
-                insertLevelStmt.setInt(4, level.getGddlTier());
+                insertLevelStmt.setDouble(4, level.getGddlTier());
                 insertLevelStmt.setString(5, level.getName());
                 insertLevelStmt.setBoolean(6, level.isPlatformer());
                 insertLevelStmt.setString(7, level.getRating());
@@ -469,27 +469,6 @@ public class GDDatabase {
         System.out.println(member.getName() + " successfully added to database");
     }
 
-    public static void addMemberToGuildMembers(User member, Guild guild) {
-        String url = RambleBot.isRunningLocally() ? local_url : prod_url;
-        String password = RambleBot.isRunningLocally() ? local_password : prod_password;
-        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
-        String guildMembersQuery =
-                """
-                INSERT INTO guild_members (guild_id, user_id)
-                VALUES (?, ?)
-                ON CONFLICT DO NOTHING;
-                """;
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement stmt = conn.prepareStatement(guildMembersQuery)) {
-            stmt.setLong(1, guild.getIdLong());
-            stmt.setLong(2, member.getIdLong());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(member.getName() + " successfully added to guild_members");
-    }
-
     public static void deleteRecord(long submitterID, long levelID) {
         String queryTemp =
             """
@@ -578,7 +557,7 @@ public class GDDatabase {
                 long id = rs.getLong("id");
                 GDDifficulty newGDD = GDLevel.fetchGDDLRating(id);
                 String newDifficulty = rs.getString("difficulty");
-                int newTier = rs.getInt("gddl_tier");
+                double newTier = rs.getDouble("gddl_tier");
                 if (newGDD != null) {
                     newDifficulty = newGDD.difficulty();
                     newTier = newGDD.gddlTier();
@@ -588,7 +567,7 @@ public class GDDatabase {
                 }
 
                 updateStmt.setString(1, newDifficulty);
-                updateStmt.setInt(2, newTier);
+                updateStmt.setDouble(2, newTier);
                 updateStmt.setLong(3, id);
                 updateStmt.addBatch(); // queue up updates
             }
@@ -626,7 +605,7 @@ public class GDDatabase {
                 long id = rs.getLong("id");
                 GDDifficulty newGDD = GDLevel.fetchGDDLRating(id);
                 String newDifficulty = rs.getString("difficulty");
-                int newTier = rs.getInt("gddl_tier");
+                double newTier = rs.getDouble("gddl_tier");
                 if (newGDD != null) {
                     newDifficulty = newGDD.difficulty();
                     newTier = newGDD.gddlTier();
@@ -636,7 +615,7 @@ public class GDDatabase {
                 }
 
                 updateStmt.setString(1, newDifficulty);
-                updateStmt.setInt(2, newTier);
+                updateStmt.setDouble(2, newTier);
                 updateStmt.setLong(3, id);
                 updateStmt.addBatch(); // queue up updates
             }
@@ -680,7 +659,7 @@ public class GDDatabase {
                                     rs.getInt("stars"),
                                     rs.getString("author"),
                                     rs.getString("difficulty"),
-                                    rs.getInt("gddl_tier"),
+                                    rs.getDouble("gddl_tier"),
                                     rs.getBoolean("platformer"),
                                     rs.getString("rating")
                             )
@@ -703,47 +682,59 @@ public class GDDatabase {
             CREATE SCHEMA public;
             
             CREATE TABLE levels (
-                id BIGINT PRIMARY KEY,
-                name TEXT NOT NULL,
-                stars INT,
-                author TEXT NOT NULL,
-                difficulty TEXT,
-                gddl_tier INT,
-                platformer BOOLEAN DEFAULT FALSE,
-                rating TEXT,
-                UNIQUE (name, author)
+            id BIGINT PRIMARY KEY,
+            name TEXT NOT NULL,
+            stars INT,
+            author TEXT NOT NULL,
+            difficulty TEXT,
+            gddl_tier DECIMAL(4,2),
+            platformer BOOLEAN DEFAULT FALSE,
+            rating TEXT,
+            UNIQUE (name, author)
             );
             
             CREATE TABLE members (
-                user_id BIGINT PRIMARY KEY,
-                username TEXT NOT NULL,
-                member_status TEXT DEFAULT 'member'
+            user_id BIGINT PRIMARY KEY,
+            username TEXT NOT NULL,
+            member_status STRING DEFAULT ""
             );
             
             CREATE TABLE guilds (
-                guild_id BIGINT PRIMARY KEY,
-                name TEXT NOT NULL
+            guild_id BIGINT PRIMARY KEY,
+            name TEXT NOT NULL
             );
             
             CREATE TABLE records (
-                record_id BIGSERIAL PRIMARY KEY,
-                submitter_id BIGINT NOT NULL REFERENCES members(user_id) ON DELETE CASCADE,
-                attempts INT DEFAULT 0,
-                bias_level INT DEFAULT 0,
-                record_accepted BOOLEAN DEFAULT FALSE,
-                level_id BIGINT NOT NULL REFERENCES levels(id) ON DELETE CASCADE,
-                UNIQUE (submitter_id, level_id)
+            record_id BIGSERIAL PRIMARY KEY,
+            submitter_id BIGINT NOT NULL REFERENCES members(user_id) ON DELETE CASCADE,
+            attempts INT DEFAULT 0,
+            bias_level INT DEFAULT 0,
+            record_accepted BOOLEAN DEFAULT FALSE,
+            level_id BIGINT NOT NULL REFERENCES levels(id) ON DELETE CASCADE,
+            UNIQUE (submitter_id, level_id)
             );
             CREATE INDEX records_submitter_index ON records(submitter_id);
             CREATE INDEX records_level_index ON records(level_id);
             
             CREATE TABLE guild_members (
-                guild_id BIGINT NOT NULL REFERENCES guilds(guild_id) ON DELETE CASCADE,
-                user_id BIGINT NOT NULL REFERENCES members(user_id) ON DELETE CASCADE,
-                PRIMARY KEY (guild_id, user_id)
+            guild_id BIGINT NOT NULL REFERENCES guilds(guild_id) ON DELETE CASCADE,
+            user_id BIGINT NOT NULL REFERENCES members(user_id) ON DELETE CASCADE,
+            PRIMARY KEY (guild_id, user_id)
             );
+            
             CREATE INDEX gm_user_index ON guild_members(user_id);
             CREATE INDEX gm_guild_index ON guild_members(guild_id);
+            
+            CREATE INDEX levels_platformer_index ON levels(platformer);
+            CREATE INDEX records_accepted_index ON records(record_accepted);
+            
+            CREATE INDEX levels_difficulty_index ON levels(difficulty);
+            CREATE INDEX levels_gddl_tier_index ON levels(gddl_tier);
+            
+            CREATE INDEX levels_name_lower_index ON levels(LOWER(name));
+            CREATE INDEX levels_author_lower_index ON levels(LOWER(author));
+            
+            CREATE INDEX records_guild_verification_index ON records(record_accepted, level_id) WHERE record_accepted = FALSE;
             
             COMMIT;
             """;
@@ -757,5 +748,35 @@ public class GDDatabase {
             throw new RuntimeException(e);
         }
         System.out.println("Database successfully constructed!");
+    }
+
+    public static void editDatabase() {
+        String databaseCreator =
+                """
+                BEGIN;
+                
+                ALTER TABLE levels
+                ALTER COLUMN gddl_tier TYPE DECIMAL(4,2);
+                
+                CREATE INDEX levels_platformer_index ON levels(platformer);
+                CREATE INDEX records_accepted_index ON records(record_accepted);
+                CREATE INDEX levels_difficulty_index ON levels(difficulty);
+                CREATE INDEX levels_gddl_tier_index ON levels(gddl_tier);
+                CREATE INDEX levels_name_lower_index ON levels(LOWER(name));
+                CREATE INDEX levels_author_lower_index ON levels(LOWER(author));
+                CREATE INDEX records_guild_verification_index ON records(record_accepted, level_id) WHERE record_accepted = FALSE;
+                
+                COMMIT;
+                """;
+        String url = RambleBot.isRunningLocally() ? local_url : prod_url;
+        String password = RambleBot.isRunningLocally() ? local_password : prod_password;
+        String user = RambleBot.isRunningLocally() ? local_user : prod_user;
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(databaseCreator);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Database successfully altered!");
     }
 }

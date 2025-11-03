@@ -35,9 +35,10 @@ public class TextCommand extends ListenerAdapter {
                 return;
             }
         }
-        if (message.equals("r!reset_database") && isBotOwner(user)) {
-            GDDatabase.createDatabase();
-            event.getChannel().sendMessage("Database reset successfully!").queue();
+        if (message.equals("r!database") && isBotOwner(user)) {
+            System.out.println("Starting database edit!");
+            GDDatabase.editDatabase();
+            event.getChannel().sendMessage("Database edited successfully!").queue();
         }
 
         if (message.startsWith("r!mod") && isBotOwner(user)) {

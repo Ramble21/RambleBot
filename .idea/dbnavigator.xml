@@ -72,6 +72,11 @@ WHERE table_type = 'BASE TABLE';]]></console>
       <filter id="63547dca-8e3a-4752-b77c-c7894e835d00" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
     <filter-actions connection-id="4f4279af-51db-42d8-8b75-35b460776954" dataset="main.messages" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.records" active-filter-id="0a9b7e9f-4ea2-4f50-a6a2-8b482c2cd233">
+      <filter id="0a9b7e9f-4ea2-4f50-a6a2-8b482c2cd233" name="ramble21 records only" temporary="false" custom-name="true" type="basic" join-type="AND">
+        <condition column="submitter_id" operator="=" value="739978476651544607" active="true" />
+      </filter>
+    </filter-actions>
     <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.guild_members" active-filter-id="8f23f23d-4e87-4262-952f-730e9e9de4aa">
       <filter id="8f23f23d-4e87-4262-952f-730e9e9de4aa" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
