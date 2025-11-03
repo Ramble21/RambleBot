@@ -113,11 +113,11 @@ public class GeometryDashStats implements Command {
         int extremeCount = 0;
         for (GDRecord record : records){
             GDLevel level = record.level();
-            if (level.getDifficultyAsInt() == 5) easyCount++;
-            else if (level.getDifficultyAsInt() == 4) mediumCount++;
-            else if (level.getDifficultyAsInt() == 3) hardCount++;
-            else if (level.getDifficultyAsInt() == 2) insaneCount++;
-            else extremeCount++;
+            if (level.getDifficultyAsInt() == 6) easyCount++;
+            else if (level.getDifficultyAsInt() == 7) mediumCount++;
+            else if (level.getDifficultyAsInt() == 8) hardCount++;
+            else if (level.getDifficultyAsInt() == 9) insaneCount++;
+            else if (level.getDifficultyAsInt() == 10) insaneCount++;
         }
         return emojiURL + ": " + extremeURL + "x" + extremeCount + ", " + insaneURL + "x" + insaneCount + ", " + hardURL + "x" + hardCount + ", " + mediumURL + "x" + mediumCount + ", " + easyURL + "x" + easyCount;
     }
