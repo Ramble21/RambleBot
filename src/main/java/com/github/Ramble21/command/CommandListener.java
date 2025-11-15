@@ -19,6 +19,8 @@ public class CommandListener extends ListenerAdapter {
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         List<CommandData> commandData = new ArrayList<>();
 
+        commandData.add(Commands.slash("coinflip", "Flip a coin"));
+
         commandData.add(Commands.slash("grab-ip", "Grabs the totally real ip of the member that you choose")
                 .addOption(OptionType.USER, "member", "Member to grab IP of", false));
 

@@ -585,7 +585,7 @@ public class GDDatabase {
             SELECT id, difficulty, gddl_tier
             FROM levels
             WHERE difficulty IS NULL
-                OR gddl_tier = 0;
+                OR gddl_tier = FLOOR(gddl_tier);
             """;
         String updateQuery =
             """

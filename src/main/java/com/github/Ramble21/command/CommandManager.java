@@ -22,6 +22,7 @@ public class CommandManager{
         commands.put("wordbomb", new WordBombManager());
         commands.put("1984-list", new WordCensorManager());
         commands.put("counter-stats", new CounterStats());
+        commands.put("coinflip", new CoinFlip());
     }
 
     public Command getCommand(String name){

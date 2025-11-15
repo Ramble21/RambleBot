@@ -112,7 +112,7 @@ WHERE submitter_id = ?
     SELECT id, difficulty, gddl_tier
     FROM levels
     WHERE difficulty IS NULL
-        OR gddl_tier = 0;
+        OR gddl_tier = FLOOR(gddl_tier);
     -- update
     UPDATE levels
     SET difficulty = ?, gddl_tier = ?
