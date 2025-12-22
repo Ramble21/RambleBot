@@ -106,6 +106,10 @@ public class CommandListener extends ListenerAdapter {
                                         )
                         )
                         .addSubcommands(
+                                new SubcommandData("submitbysavefile", "Submit all valid completion records insane demon and below in your GD save file")
+                                        .addOptions(
+                                                new OptionData(OptionType.ATTACHMENT, "savefile", "Upload your CCGameManager.dat file here", true)
+                                        ),
                                 new SubcommandData("editrecord", "Edit a previously submitted Geometry Dash completion record")
                                         .addOptions(
                                                 new OptionData(OptionType.STRING, "name", "Name of the level to edit record of", true),

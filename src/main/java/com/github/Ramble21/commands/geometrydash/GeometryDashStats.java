@@ -79,8 +79,7 @@ public class GeometryDashStats implements Command {
                 Ramble21.getEmojiName("Insane Demon") + ": " + GDMisc.makeExtremaString(GDMisc.getAttemptMin(classicRecords, "Insane Demon")) +
                 Ramble21.getEmojiName("Extreme Demon") + ": " + GDMisc.makeExtremaString(GDMisc.getAttemptMin(classicRecords, "Extreme Demon"))
         );
-
-        description += "\n <:star:1307518203122942024> **Attempt Highs** :\n";
+        description += "\n <:star:1307518203122942024> **Attempt Highs**:\n";
 
         description +=
                 (Ramble21.getEmojiName("Easy Demon") + ": " + GDMisc.makeExtremaString(GDMisc.getAttemptMax(classicRecords, "Easy Demon")) +
@@ -89,7 +88,6 @@ public class GeometryDashStats implements Command {
                         Ramble21.getEmojiName("Insane Demon") + ": " + GDMisc.makeExtremaString(GDMisc.getAttemptMax(classicRecords, "Insane Demon")) +
                         Ramble21.getEmojiName("Extreme Demon") + ": " + GDMisc.makeExtremaString(GDMisc.getAttemptMax(classicRecords, "Extreme Demon"))
         );
-
         embed.setDescription(description);
         event.getHook().editOriginalEmbeds(embed.build()).queue();
     }

@@ -6,6 +6,7 @@ import com.github.Ramble21.classes.geometrydash.GDLevel;
 import com.github.Ramble21.classes.Ramble21;
 import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
@@ -22,7 +23,6 @@ public record GeometryDashRecordSubmit(boolean bySearch) implements Command {
     public void execute(SlashCommandInteractionEvent event) throws ErrorResponseException {
 
         event.deferReply(false).queue();
-        long submitterID = Objects.requireNonNull(event.getMember()).getIdLong();
         int attempts = Objects.requireNonNull(event.getOption("attempts")).getAsInt();
         if (attempts < 10) {
             event.getHook().sendMessage("Nice try, but I know you spent more than " + attempts + " attempts beating that.").setEphemeral(true).queue();
@@ -53,12 +53,12 @@ public record GeometryDashRecordSubmit(boolean bySearch) implements Command {
             }
         }
 
-        String memberStatus = GDDatabase.getMemberStatus(event.getMember());
+        boolean recordAlrExists = submitRecord(level, event.getMember(), attempts);
+
+        String memberStatus = GDDatabase.getMemberStatus(Objects.requireNonNull(event.getMember()));
         boolean memberIsBlacklisted = memberStatus.equals("blacklisted");
         boolean memberIsModerator = memberStatus.equals("moderator");
 
-        boolean autoAccepted = (level.getDifficultyAsInt() < 10 && !memberIsBlacklisted) || memberIsModerator;
-        boolean recordAlrExists = !GDDatabase.addRecord(submitterID, attempts, 0, autoAccepted, level);
         if (recordAlrExists) {
             event.getHook().sendMessage("You have already submitted this level!").setEphemeral(true).queue();
             return;
@@ -79,6 +79,17 @@ public record GeometryDashRecordSubmit(boolean bySearch) implements Command {
             embed = generateEmbed(level, attempts);
         }
         event.getHook().editOriginalEmbeds(embed.build()).queue();
+    }
+
+    public static boolean submitRecord(GDLevel level, Member member, int attempts) {
+        // submits record, returns true if the record already exists and false if the record does not already exist
+        String memberStatus = GDDatabase.getMemberStatus(member);
+        boolean memberIsBlacklisted = memberStatus.equals("blacklisted");
+        boolean memberIsModerator = memberStatus.equals("moderator");
+        long submitterID = Objects.requireNonNull(member).getIdLong();
+
+        boolean autoAccepted = (level.getDifficultyAsInt() < 10 && !memberIsBlacklisted) || memberIsModerator;
+        return !GDDatabase.addRecord(submitterID, attempts, 0, autoAccepted, level);
     }
 
     public EmbedBuilder generateEmbed(GDLevel level, int attempts) {

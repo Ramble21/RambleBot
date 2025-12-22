@@ -13,12 +13,11 @@ public class GDMisc {
         );
     }
 
-    public static void sortGuildLevelsByDiff(ArrayList<GDLevel> levels, HashMap<GDLevel, Integer> levelsToAvgAttempts) {
+    public static void sortGuildLevelsByDiff(ArrayList<GDLevel> levels) {
         levels.sort(
                 Comparator
                         .comparingInt((GDLevel l) -> -l.getDifficultyAsInt())
                         .thenComparing(GDLevel::getGddlTier, Comparator.reverseOrder())
-                        .thenComparing(levelsToAvgAttempts::get, Comparator.reverseOrder())
         );
     }
 

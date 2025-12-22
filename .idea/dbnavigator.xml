@@ -48,9 +48,7 @@ WHERE table_type = 'BASE TABLE';]]></console>
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="e6428192-2612-4d06-96d8-8a7762be0127" object-ref="schemas/public/tables/levels" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="4f4279af-51db-42d8-8b75-35b460776954" />

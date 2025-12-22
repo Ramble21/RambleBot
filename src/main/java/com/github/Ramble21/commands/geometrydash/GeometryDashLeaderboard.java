@@ -34,64 +34,67 @@ public class GeometryDashLeaderboard implements Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event){
-        if (event.getOption("platformer") == null || !Objects.requireNonNull(event.getOption("platformer")).getAsBoolean()) {
-            isPlatformer = false;
-        }
-        guild = event.getGuild();
-        assert guild != null;
+        event.deferReply(false).queue(hook -> {
+            if (event.getOption("platformer") == null || !Objects.requireNonNull(event.getOption("platformer")).getAsBoolean()) {
+                isPlatformer = false;
+            }
+            guild = event.getGuild();
+            assert guild != null;
 
-        leaderboard = new GDGuildLB(guild.getIdLong(), isPlatformer);
-        EmbedBuilder embed = new EmbedBuilder();
-        if (isPlatformer) {
-            embed.setTitle("Hardest Platformer Completions in Server " + guild.getName());
-        }
-        else {
-            embed.setTitle("Hardest Classic Completions in Server " + guild.getName());
-        }
+            leaderboard = new GDGuildLB(guild.getIdLong(), isPlatformer);
+            EmbedBuilder embed = new EmbedBuilder();
+            if (isPlatformer) {
+                embed.setTitle("Hardest Platformer Completions in Server " + guild.getName());
+            }
+            else {
+                embed.setTitle("Hardest Classic Completions in Server " + guild.getName());
+            }
 
-        String description;
-        boolean includeButtons = true;
-        if (leaderboard.levels().isEmpty()) {
-            description = "There have been no " + (isPlatformer ? "platformer" : "classic") + " completions submitted to this server yet!";
-            includeButtons = false;
-        }
-        else {
-            description = makePageLeaderboardDescription(leaderboard.levels(), 10, 0, guild.getIdLong());
-        }
+            String description;
+            boolean includeButtons = true;
+            if (leaderboard.levels().isEmpty()) {
+                description = "There have been no " + (isPlatformer ? "platformer" : "classic") + " completions submitted to this server yet!";
+                includeButtons = false;
+            }
+            else {
+                description = makePageLeaderboardDescription(leaderboard.levels(), 10, 0, guild.getIdLong());
+            }
 
-        embed.setDescription(description);
-        embed.setColor(Color.yellow);
-        if (includeButtons){
-            final PaginatorListener[] paginatorListener = {null}; // it has to be a 1 element array bc of some dumb java shit
-            event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build())
-                    .setComponents(ActionRow.of(
-                            Button.of(ButtonStyle.SECONDARY, "previous_profile", "Previous"),
-                            Button.of(ButtonStyle.SECONDARY, "next_profile", "Next"))
-                    )
-                    .queue(message -> {
-                        this.originalMessageId = message.getId();
-                        paginatorListener[0] = new PaginatorListener(this, originalMessageId);
-                        event.getJDA().addEventListener(paginatorListener[0]);
-                    }));
-            Timer buttonTimeout = new Timer();
-            TimerTask removeButtons = new TimerTask() {
-                @Override
-                public void run() {
-                    event.getChannel().editMessageComponentsById(originalMessageId)
-                            .setComponents(ActionRow.of(
-                                    Button.of(ButtonStyle.SECONDARY, "previous_profile", "Previous").asDisabled(),
-                                    Button.of(ButtonStyle.SECONDARY, "next_profile", "Next").asDisabled())
-                            )
-                            .queue();
-                    event.getJDA().removeEventListener(paginatorListener[0]);
-                }
-            };
-            buttonTimeout.schedule(removeButtons, 300000);
-        }
-        else{
-            event.deferReply().queue(hook -> hook.sendMessageEmbeds(embed.build()).queue());
-        }
+            embed.setDescription(description);
+            embed.setColor(Color.yellow);
 
+            if (includeButtons){
+                final PaginatorListener[] paginatorListener = {null};
+                hook.sendMessageEmbeds(embed.build())
+                        .setComponents(ActionRow.of(
+                                Button.of(ButtonStyle.SECONDARY, "previous_profile", "Previous"),
+                                Button.of(ButtonStyle.SECONDARY, "next_profile", "Next"))
+                        )
+                        .queue(message -> {
+                            this.originalMessageId = message.getId();
+                            paginatorListener[0] = new PaginatorListener(this, originalMessageId);
+                            event.getJDA().addEventListener(paginatorListener[0]);
+                        });
+
+                Timer buttonTimeout = new Timer();
+                TimerTask removeButtons = new TimerTask() {
+                    @Override
+                    public void run() {
+                        event.getChannel().editMessageComponentsById(originalMessageId)
+                                .setComponents(ActionRow.of(
+                                        Button.of(ButtonStyle.SECONDARY, "previous_profile", "Previous").asDisabled(),
+                                        Button.of(ButtonStyle.SECONDARY, "next_profile", "Next").asDisabled())
+                                )
+                                .queue();
+                        event.getJDA().removeEventListener(paginatorListener[0]);
+                    }
+                };
+                buttonTimeout.schedule(removeButtons, 300000);
+            }
+            else{
+                hook.sendMessageEmbeds(embed.build()).queue();
+            }
+        });
     }
     public static String makePageLeaderboardDescription(ArrayList<GDLevel> list, int perPage, int pageNo, long guildID){
         StringBuilder description = new StringBuilder();

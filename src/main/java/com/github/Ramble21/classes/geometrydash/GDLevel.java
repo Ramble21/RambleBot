@@ -21,6 +21,9 @@ public class GDLevel {
     private String rating; // feature epic etc., just a star rate is ""
 
     public static GDLevel fromID(long levelID) {
+        if (levelID == 12107595L) { // generation retro (gdbrowser default)
+            return null;
+        }
         GDLevel databaseLevel = GDDatabase.getLevel(levelID);
         if (databaseLevel != null) {
             return databaseLevel;
@@ -70,7 +73,6 @@ public class GDLevel {
                 this.gddlTier = gdD.gddlTier();
                 this.name = gdD.name();
             }
-            System.out.println(this);
         }
     }
 
@@ -107,7 +109,6 @@ public class GDLevel {
                 this.difficulty = gdD.difficulty();
                 this.gddlTier = gdD.gddlTier();
             }
-            System.out.println(this);
         }
     }
 
@@ -139,8 +140,6 @@ public class GDLevel {
         return difficulty;
     }
     public int getDifficultyAsInt(){
-        if (difficulty == null)
-            throw new NullPointerException(toString());
         return switch (difficulty){
             // ints match up with GDBrowser API internal nums
             case "Non-Demon" -> -1;
@@ -224,6 +223,10 @@ public class GDLevel {
         int retryDelayMs = 800;
         int connectionTimeoutMs = 5000;
         int readTimeoutMs = 10000;
+
+        if (levelId == 12107595L) {
+            return new GDDifficulty("Generation Retro", null, 67);
+        }
 
         for (int attempt = 0; attempt < maxRetries; attempt++) {
             HttpURLConnection conn = null;
@@ -476,7 +479,7 @@ public class GDLevel {
                     System.out.println("Server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
                     Thread.sleep(retryDelayMs);
                 }
-                else if (responseCode == 404) { // 404
+                else if (responseCode == 404) {
                     System.out.println("Level " + name + " not found (404)");
                     return null;
                 }
@@ -490,8 +493,7 @@ public class GDLevel {
                 try {
                     Thread.sleep(retryDelayMs);
                 } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return null;
+                    System.out.println("Thread sleep interrupted. Continuing as usual");
                 }
             }
             catch (IOException e) {
@@ -499,14 +501,11 @@ public class GDLevel {
                 try {
                     Thread.sleep(retryDelayMs);
                 } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return null;
+                    System.out.println("Thread sleep interrupted. Continuing as usual");
                 }
             }
             catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Request interrupted");
-                return null;
+                System.out.println("Thread sleep interrupted. Continuing as usual");
             }
             catch (Exception e) {
                 System.out.println("Unexpected error: " + e.getMessage());
