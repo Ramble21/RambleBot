@@ -33,8 +33,9 @@ public class GDSubmitSaveFile implements Command {
         hook.sendMessage("Save file successfully decrypted, scanning all levels. This may take a long time.").queue();
 
         CCParseProgress parseProgress = CCLevelParser.parseOnlineLevels(decrypted, event.getMember(), null);
-        while (!parseProgress.isComplete()) {
-            CCLevelParser.parseOnlineLevels(decrypted, event.getMember(), parseProgress);
+        if (!parseProgress.isComplete()) {
+            hook.sendMessage("Safe file partially scanned, rate limit reached. Please try again later.").queue();
+            return;
         }
         hook.sendMessage("Save file successfully scanned! " + parseProgress.completedCount() + " new demons were added to your RambleBot profile!").queue();
     }

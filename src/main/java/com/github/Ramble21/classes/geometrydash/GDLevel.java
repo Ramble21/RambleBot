@@ -284,14 +284,14 @@ public class GDLevel {
                         return null;
                     }
                 }
-                else if (responseCode == 429) { // Rate limited
+                else if (responseCode == 429) {
                     System.out.println("Rate limited on gdladder.com. Retrying in " + retryDelayMs + "ms... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    Thread.sleep(retryDelayMs);
-                    retryDelayMs *= 2; // Exponential backoff
+                    sleep(retryDelayMs);
+                    retryDelayMs *= 2;
                 }
-                else if (responseCode >= 500 && responseCode < 600) { // Server error
+                else if (responseCode >= 500 && responseCode < 600) {
                     System.out.println("GDLadder server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    Thread.sleep(retryDelayMs);
+                    sleep(retryDelayMs);
                 }
                 else if (responseCode == 404) {
                     System.out.println("Level rating not found (404) for level ID: " + levelId);
@@ -303,26 +303,11 @@ public class GDLevel {
             }
             catch (SocketTimeoutException e) {
                 System.out.println("Request timed out fetching rating. Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                try {
-                    Thread.sleep(retryDelayMs);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return null;
-                }
+                sleep(retryDelayMs);
             }
             catch (IOException e) {
                 System.out.println("Network error fetching rating: " + e.getMessage() + ". Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                try {
-                    Thread.sleep(retryDelayMs);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return null;
-                }
-            }
-            catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Request interrupted while fetching rating");
-                return null;
+                sleep(retryDelayMs);
             }
             catch (Exception e) {
                 System.out.println("Unexpected error fetching rating: " + e.getMessage());
@@ -344,7 +329,30 @@ public class GDLevel {
     }
 
     public static String fetchAPIResponse(long levelId) {
-        int maxRetries = 4;
+        String apiUrl = "https://gdbrowser.com/api/level/" + levelId;
+        return executeAPIRequest(apiUrl, "Level " + levelId);
+    }
+
+    public static String fetchAPIResponseByName(String name, String difficulty) {
+        String apiUrl = "https://gdbrowser.com/api/search/" + name + "?diff=" + getDifficultyAsInt(difficulty);
+        String response = executeAPIRequest(apiUrl, "Level " + name);
+
+        if (response != null) {
+            try {
+                JsonArray levelsArray = JsonParser.parseString(response).getAsJsonArray();
+                if (!levelsArray.isEmpty()) {
+                    JsonObject firstLevel = levelsArray.get(0).getAsJsonObject();
+                    return firstLevel.toString();
+                }
+            } catch (Exception e) {
+                System.out.println("Error parsing search results: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    private static String executeAPIRequest(String apiUrl, String identifier) {
+        int maxRetries = 7;
         int retryDelayMs = 800;
         int connectionTimeoutMs = 5000;
         int readTimeoutMs = 10000;
@@ -352,9 +360,7 @@ public class GDLevel {
         for (int attempt = 0; attempt < maxRetries; attempt++) {
             HttpURLConnection connection = null;
             try {
-                String apiUrl = "https://gdbrowser.com/api/level/" + levelId;
                 URL url = new URL(apiUrl);
-
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(connectionTimeoutMs);
@@ -362,12 +368,13 @@ public class GDLevel {
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
                 int responseCode = connection.getResponseCode();
+
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     BufferedReader in = new BufferedReader(
                             new InputStreamReader(connection.getInputStream())
                     );
-                    String inputLine;
                     StringBuilder response = new StringBuilder();
+                    String inputLine;
 
                     while ((inputLine = in.readLine()) != null) {
                         response.append(inputLine);
@@ -375,46 +382,31 @@ public class GDLevel {
                     in.close();
                     return response.toString();
                 }
-                else if (responseCode == 429) { // Rate limited
+                else if (responseCode == 429) {
                     System.out.println("Rate limited on gdbrowser.com. Retrying in " + retryDelayMs + "ms... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    Thread.sleep(retryDelayMs);
+                    sleep(retryDelayMs);
                     retryDelayMs *= 2;
                 }
-                else if (responseCode >= 500 && responseCode < 600) { // Server error
+                else if (responseCode >= 500 && responseCode < 600) {
                     System.out.println("Server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    Thread.sleep(retryDelayMs);
+                    sleep(retryDelayMs);
                 }
-                else if (responseCode == 404) { // 404
-                    System.out.println("Level " + levelId + " not found (404)");
+                else if (responseCode == 404) {
+                    System.out.println(identifier + " not found (404)");
                     return null;
                 }
                 else {
-                    System.out.println("GET request failed for level " + levelId + ". Response code: " + responseCode);
+                    System.out.println("GET request failed for " + identifier + ". Response code: " + responseCode);
                     return null;
                 }
             }
             catch (SocketTimeoutException e) {
                 System.out.println("Request timed out. Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                try {
-                    Thread.sleep(retryDelayMs);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return null;
-                }
+                sleep(retryDelayMs);
             }
             catch (IOException e) {
                 System.out.println("Network error: " + e.getMessage() + ". Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                try {
-                    Thread.sleep(retryDelayMs);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return null;
-                }
-            }
-            catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Request interrupted");
-                return null;
+                sleep(retryDelayMs);
             }
             catch (Exception e) {
                 System.out.println("Unexpected error: " + e.getMessage());
@@ -426,99 +418,17 @@ public class GDLevel {
                 }
             }
         }
-        System.out.println("Max retries exceeded");
+
+        System.out.println("Max retries exceeded for " + identifier);
         return null;
     }
 
-    public static String fetchAPIResponseByName(String name, String difficulty) {
-        int maxRetries = 4;
-        int retryDelayMs = 800;
-        int connectionTimeoutMs = 5000;
-        int readTimeoutMs = 10000;
-
-        for (int attempt = 0; attempt < maxRetries; attempt++) {
-            HttpURLConnection connection = null;
-            try {
-                String apiUrl = "https://gdbrowser.com/api/search/" + name + "?diff=" + getDifficultyAsInt(difficulty);
-                URL url = new URL(apiUrl);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(connectionTimeoutMs);
-                connection.setReadTimeout(readTimeoutMs);
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream())
-                    );
-                    String inputLine;
-                    StringBuilder response = new StringBuilder();
-
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    in.close();
-
-                    JsonArray levelsArray = JsonParser.parseString(response.toString()).getAsJsonArray();
-                    if (!levelsArray.isEmpty()) {
-                        JsonObject firstLevel = levelsArray.get(0).getAsJsonObject();
-                        return firstLevel.toString();
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                else if (responseCode == 429) { // Rate limited
-                    System.out.println("Rate limited on gdbrowser.com. Retrying in " + retryDelayMs + "ms... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    Thread.sleep(retryDelayMs);
-                    retryDelayMs *= 2;
-                }
-                else if (responseCode >= 500 && responseCode < 600) { // Server error
-                    System.out.println("Server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    Thread.sleep(retryDelayMs);
-                }
-                else if (responseCode == 404) {
-                    System.out.println("Level " + name + " not found (404)");
-                    return null;
-                }
-                else {
-                    System.out.println("GET request failed for level " + name + ". Response code: " + responseCode);
-                    return null;
-                }
-            }
-            catch (SocketTimeoutException e) {
-                System.out.println("Request timed out. Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                try {
-                    Thread.sleep(retryDelayMs);
-                } catch (InterruptedException ie) {
-                    System.out.println("Thread sleep interrupted. Continuing as usual");
-                }
-            }
-            catch (IOException e) {
-                System.out.println("Network error: " + e.getMessage() + ". Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                try {
-                    Thread.sleep(retryDelayMs);
-                } catch (InterruptedException ie) {
-                    System.out.println("Thread sleep interrupted. Continuing as usual");
-                }
-            }
-            catch (InterruptedException e) {
-                System.out.println("Thread sleep interrupted. Continuing as usual");
-            }
-            catch (Exception e) {
-                System.out.println("Unexpected error: " + e.getMessage());
-                return null;
-            }
-            finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
+    public static void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            System.out.println("Sleep interrupted, continuing with retry logic");
         }
-        System.out.println("Max retries exceeded");
-        return null;
     }
 
     @Override

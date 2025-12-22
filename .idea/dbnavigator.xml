@@ -9,6 +9,24 @@
     <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
+  <component name="DBNavigator.Project.DataExportManager">
+    <export-instructions>
+      <create-header value="true" />
+      <friendly-headers value="false" />
+      <quote-values-containing-separator value="true" />
+      <quote-all-values value="false" />
+      <value-separator value="" />
+      <begin-quote value="&quot;" />
+      <end-quote value="&quot;" />
+      <file-name value="" />
+      <file-location value="" />
+      <scope value="GLOBAL" />
+      <destination value="FILE" />
+      <format value="EXCEL" />
+      <charset value="UTF-8" />
+      <charset value="UTF-8" />
+    </export-instructions>
+  </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
       <assistant-state connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
@@ -38,6 +56,7 @@ FROM information_schema.tables
 WHERE table_type = 'BASE TABLE';]]></console>
     </connection>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7">
+      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main" />
       <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
     <connection id="e6428192-2612-4d06-96d8-8a7762be0127">
@@ -48,7 +67,9 @@ WHERE table_type = 'BASE TABLE';]]></console>
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" object-ref="schemas/public/tables/levels" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="4f4279af-51db-42d8-8b75-35b460776954" />
@@ -75,6 +96,7 @@ WHERE table_type = 'BASE TABLE';]]></console>
     <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.levels" active-filter-id="a6e5dac0-7194-48dc-8f86-fec7a16131e5">
       <filter id="a6e5dac0-7194-48dc-8f86-fec7a16131e5" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.members" active-filter-id="" />
     <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.records" active-filter-id="0a9b7e9f-4ea2-4f50-a6a2-8b482c2cd233">
       <filter id="0a9b7e9f-4ea2-4f50-a6a2-8b482c2cd233" name="ramble21 records only" temporary="false" custom-name="true" type="basic" join-type="AND">
         <condition column="submitter_id" operator="=" value="739978476651544607" active="true" />
@@ -539,7 +561,7 @@ WHERE table_type = 'BASE TABLE';]]></console>
         <data-length-threshold value="250" />
       </values-actions-popup>
       <general>
-        <fetch-block-size value="100" />
+        <fetch-block-size value="1000" />
         <fetch-timeout value="30" />
         <trim-whitespaces value="true" />
         <convert-empty-strings-to-null value="true" />
