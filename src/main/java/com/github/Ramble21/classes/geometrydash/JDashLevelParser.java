@@ -14,6 +14,7 @@ public class JDashLevelParser {
     public static jdash.common.entity.GDLevel fetchAPIResponse(long levelId) {
         int maxRetries = 7;
         int retryDelayMs = 800;
+        sleep(1200);
 
         for (int attempt = 0; attempt < maxRetries; attempt++) {
             try {
@@ -35,15 +36,10 @@ public class JDashLevelParser {
         return null;
     }
 
-    /**
-     * Fetch JDash GDLevel by name and difficulty
-     * @param name The level name to search for
-     * @param difficulty The difficulty filter (e.g., "hard", "demon")
-     * @return First matching JDash GDLevel or null if not found
-     */
     public static GDLevel fetchAPIResponseByName(String name, DemonDifficulty difficulty) {
         int maxRetries = 7;
         int retryDelayMs = 800;
+        sleep(1200);
 
         LevelSearchFilter filter = LevelSearchFilter.create().withDemonFilter(difficulty);
 
