@@ -87,7 +87,6 @@ public record GeometryDashRecordSubmit(boolean bySearch) implements Command {
         boolean memberIsBlacklisted = memberStatus.equals("blacklisted");
         boolean memberIsModerator = memberStatus.equals("moderator");
         long submitterID = Objects.requireNonNull(member).getIdLong();
-        System.out.println("Submitting record: GDRecord[name=" + level.getName() + ", ID=" + level.getId() + ", difficulty=" + level.getDifficulty() + ", submitter=" + member.getEffectiveName() + ", attempts=" + attempts + "]");
 
         boolean autoAccepted = (level.getDifficultyAsInt() < 10 && !memberIsBlacklisted) || memberIsModerator;
         return !GDDatabase.addRecord(submitterID, attempts, 0, autoAccepted, level);

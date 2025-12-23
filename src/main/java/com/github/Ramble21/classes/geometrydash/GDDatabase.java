@@ -338,6 +338,7 @@ public class GDDatabase {
                 checkStmt.setLong(2, level.getId());
                 try (ResultSet rs = checkStmt.executeQuery()) {
                     if (rs.next()) {
+                        System.out.println("Record already exists: GDRecord[name=" + level.getName() + ", ID=" + level.getId() + ", difficulty=" + level.getDifficulty() + ", submitterID=" + submitterID + ", attempts=" + attempts + "]");
                         return false;
                     }
                 }
@@ -362,6 +363,7 @@ public class GDDatabase {
                 insertRecordStmt.setBoolean(4, recordAccepted);
                 insertRecordStmt.setLong(5, level.getId());
                 insertRecordStmt.executeUpdate();
+                System.out.println("Submitting record: GDRecord[name=" + level.getName() + ", ID=" + level.getId() + ", difficulty=" + level.getDifficulty() + ", submitterID=" + submitterID + ", attempts=" + attempts + "]");
                 return true;
             }
 
