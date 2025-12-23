@@ -62,13 +62,12 @@ public class CCLevelParser {
                 }
 
                 GDLevel level = GDLevel.fromID(Long.parseLong(levelId));
-                if (level == null || level.getDifficulty() == null) {
+                if (level.getDifficulty() == null) {
                     // API error - return progress so far
                     int totalCompleted = previousCompletedCount + newCompletedCount;
                     System.out.println("API error detected at level " + levelId + ". Progress saved: " +
                             newCompletedCount + " new demons submitted this run.");
                     System.out.println("Already processed " + processedLevels.size() + " levels total.");
-                    System.out.println("Total demons submitted across all runs: " + totalCompleted);
                     return new CCParseProgress(totalCompleted, processedLevels, false);
                 }
                 if (level.getDifficultyAsInt() < 10) {
@@ -84,7 +83,6 @@ public class CCLevelParser {
         int totalCompleted = previousCompletedCount + newCompletedCount;
         System.out.println("Scan complete! New demons this run: " + newCompletedCount);
         System.out.println("Total processed levels: " + processedLevels.size());
-        System.out.println("Total demons submitted across all runs: " + totalCompleted);
         return new CCParseProgress(totalCompleted, processedLevels, true);
     }
 

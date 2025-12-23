@@ -1,6 +1,7 @@
 package com.github.Ramble21.classes.geometrydash;
 
 import com.google.gson.*;
+import jdash.common.DemonDifficulty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Objects;
+
+import static com.github.Ramble21.classes.geometrydash.JDashLevelParser.*;
 
 public class GDLevel {
     private String name;
@@ -21,9 +24,6 @@ public class GDLevel {
     private String rating; // feature epic etc., just a star rate is ""
 
     public static GDLevel fromID(long levelID) {
-        if (levelID == 12107595L) { // generation retro (gdbrowser default)
-            return null;
-        }
         GDLevel databaseLevel = GDDatabase.getLevel(levelID);
         if (databaseLevel != null) {
             return databaseLevel;
@@ -53,9 +53,17 @@ public class GDLevel {
             rating = "featured";
         }
         else {
-            String jsonResponse = fetchAPIResponseByName(name, difficulty);
-            if (jsonResponse != null){
-                parseJson(jsonResponse);
+            DemonDifficulty demonDiff = switch (difficulty) {
+                case "Easy Demon" -> DemonDifficulty.EASY;
+                case "Medium Demon" -> DemonDifficulty.MEDIUM;
+                case "Hard Demon" -> DemonDifficulty.HARD;
+                case "Insane Demon" -> DemonDifficulty.INSANE;
+                case "Extreme Demon" -> DemonDifficulty.EXTREME;
+                default -> null;
+            };
+            jdash.common.entity.GDLevel tempLevel = fetchAPIResponseByName(name, demonDiff);
+            if (tempLevel != null){
+                parseTempLevel(tempLevel);
             }
             else {
                 this.stars = -1;
@@ -91,24 +99,23 @@ public class GDLevel {
             rating = "featured";
         }
         else {
-            String jsonResponse = fetchAPIResponse(levelID);
-            if (jsonResponse != null){
-                parseJson(jsonResponse);
+            jdash.common.entity.GDLevel tempLevel = fetchAPIResponse(levelID);
+            if (tempLevel != null){
+                parseTempLevel(tempLevel);
             }
             else {
                 this.stars = -1;
+                return;
             }
         }
-        if (this.stars != -1) {
-            GDDifficulty gdD = fetchGDDLRating(id);
-            if (gdD == null) {
-                this.difficulty = null;
-                this.gddlTier = 0;
-            }
-            else {
-                this.difficulty = gdD.difficulty();
-                this.gddlTier = gdD.gddlTier();
-            }
+        GDDifficulty gdD = fetchGDDLRating(id);
+        if (gdD == null) {
+            this.difficulty = null;
+            this.gddlTier = 0;
+        }
+        else {
+            this.difficulty = gdD.difficulty();
+            this.gddlTier = gdD.gddlTier();
         }
     }
 
@@ -122,6 +129,31 @@ public class GDLevel {
         this.gddlTier = gddlTier;
         this.platformer = platformer;
         this.rating = rating;
+    }
+
+
+    public void parseTempLevel(jdash.common.entity.GDLevel jdashLevel) {
+        this.name = jdashLevel.name();
+        this.author = jdashLevel.creatorName().isPresent() ? jdashLevel.creatorName().get() : "-";
+        this.difficulty = jdashLevel.demonDifficulty().name();
+        this.id = jdashLevel.id();
+        this.stars = jdashLevel.isDemon() ? 10 : 0;
+        this.platformer = jdashLevel.isPlatformer();
+
+        String qr = jdashLevel.qualityRating().name().toLowerCase();
+        boolean featured = qr.equals("featured");
+        boolean epic = qr.equals("epic");
+        boolean legendary = qr.equals("legendary");
+        boolean mythic = qr.equals("mythic");
+        this.rating = makeRating(featured, epic, legendary, mythic);
+    }
+
+    public static void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            System.out.println("Sleep interrupted, continuing with retry logic");
+        }
     }
 
     public String getName() {
@@ -141,7 +173,6 @@ public class GDLevel {
     }
     public int getDifficultyAsInt(){
         return switch (difficulty){
-            // ints match up with GDBrowser API internal nums
             case "Non-Demon" -> -1;
             case "Easy Demon" -> 6;
             case "Medium Demon" -> 7;
@@ -151,18 +182,7 @@ public class GDLevel {
             default -> throw new IllegalStateException("Unexpected value: " + difficulty);
         };
     }
-    public static int getDifficultyAsInt(String difficulty){
-        return switch (difficulty){
-            // ints match up with GDBrowser API internal nums
-            case "Non-Demon" -> -1;
-            case "Easy Demon" -> 6;
-            case "Medium Demon" -> 7;
-            case "Hard Demon" -> 8;
-            case "Insane Demon" -> 9;
-            case "Extreme Demon" -> 10;
-            default -> throw new IllegalStateException("Unexpected value: " + difficulty);
-        };
-    }
+
     public boolean isPlatformer(){
         return platformer;
     }
@@ -171,23 +191,6 @@ public class GDLevel {
     }
     public String getRating(){
         return rating;
-    }
-
-    public void parseJson(String jsonResponse){
-        JsonObject data = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-        this.name = data.get("name").getAsString();
-        this.author = data.get("author").getAsString();
-        this.difficulty = data.get("difficulty").getAsString();
-        this.id = data.get("id").getAsInt();
-        this.stars = data.get("stars").getAsInt();
-        this.platformer = data.get("platformer").getAsBoolean();
-
-        boolean featured = data.get("featured").getAsBoolean();
-        boolean epic = data.get("epic").getAsBoolean();
-        boolean legendary = data.get("legendary").getAsBoolean();
-        boolean mythic = data.get("mythic").getAsBoolean();
-        this.rating = makeRating(featured, epic, legendary, mythic);
     }
 
     public static String makeRating(boolean featured, boolean epic, boolean legendary, boolean mythic){
@@ -326,109 +329,6 @@ public class GDLevel {
 
         System.out.println("Max retries exceeded while fetching rating for level " + levelId);
         return null;
-    }
-
-    public static String fetchAPIResponse(long levelId) {
-        String apiUrl = "https://gdbrowser.com/api/level/" + levelId;
-        return executeAPIRequest(apiUrl, "Level " + levelId);
-    }
-
-    public static String fetchAPIResponseByName(String name, String difficulty) {
-        String apiUrl = "https://gdbrowser.com/api/search/" + name + "?diff=" + getDifficultyAsInt(difficulty);
-        String response = executeAPIRequest(apiUrl, "Level " + name);
-
-        if (response != null) {
-            try {
-                JsonArray levelsArray = JsonParser.parseString(response).getAsJsonArray();
-                if (!levelsArray.isEmpty()) {
-                    JsonObject firstLevel = levelsArray.get(0).getAsJsonObject();
-                    return firstLevel.toString();
-                }
-            } catch (Exception e) {
-                System.out.println("Error parsing search results: " + e.getMessage());
-            }
-        }
-        return null;
-    }
-
-    private static String executeAPIRequest(String apiUrl, String identifier) {
-        int maxRetries = 7;
-        int retryDelayMs = 800;
-        int connectionTimeoutMs = 5000;
-        int readTimeoutMs = 10000;
-
-        for (int attempt = 0; attempt < maxRetries; attempt++) {
-            HttpURLConnection connection = null;
-            try {
-                URL url = new URL(apiUrl);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(connectionTimeoutMs);
-                connection.setReadTimeout(readTimeoutMs);
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-                int responseCode = connection.getResponseCode();
-
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream())
-                    );
-                    StringBuilder response = new StringBuilder();
-                    String inputLine;
-
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    in.close();
-                    return response.toString();
-                }
-                else if (responseCode == 429) {
-                    System.out.println("Rate limited on gdbrowser.com. Retrying in " + retryDelayMs + "ms... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    sleep(retryDelayMs);
-                    retryDelayMs *= 2;
-                }
-                else if (responseCode >= 500 && responseCode < 600) {
-                    System.out.println("Server error (" + responseCode + "). Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                    sleep(retryDelayMs);
-                }
-                else if (responseCode == 404) {
-                    System.out.println(identifier + " not found (404)");
-                    return null;
-                }
-                else {
-                    System.out.println("GET request failed for " + identifier + ". Response code: " + responseCode);
-                    return null;
-                }
-            }
-            catch (SocketTimeoutException e) {
-                System.out.println("Request timed out. Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                sleep(retryDelayMs);
-            }
-            catch (IOException e) {
-                System.out.println("Network error: " + e.getMessage() + ". Retrying... (Attempt " + (attempt + 1) + "/" + maxRetries + ")");
-                sleep(retryDelayMs);
-            }
-            catch (Exception e) {
-                System.out.println("Unexpected error: " + e.getMessage());
-                return null;
-            }
-            finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-        }
-
-        System.out.println("Max retries exceeded for " + identifier);
-        return null;
-    }
-
-    public static void sleep(int milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            System.out.println("Sleep interrupted, continuing with retry logic");
-        }
     }
 
     @Override

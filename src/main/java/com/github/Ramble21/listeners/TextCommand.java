@@ -43,12 +43,13 @@ public class TextCommand extends ListenerAdapter {
 
         if (message.startsWith("r!mod") && isBotOwner(user)) {
             String[] parts = message.split("\\s+");
-            if (parts.length < 2) {
+            try {
+                long memberID = Long.parseLong(parts[1]);
+                GDDatabase.changeMemberStatus(memberID, "moderator");
+                event.getChannel().sendMessage("<@" + memberID + "> has been successfully added as a RambleBot moderator!").queue();
+            } catch (Exception e) {
                 event.getChannel().sendMessage("You forgot to send a User ID bro").queue();
             }
-            long memberID = Long.parseLong(parts[1]);
-            GDDatabase.changeMemberStatus(memberID, "moderator");
-            event.getChannel().sendMessage("<@" + memberID + "> has been successfully added as a RambleBot moderator!").queue();
         }
 
         if (message.startsWith("r!blacklist") && isBotOwner(user)) {

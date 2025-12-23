@@ -41,7 +41,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>net.dv8tion</groupId>
@@ -68,6 +67,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alex1304.jdash</groupId>
+            <artifactId>jdash-client</artifactId>
+            <version>5.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.api-client</groupId>
