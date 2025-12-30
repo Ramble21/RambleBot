@@ -10,11 +10,10 @@ import java.util.regex.Pattern;
 
 public class CCLevelParser {
 
-    public static CCParseProgress parseOnlineLevels(String decryptedXml, Member member, CCParseProgress previousProgress) {
-        HashSet<String> processedLevels = (previousProgress != null) ? previousProgress.processedLevels() : new HashSet<>();
-        int previousCompletedCount = (previousProgress != null) ? previousProgress.completedCount() : 0;
-
+    public static CCParseProgress parseOnlineLevels(String decryptedXml, Member member) {
+        HashSet<String> processedLevels = new HashSet<>();
         HashSet<String> demonLevels = new HashSet<>();
+
         int gs9Index = decryptedXml.indexOf("<k>GS_9</k>");
         if (gs9Index != -1) {
             int dictStart = decryptedXml.indexOf("<d>", gs9Index);
@@ -33,18 +32,18 @@ public class CCLevelParser {
 
         int glm03Index = decryptedXml.indexOf("<k>GLM_03</k>");
         if (glm03Index == -1) {
-            return new CCParseProgress(previousCompletedCount, processedLevels, true);
+            return new CCParseProgress(0, processedLevels, true);
         }
         int dictStart = decryptedXml.indexOf("<d>", glm03Index);
         int dictEnd = findMatchingClosingTag(decryptedXml, dictStart);
         if (dictStart == -1 || dictEnd == -1) {
-            return new CCParseProgress(previousCompletedCount, processedLevels, true);
+            return new CCParseProgress(0, processedLevels, true);
         }
         String glm03Section = decryptedXml.substring(dictStart, dictEnd);
         Pattern pattern = Pattern.compile("<k>(\\d{5,})</k><d>(.*?)</d>");
         Matcher matcher = pattern.matcher(glm03Section);
 
-        int newCompletedCount = 0;
+        int levelsCompleted = 0;
         while (matcher.find()) {
             String levelId = matcher.group(1);
             String levelData = matcher.group(2);
@@ -64,26 +63,24 @@ public class CCLevelParser {
                 GDLevel level = GDLevel.fromID(Long.parseLong(levelId));
                 if (level.getDifficulty() == null) {
                     // API error - return progress so far
-                    int totalCompleted = previousCompletedCount + newCompletedCount;
                     System.out.println("API error detected at level " + levelId + ". Progress saved: " +
-                            newCompletedCount + " new demons submitted this run.");
+                            levelsCompleted + " new demons submitted this run.");
                     System.out.println("Already processed " + processedLevels.size() + " levels total.");
-                    return new CCParseProgress(totalCompleted, processedLevels, false);
+                    return new CCParseProgress(levelsCompleted, processedLevels, false);
                 }
                 if (level.getDifficultyAsInt() < 10) {
-                    boolean levelSubmitted = GeometryDashRecordSubmit.submitRecord(level, member, attempts);
-                    if (levelSubmitted) {
-                        newCompletedCount++;
+                    boolean levelAlrSubmitted = GeometryDashRecordSubmit.submitRecord(level, member, attempts);
+                    if (!levelAlrSubmitted) {
+                        levelsCompleted++;
                     }
                 }
                 processedLevels.add(levelId);
             }
         }
 
-        int totalCompleted = previousCompletedCount + newCompletedCount;
-        System.out.println("Scan complete! New demons this run: " + newCompletedCount);
+        System.out.println("Scan complete! New demons this run: " + levelsCompleted);
         System.out.println("Total processed levels: " + processedLevels.size());
-        return new CCParseProgress(totalCompleted, processedLevels, true);
+        return new CCParseProgress(levelsCompleted, processedLevels, true);
     }
 
     private static int findMatchingClosingTag(String xml, int openTagPos) {

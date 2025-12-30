@@ -32,7 +32,7 @@ public class GDSubmitSaveFile implements Command {
         }
         hook.sendMessage("Save file successfully decrypted, scanning all levels. This may take a long time.").queue();
 
-        CCParseProgress parseProgress = CCLevelParser.parseOnlineLevels(decrypted, event.getMember(), null);
+        CCParseProgress parseProgress = CCLevelParser.parseOnlineLevels(decrypted, event.getMember());
         if (!parseProgress.isComplete()) {
             hook.sendMessage("Safe file partially scanned, rate limit reached. Please try again later.").queue();
             return;
