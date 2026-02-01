@@ -8,6 +8,7 @@ RambleBot Geometry Dash-specific commands (all under the /gd header)
 | Subcommand Name | Description |
 |:---------------:|:-----------:|
 |submitrecord|Submit a completion record|
+|submitbysavefile|Submit multiple records through your GD save file|
 |editrecord|Edit a previously submitted record|
 |deleterecord|Delete a previously submitted record|
 |profile|See one's "personal demonlist"|
@@ -27,5 +28,6 @@ Miscellaneous commands:
 |/counter|Configure a server "counter" that will keep track of how long your server can last before saying a certain word or phrase|configure, stats|
 |/guess-flags|Test your world knowledge by guessing national or international flags!|N/A|
 |/grab-ip|Totally real IP-grabber to prank your friends|N/A|
+|/coinflip|Flips a coin|N/A|
 |/rizz-rater|Rates the rizz of one of your server members on a scale of 1 to 10|N/A|
 
