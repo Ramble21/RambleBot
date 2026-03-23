@@ -44,8 +44,8 @@ public class WordBomb implements Command {
 
 
     public final int STARTING_LIVES = 3;
-    private final int TURN_TIME = 10;
 
+    private int TURN_TIME;
     private int DIFFICULTY_CODE;
     private int LANGUAGE_CODE;
     public int NUM_TURNS;
@@ -102,6 +102,8 @@ public class WordBomb implements Command {
 
         host = event.getUser();
         players.add(new WordBombPlayer(host, STARTING_LIVES));
+
+        TURN_TIME = event.getOption("turn-length") == null ? 10 : Objects.requireNonNull(event.getOption("turn-length")).getAsInt();
         LANGUAGE_CODE = event.getOption("language") == null ? 0 : Objects.requireNonNull(event.getOption("language")).getAsInt();
         DIFFICULTY_CODE = event.getOption("difficulty") == null ? 1 : Objects.requireNonNull(event.getOption("difficulty")).getAsInt();
         boolean PRACTICE_MODE = event.getOption("practice") != null && Objects.requireNonNull(event.getOption("practice")).getAsBoolean();

@@ -62,6 +62,9 @@ public class CommandListener extends ListenerAdapter {
                                         .addChoice("Español", 1)
                                         .setRequired(false)
                                 ),
+                                (new OptionData(OptionType.INTEGER, "turn-length", "How many seconds each player gets for their word per turn (default: 10)")
+                                        .setRequired(false)
+                                ),
                                 (new OptionData(OptionType.BOOLEAN, "practice", "Select \"True\" to play in practice mode (currently unsupported)")
                                         .setRequired(false)
                                 )
