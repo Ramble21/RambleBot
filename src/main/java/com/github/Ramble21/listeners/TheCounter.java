@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class TheCounter extends ListenerAdapter {
                 "penis", "cock", "dick", "peanits", "pingas"
         };
         String[] exceptions = {
-                "cockroach", "dickhead", "cocktail", "peacock", "cockpit",
+                "cockroach", "dickhead", "cocktail", "peacock", "cockpit", "girlcockx",
                 "cockatoo", "dickinson", "dickens", "penistone", "dickwad"
         };
         for (String trigger : triggerWords) {
@@ -54,6 +55,15 @@ public class TheCounter extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) {
             return;
+        }
+        MessageChannel channel = event.getMessage().getChannel();
+        String[] badChannels = {
+                "vent"
+        };
+        for (String badChannel : badChannels) {
+            if (channel.getName().equals(badChannel)) {
+                return;
+            }
         }
         String path = "data/json/the-counter/" + event.getGuild().getId() + ".json";
         String message = Diacritics.removeDiacritics(event.getMessage().getContentRaw()).toLowerCase();

@@ -41,7 +41,7 @@ public class CounterStats implements Command {
         ArrayList<String> topOffenders = new ArrayList<>(getTopOffenders(uT));
         // eventually make this customizable
         sb.append("**Counter trigger words:** [\"penis\", \"cock\", \"dick\", \"peanits\", \"pingas\"]\n");
-        sb.append("**Counter trigger exceptions:** [\"cockroach\", \"dickhead\", \"cocktail\", \"peacock\", \"cockpit\", \"cockatoo\", \"dickinson\", \"dickens\", \"penistone\", \"dickwad\"]\n\n");
+        sb.append("**Counter trigger exceptions:** [\"cockroach\", \"dickhead\", \"cocktail\", \"peacock\", \"cockpit\", \"cockatoo\", \"dickinson\", \"dickens\", \"girlcockx\", \"penistone\", \"dickwad\"]\n\n");
         sb.append("**Counter trigger most common culprits:**\n");
         for (int i = 0; i < Math.min(10, uT.size()); i++) {
             String id = topOffenders.get(i);
