@@ -30,7 +30,7 @@ public class TheCounter extends ListenerAdapter {
                 "penis", "cock", "dick", "peanits", "pingas"
         };
         String[] exceptions = {
-                "cockroach", "dickhead", "cocktail", "peacock", "cockpit", "girlcockx",
+                "cockroach", "cocky", "dickhead", "cocktail", "peacock", "cockpit", "girlcockx",
                 "cockatoo", "dickinson", "dickens", "penistone", "dickwad"
         };
         for (String trigger : triggerWords) {
