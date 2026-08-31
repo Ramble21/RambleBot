@@ -248,6 +248,6 @@ public class WordBomb implements Command {
             }
         };
         channel.getJDA().addEventListener(listener);
-        timer.schedule(removeLife, TURN_TIME * 1000);
+        timer.schedule(removeLife, TURN_TIME * 1000L);
     }
 }

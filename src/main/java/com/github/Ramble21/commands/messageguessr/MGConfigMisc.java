@@ -25,7 +25,7 @@ public class MGConfigMisc implements Command {
         if (hideOldMembers != null) {
             options.setHideOldMembers(hideOldMembers);
         }
-        if (numWrongAnswers != null) {
+        if (numWrongAnswers != null && numWrongAnswers >= 1 && numWrongAnswers <= 4) {
             options.setNumWrongAnswers(numWrongAnswers);
         }
         if (useNicknames != null) {

@@ -1,6 +1,7 @@
 package com.github.Ramble21;
 
 import com.github.Ramble21.command.CommandListener;
+import com.github.Ramble21.commands.messageguessr.MGButtonListener;
 import com.github.Ramble21.listeners.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
@@ -75,7 +76,8 @@ public class RambleBot {
             new Test(),
             new HotLavaAndChicken(),
             new WordCensorListener(),
-            new TheCounter()
+            new TheCounter(),
+            new MGButtonListener()
         );
 
         shardManager = builder.build();

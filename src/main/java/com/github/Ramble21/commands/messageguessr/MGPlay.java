@@ -4,9 +4,9 @@ import com.github.Ramble21.command.Command;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.awt.*;
@@ -22,27 +22,23 @@ public class MGPlay implements Command {
         EmbedBuilder embed = new EmbedBuilder();
         Member commandMember = Objects.requireNonNull(event.getMember());
         long serverId = Objects.requireNonNull(event.getGuild()).getIdLong();
-
         MessageGuessrOptions options = MessageGuessr.getMiscOptions();
         ArrayList<Long> badUserIds = MessageGuessr.getBadIds(event.getGuild(), options.hidesOldMembers());
         ArrayList<Long> badChannelIds = new ArrayList<>(MessageGuessr.getBlacklistedChannels());
         Message toGuess = MessageGuessrDB.getMessage(serverId, badUserIds, badChannelIds);
-
         if (toGuess == null) {
             event.reply("Message database is empty!").queue();
             return;
         }
-
         embed.setColor(Color.YELLOW);
         embed.setTitle("Who said this?");
-        embed.setAuthor(commandMember.getEffectiveName(), commandMember.getEffectiveAvatarUrl());
+        embed.setAuthor(commandMember.getEffectiveName(), null, commandMember.getEffectiveAvatarUrl());
         embed.setDescription(toGuess.content());
 
         ArrayList<Long> userIds = MessageGuessrDB.getUniqueUserIds(event.getGuild().getIdLong());
         ArrayList<Long> pool = new ArrayList<>(userIds);
         pool.remove(toGuess.userId());
         Collections.shuffle(pool);
-
         ArrayList<Long> answerList = new ArrayList<>(pool.subList(0, options.getNumWrongAnswers()));
         answerList.add(toGuess.userId());
         Collections.shuffle(answerList);
@@ -51,8 +47,8 @@ public class MGPlay implements Command {
         for (long answer : answerList) {
             User user = event.getJDA().getUserById(answer);
             String label = getLabel(user, options);
-            String buttonId = "mg:" + toGuess.userId() + ":" + answer;
-            buttons.add(Button.primary(buttonId, label));
+            String buttonId = "mg:" + commandMember.getIdLong() + ":" + toGuess.userId() + ":" + answer;
+            buttons.add(Button.secondary(buttonId, label));
         }
 
         ArrayList<ActionRow> rows = new ArrayList<>();
@@ -60,8 +56,10 @@ public class MGPlay implements Command {
             rows.add(ActionRow.of(buttons.subList(i, Math.min(i + 5, buttons.size()))));
         }
 
-        event.replyEmbeds(embed.build()).addComponents(rows).queue();
+        Button jumpButton = Button.link(toGuess.jumpUrl(), "Jump to Message").withEmoji(Emoji.fromUnicode("🔗")).asDisabled();
+        rows.add(ActionRow.of(jumpButton));
 
+        event.replyEmbeds(embed.build()).addComponents(rows).queue();
     }
 
     private String getLabel(User user, MessageGuessrOptions options) {
@@ -69,10 +67,10 @@ public class MGPlay implements Command {
             return "Unknown User";
         }
         else if (options.usesNicknames()) {
-            return user.getEffectiveName();
+            return user.getEffectiveName() + " ("  + user.getName() + ")";
         }
         else {
-            return user.getGlobalName();
+            return user.getGlobalName() + " ("  + user.getName() + ")";
         }
     }
 

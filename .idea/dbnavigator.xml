@@ -79,7 +79,14 @@ FROM information_schema.tables
 WHERE table_type = 'BASE TABLE';]]></console>
     </connection>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7">
-      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[CREATE ROLE ramble21 WITH LOGIN SUPERUSER PASSWORD 'Red1sKindaHairy';]]></console>
+      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[INSERT INTO public."MESSAGES" ("ID", "CONTENT", "TIMESTAMP", "JUMP_URL", "MENTIONS_EVERYONE", "ROLES_MENTIONED", "SERVER_ID", "USER_ID", "CHANNEL_ID", "REPLYING_TO_ID")
+VALUES
+    (12345, 'sus', 67, 'https://discord.com/channels/931838136223412235/931838136223412239/1543757210', true, NULL, 4, 4, 931838136223412235, NULL),
+    (12346, 'test1', 68, 'https://discord.com/channels/931838136223412235/931838136223412239/1543757210', false, NULL, 4, 4, 931838136223412235, NULL),
+    (12347, 'test2', 69, 'https://discord.com/channels/931838136223412235/931838136223412239/1543757211', false, NULL, 4, 4, 931838136223412235, NULL),
+    (12348, 'test3', 70, 'https://discord.com/channels/931838136223412235/931838136223412239/1543757212', false, NULL, 4, 4, 931838136223412235, NULL),
+    (12349, 'test4', 71, 'https://discord.com/channels/931838136223412235/931838136223412239/1543757213', false, NULL, 4, 4, 931838136223412235, NULL),
+    (12350, 'test5', 72, 'https://discord.com/channels/931838136223412235/931838136223412239/1543757214', false, NULL, 4, 4, 931838136223412235, NULL);]]></console>
       <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
     <connection id="e6428192-2612-4d06-96d8-8a7762be0127">
