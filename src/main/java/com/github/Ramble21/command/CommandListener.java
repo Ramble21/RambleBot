@@ -48,6 +48,22 @@ public class CommandListener extends ListenerAdapter {
                         new SubcommandData("list", "[ADMIN] List all currently censored words/phrases")
                 )
         );
+        commandData.add(Commands.slash("messageguessr", "Guess which server member said a given message!")
+                .addSubcommands(
+                        new SubcommandData("play", "Guess which server member said a given message!"),
+                        new SubcommandData("configure-misc", "[ADMIN] Configure miscellaneous Messageguessr settings").addOptions(
+                                (new OptionData(OptionType.INTEGER, "time-cutoff", "Latest point in which messages will be pulled (as a Unix seconds timestamp)").setRequired(false)),
+                                (new OptionData(OptionType.BOOLEAN, "hide-old-members", "Hide messages from members who are no longer in the server").setRequired(false))
+                        ),
+                        new SubcommandData("blacklist-channel", "[ADMIN] Blacklist a given channel from being used in Messageguessr").addOptions(
+                                (new OptionData(OptionType.CHANNEL, "channel", "Channel to blacklist").setRequired(true))
+                        ),
+                        new SubcommandData("configure-alt", "[ADMIN] Add an alt account to be counted under a main account").addOptions(
+                                (new OptionData(OptionType.USER, "alt", "The alt account to hide").setRequired(true)),
+                                (new OptionData(OptionType.USER, "main", "The main account in which the alt's messages will appear under").setRequired(true))
+                        )
+                )
+        );
         commandData.add(Commands.slash("wordbomb", "Play WordBomb on Discord!")
                 .addSubcommands(
                         new SubcommandData("play", "Play WordBomb on Discord!").addOptions(

@@ -37,7 +37,7 @@
         <tools />
         <mcp-servers />
       </assistant-state>
-      <assistant-state connection-id="4f4279af-51db-42d8-8b75-35b460776954" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+      <assistant-state connection-id="virtual-postgres-connection" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
         <tools />
         <mcp-servers />
       </assistant-state>
@@ -45,7 +45,15 @@
         <tools />
         <mcp-servers />
       </assistant-state>
+      <assistant-state connection-id="4f4279af-51db-42d8-8b75-35b460776954" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+        <mcp-servers />
+      </assistant-state>
       <assistant-state connection-id="e6428192-2612-4d06-96d8-8a7762be0127" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+        <tools />
+        <mcp-servers />
+      </assistant-state>
+      <assistant-state connection-id="e6428192-2612-4d06-96d8-8a7762be0127" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
         <tools />
         <mcp-servers />
       </assistant-state>
@@ -71,7 +79,9 @@ WHERE table_type = 'BASE TABLE';]]></console>
       <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
     <connection id="e6428192-2612-4d06-96d8-8a7762be0127">
-      <console name="Prod (Glisterbyte)" type="STANDARD" schema="ramblebot" session="Main" />
+      <console name="Prod (Glisterbyte)" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[SELECT * FROM public."MESSAGES"
+ORDER BY id DESC
+LIMIT 10;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -79,6 +89,9 @@ WHERE table_type = 'BASE TABLE';]]></console>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
+  </component>
+  <component name="DBNavigator.Project.DatabasePrerequisiteManager">
+    <prerequisites />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="4f4279af-51db-42d8-8b75-35b460776954" />
@@ -102,6 +115,11 @@ WHERE table_type = 'BASE TABLE';]]></console>
       <filter id="63547dca-8e3a-4752-b77c-c7894e835d00" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
     <filter-actions connection-id="4f4279af-51db-42d8-8b75-35b460776954" dataset="main.messages" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.MESSAGES" active-filter-id="c04f3ac4-35a7-49df-ab4b-266351dd529c">
+      <filter id="c04f3ac4-35a7-49df-ab4b-266351dd529c" name="Filter" temporary="false" custom-name="false" type="custom">
+        <condition><![CDATA[<br><br>"SERVER_ID" = 931838136223412235<br>ORDER BY "TIMESTAMP" DESC<br>LIMIT 1000;]]></condition>
+      </filter>
+    </filter-actions>
     <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.levels" active-filter-id="a6e5dac0-7194-48dc-8f86-fec7a16131e5">
       <filter id="a6e5dac0-7194-48dc-8f86-fec7a16131e5" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
@@ -114,12 +132,17 @@ WHERE table_type = 'BASE TABLE';]]></console>
     <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.guild_members" active-filter-id="8f23f23d-4e87-4262-952f-730e9e9de4aa">
       <filter id="8f23f23d-4e87-4262-952f-730e9e9de4aa" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.CHANNELS" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="pg_catalog.pg_database" active-filter-id="" />
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="information_schema.sql_features" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.STARBOARDS" active-filter-id="">
+      <filter id="aff7d40c-8358-4ca8-b6f7-8330e4928f58" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="CHANNEL_ID" operator="=" value="" active="true" />
+      </filter>
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
-  </component>
-  <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/src/main/java/com/github/Ramble21/classes/geometrydash/queries.sql" connection-id="virtual-postgres-connection" session-id="MAIN" current-schema="" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -380,14 +403,14 @@ WHERE table_type = 'BASE TABLE';]]></console>
           <description value="" />
           <database-type value="POSTGRES" />
           <config-type value="BASIC" />
-          <database-version value="17.5" />
+          <database-version value="17.9" />
           <driver-source value="BUNDLED" />
           <driver-library value="" />
           <driver value="" />
           <url-type value="DATABASE" />
-          <host value="ssh.glisterbyte.com" />
+          <host value="localhost" />
           <port value="5432" />
-          <database value="ramblebot" />
+          <database value="glisterbot2" />
           <tns-folder value="" />
           <tns-profile value="" />
           <server-type value="" />
@@ -410,12 +433,12 @@ WHERE table_type = 'BASE TABLE';]]></console>
           <auto-commit value="false" />
         </properties>
         <ssh-settings>
-          <active value="false" />
-          <proxy-host value="" />
+          <active value="true" />
+          <proxy-host value="ssh.glisterbyte.com" />
           <proxy-port value="22" />
-          <proxy-user value="" />
-          <auth-type value="PASSWORD" />
-          <key-file value="" />
+          <proxy-user value="ramble" />
+          <auth-type value="KEY_PAIR" />
+          <key-file value="$USER_HOME$/.ssh/id_ed25519" />
         </ssh-settings>
         <ssl-settings>
           <active value="false" />
