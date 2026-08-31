@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -28,7 +29,9 @@ public class MessageGuessr {
         ArrayList<Long> badIds = new ArrayList<>();
         for (long userId : MessageGuessrDB.getUniqueUserIds(guild.getIdLong())) {
             User user = guild.getJDA().getUserById(userId);
-            if (user == null || user.isBot() || (excludeOldMembers && guild.isMember(user))) {
+            boolean isCurrentMember = guild.getMemberById(userId) != null;
+
+            if (user == null || user.isBot() || (excludeOldMembers && !isCurrentMember)) {
                 badIds.add(userId);
             }
         }

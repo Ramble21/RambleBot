@@ -1,6 +1,7 @@
 package com.github.Ramble21.command;
 
 import com.github.Ramble21.commands.*;
+import com.github.Ramble21.commands.messageguessr.MGPlay;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.w3c.dom.css.Counter;
 
@@ -24,6 +25,7 @@ public class CommandManager{
         commands.put("counter-stats", new CounterStats());
         commands.put("coinflip", new CoinFlip());
         commands.put("messageguessr", new MessageGuessrManager());
+        commands.put("guess-messages", new MGPlay());
     }
 
     public Command getCommand(String name){

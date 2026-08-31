@@ -20,7 +20,6 @@ public class MessageGuessrManager implements Command {
 
 
     public MessageGuessrManager() {
-        subcommands.put("play", new MGPlay());
         subcommands.put("configure-misc", new MGConfigMisc());
         subcommands.put("configure-alt", new MGConfigAlt());
         subcommands.put("blacklist-channel", new MGBlacklistChannel());

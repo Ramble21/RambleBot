@@ -36,6 +36,7 @@ public class MGPlay implements Command {
         embed.setDescription(toGuess.content());
 
         ArrayList<Long> userIds = MessageGuessrDB.getUniqueUserIds(event.getGuild().getIdLong());
+        userIds.removeAll(badUserIds);
         ArrayList<Long> pool = new ArrayList<>(userIds);
         pool.remove(toGuess.userId());
         Collections.shuffle(pool);

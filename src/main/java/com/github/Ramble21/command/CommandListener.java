@@ -48,9 +48,9 @@ public class CommandListener extends ListenerAdapter {
                         new SubcommandData("list", "[ADMIN] List all currently censored words/phrases")
                 )
         );
+        commandData.add(Commands.slash("guess-messages", "Guess which server member said a given message!"));
         commandData.add(Commands.slash("messageguessr", "Guess which server member said a given message!")
                 .addSubcommands(
-                        new SubcommandData("play", "Guess which server member said a given message!"),
                         new SubcommandData("configure-misc", "[ADMIN] Configure miscellaneous Messageguessr settings").addOptions(
                                 (new OptionData(OptionType.INTEGER, "time-cutoff", "Latest point in which messages will be pulled (as a Unix seconds timestamp)").setRequired(false)),
                                 (new OptionData(OptionType.BOOLEAN, "hide-old-members", "Hide messages from members who are no longer in the server (excluding configured alts)").setRequired(false)),
