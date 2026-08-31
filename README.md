@@ -20,15 +20,16 @@ RambleBot Geometry Dash-specific commands (all under the /gd header)
 
 Miscellaneous commands:
 
-| Command Name |                                                        Description                                                        |    Subcommands    |
-|:------------:|:-------------------------------------------------------------------------------------------------------------------------:|:-----------------:|
-|    /vocab    |                                       Study vocabulary terms in a foreign language                                        |  french, spanish  |
-|  /typeracer  |                                       Challenge your friends to a typing speed race                                       | play, leaderboard |
-|  /wordbomb   |                                Challenge your friends to the explosive word game WordBomb                                 | play, leaderboard |
-|  /1984-list  |                          Add words and/or phrases to the censor list for moderation (Admin only)                          | add, remove, list |
-|   /counter   | Configure a server "counter" that will keep track of how long your server can last before saying a certain word or phrase | configure, stats  |
-| /guess-flags |                          Test your world knowledge by guessing national or international flags!                           |        N/A        |
-|   /grab-ip   |                                       Totally real IP-grabber to prank your friends                                       |        N/A        |
-|  /coinflip   |                                                       Flips a coin                                                        |        N/A        |
-| /rizz-rater  |                            Rates the rizz of one of your server members on a scale of 1 to 10                             |        N/A        |
+|  Command Name   |                                                        Description                                                        |    Subcommands    |
+|:---------------:|:-------------------------------------------------------------------------------------------------------------------------:|:-----------------:|
+|     /vocab      |                                       Study vocabulary terms in a foreign language                                        |  french, spanish  |
+|   /typeracer    |                                       Challenge your friends to a typing speed race                                       | play, leaderboard |
+|    /wordbomb    |                                Challenge your friends to the explosive word game WordBomb                                 | play, leaderboard |
+|   /1984-list    |                          Add words and/or phrases to the censor list for moderation (Admin only)                          | add, remove, list |
+|    /counter     | Configure a server "counter" that will keep track of how long your server can last before saying a certain word or phrase | configure, stats  |
+|  /guess-flags   |                          Test your world knowledge by guessing national or international flags!                           |        N/A        |
+|    /grab-ip     |                                       Totally real IP-grabber to prank your friends                                       |        N/A        |
+|    /coinflip    |                                                       Flips a coin                                                        |        N/A        |
+|   /rizz-rater   |                            Rates the rizz of one of your server members on a scale of 1 to 10                             |        N/A        |
+| /guess-messages |            Guess which member of your server said a given message (requires an existing message log database)             |        N/A        |
 

@@ -1,6 +1,7 @@
 package com.github.Ramble21.commands.messageguessr;
 
 import com.github.Ramble21.command.Command;
+import com.github.Ramble21.command.MessageGuessrManager;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -19,6 +20,12 @@ public class MGPlay implements Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) throws IOException {
+
+        if (!Objects.requireNonNull(event.getGuild()).getId().equals(MessageGuessrManager.mgServer)) {
+            event.reply("This command is not supported in this server. Sorry!").queue();
+            return;
+        }
+
         EmbedBuilder embed = new EmbedBuilder();
         Member commandMember = Objects.requireNonNull(event.getMember());
         long serverId = Objects.requireNonNull(event.getGuild()).getIdLong();
