@@ -79,29 +79,7 @@ FROM information_schema.tables
 WHERE table_type = 'BASE TABLE';]]></console>
     </connection>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7">
-      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[INSERT INTO public."MESSAGES" (
-    "ID",
-    "CONTENT",
-    "TIMESTAMP",
-    "JUMP_URL",
-    "MENTIONS_EVERYONE",
-    "ROLES_MENTIONED",
-    "SERVER_ID",
-    "USER_ID",
-    "CHANNEL_ID",
-    "REPLYING_TO_ID"
-) VALUES (
-    12345,
-    'sus',
-    67,
-    '23412239/1543757209895436298',
-    true,
-    ARRAY[]::bigint[],
-    4,
-    4,
-    4,
-    NULL
-);]]></console>
+      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[CREATE ROLE ramble21 WITH LOGIN SUPERUSER PASSWORD 'Red1sKindaHairy';]]></console>
       <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
     <connection id="e6428192-2612-4d06-96d8-8a7762be0127">
@@ -147,6 +125,7 @@ LIMIT 10;]]></console>
         <condition><![CDATA[<br><br>"SERVER_ID" = 931838136223412235<br>ORDER BY "TIMESTAMP" DESC<br>LIMIT 1000;]]></condition>
       </filter>
     </filter-actions>
+    <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.USERS" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="e6428192-2612-4d06-96d8-8a7762be0127" dataset="public.levels" active-filter-id="a6e5dac0-7194-48dc-8f86-fec7a16131e5">
       <filter id="a6e5dac0-7194-48dc-8f86-fec7a16131e5" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>

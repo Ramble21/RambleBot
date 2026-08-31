@@ -15,7 +15,7 @@ public class MGConfigMisc implements Command {
     public void execute(SlashCommandInteractionEvent event) throws IOException {
         Integer timeCutoff = event.getOption("time-cutoff", OptionMapping::getAsInt);
         Boolean hideOldMembers = event.getOption("hide-old-members", OptionMapping::getAsBoolean);
-        Boolean hideCommands = event.getOption("hide-commands", OptionMapping::getAsBoolean);
+        Integer numWrongAnswers = event.getOption("num-wrong-answers", OptionMapping::getAsInt);
         Boolean useNicknames = event.getOption("use-nicknames", OptionMapping::getAsBoolean);
 
         MessageGuessrOptions options = MessageGuessr.getMiscOptions();
@@ -25,8 +25,8 @@ public class MGConfigMisc implements Command {
         if (hideOldMembers != null) {
             options.setHideOldMembers(hideOldMembers);
         }
-        if (hideCommands != null) {
-            options.setHideCommands(hideCommands);
+        if (numWrongAnswers != null) {
+            options.setNumWrongAnswers(numWrongAnswers);
         }
         if (useNicknames != null) {
             options.setUseNicknames(useNicknames);

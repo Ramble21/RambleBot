@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,6 +14,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -22,14 +24,15 @@ public class MessageGuessr {
         return "<t:" + unixSeconds + ":F>";
     }
 
-    public static HashSet<Long> getBotIds(Guild guild) {
-        HashSet<Long> botIds = new HashSet<>();
-        for (Member member : guild.getMembers()) {
-            if (member.getUser().isBot()) {
-                botIds.add(member.getUser().getIdLong());
+    public static ArrayList<Long> getBadIds(Guild guild, boolean excludeOldMembers) {
+        ArrayList<Long> badIds = new ArrayList<>();
+        for (long userId : MessageGuessrDB.getUniqueUserIds(guild.getIdLong())) {
+            User user = guild.getJDA().getUserById(userId);
+            if (user == null || user.isBot() || (excludeOldMembers && guild.isMember(user))) {
+                badIds.add(userId);
             }
         }
-        return botIds;
+        return badIds;
     }
 
     public static long getMainAccount(long userId) {
@@ -115,11 +118,11 @@ public class MessageGuessr {
             options = gson.fromJson(reader, listType);
 
             if (options == null) {
-                options = new MessageGuessrOptions(-1, false, true, false);
+                options = new MessageGuessrOptions(-1, 3, false, false);
             }
 
         } catch (IOException e) {
-            options = new MessageGuessrOptions(-1, false, true, false);
+            options = new MessageGuessrOptions(-1, 3, false, false);
         }
 
         return options;

@@ -54,7 +54,7 @@ public class CommandListener extends ListenerAdapter {
                         new SubcommandData("configure-misc", "[ADMIN] Configure miscellaneous Messageguessr settings").addOptions(
                                 (new OptionData(OptionType.INTEGER, "time-cutoff", "Latest point in which messages will be pulled (as a Unix seconds timestamp)").setRequired(false)),
                                 (new OptionData(OptionType.BOOLEAN, "hide-old-members", "Hide messages from members who are no longer in the server (excluding configured alts)").setRequired(false)),
-                                (new OptionData(OptionType.BOOLEAN, "hide-commands", "Hide messages starting with characters commonly used in bot commands (may produce false positives)").setRequired(false)),
+                                (new OptionData(OptionType.INTEGER, "num-wrong-answers", "Number of wrong answers included in each game (currently only supports 1-4)").setRequired(false)),
                                 (new OptionData(OptionType.BOOLEAN, "use-nicknames", "Use nicknames in the option choices for members if possible (instead of global display names)").setRequired(false))
                         ),
                         new SubcommandData("blacklist-channel", "[ADMIN] Blacklist a given channel from being used in Messageguessr").addOptions(

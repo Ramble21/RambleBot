@@ -56,6 +56,27 @@ public class MessageGuessrDB {
         }
     }
 
+    public static ArrayList<Long> getUniqueUserIds(long serverId) {
+        String queryTemp =
+                """
+                SELECT DISTINCT "USER_ID" FROM "public"."MESSAGES"
+                WHERE "SERVER_ID" = ?
+                """;
+        ArrayList<Long> userIds = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
+            stmt.setLong(1, serverId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    userIds.add(rs.getLong("USER_ID"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userIds;
+    }
+
     public static Message getMessageById(long messageId) {
         String queryTemp =
                 """

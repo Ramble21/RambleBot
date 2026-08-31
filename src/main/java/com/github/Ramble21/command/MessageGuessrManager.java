@@ -16,6 +16,8 @@ import java.util.Objects;
 
 public class MessageGuessrManager implements Command {
     private final Map<String, Command> subcommands = new HashMap<>();
+    public static final String mgServer = Dotenv.configure().load().get("MESSAGEDB_SERVER_ID");
+
 
     public MessageGuessrManager() {
         subcommands.put("play", new MGPlay());
@@ -28,7 +30,6 @@ public class MessageGuessrManager implements Command {
     public void execute(SlashCommandInteractionEvent event) throws IOException {
         String subcommandName = event.getSubcommandName();
         Command subcommand = subcommands.get(subcommandName);
-        String mgServer = Dotenv.configure().load().get("MESSAGEDB_SERVER_ID");
 
         if (!Objects.requireNonNull(event.getGuild()).getId().equals(mgServer)) {
             event.reply("This command is not supported in this server. Sorry!").queue();
