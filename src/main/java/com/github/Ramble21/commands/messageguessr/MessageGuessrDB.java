@@ -25,10 +25,6 @@ public class MessageGuessrDB {
                 LIMIT 1;
                 """;
 
-        if (RambleBot.isRunningLocally()) {
-            throw new RuntimeException("Message database connection does not work while running locally!");
-        }
-
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(queryTemp)) {
 
@@ -67,10 +63,6 @@ public class MessageGuessrDB {
                 WHERE "ID" = ?
                 LIMIT 1;
                 """;
-
-        if (RambleBot.isRunningLocally()) {
-            throw new RuntimeException("Message database connection does not work while running locally!");
-        }
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(queryTemp)) {

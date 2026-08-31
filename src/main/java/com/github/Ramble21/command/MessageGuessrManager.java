@@ -1,5 +1,6 @@
 package com.github.Ramble21.command;
 
+import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.commands.*;
 import com.github.Ramble21.commands.messageguessr.MGBlacklistChannel;
 import com.github.Ramble21.commands.messageguessr.MGConfigAlt;

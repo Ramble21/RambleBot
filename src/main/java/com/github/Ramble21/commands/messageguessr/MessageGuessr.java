@@ -32,6 +32,15 @@ public class MessageGuessr {
         return botIds;
     }
 
+    public static long getMainAccount(long userId) {
+        HashMap<Long, Long> altIdsToMainId = getAltMap();
+        if (altIdsToMainId.containsKey(userId)) {
+            return altIdsToMainId.get(userId);
+        }
+        altIdsToMainId.put(userId, userId);
+        return userId;
+    }
+
     private static void testDirectories() {
         try {
             for (String pathStr : new String[]{
@@ -47,11 +56,10 @@ public class MessageGuessr {
         }
     }
 
-    public static void addAltToMap(long altId, long mainId) {
+    public static void addAltToMap(HashMap<Long, Long> altIdsToMainId, long altId, long mainId) {
         testDirectories();
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        HashMap<Long, Long> altIdsToMainId = getAltMap();
         altIdsToMainId.put(altId, mainId);
 
         try (FileWriter writer = new FileWriter("data/json/messageguessr/altmap.json")){
@@ -94,6 +102,38 @@ public class MessageGuessr {
         }
 
         return blacklistedChannels;
+    }
+
+    public static MessageGuessrOptions getMiscOptions() {
+        testDirectories();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        MessageGuessrOptions options;
+
+        try (FileReader reader = new FileReader("data/json/messageguessr/options.json")) {
+            Type listType = new TypeToken<MessageGuessrOptions>() {}.getType();
+            options = gson.fromJson(reader, listType);
+
+            if (options == null) {
+                options = new MessageGuessrOptions(-1, false, true, false);
+            }
+
+        } catch (IOException e) {
+            options = new MessageGuessrOptions(-1, false, true, false);
+        }
+
+        return options;
+    }
+
+    public static void setMiscOptions(MessageGuessrOptions options) {
+        testDirectories();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter("data/json/messageguessr/options.json")) {
+            gson.toJson(options, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static HashMap<Long, Long> getAltMap() {

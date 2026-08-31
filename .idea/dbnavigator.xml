@@ -33,6 +33,10 @@
         <tools />
         <mcp-servers />
       </assistant-state>
+      <assistant-state connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+        <mcp-servers />
+      </assistant-state>
       <assistant-state connection-id="virtual-postgres-connection" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
         <tools />
         <mcp-servers />
@@ -75,7 +79,29 @@ FROM information_schema.tables
 WHERE table_type = 'BASE TABLE';]]></console>
     </connection>
     <connection id="7c740d92-abaa-4876-920a-1c98f0570ff7">
-      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main" />
+      <console name="Local test db" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[INSERT INTO public."MESSAGES" (
+    "ID",
+    "CONTENT",
+    "TIMESTAMP",
+    "JUMP_URL",
+    "MENTIONS_EVERYONE",
+    "ROLES_MENTIONED",
+    "SERVER_ID",
+    "USER_ID",
+    "CHANNEL_ID",
+    "REPLYING_TO_ID"
+) VALUES (
+    12345,
+    'sus',
+    67,
+    '23412239/1543757209895436298',
+    true,
+    ARRAY[]::bigint[],
+    4,
+    4,
+    4,
+    NULL
+);]]></console>
       <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
     <connection id="e6428192-2612-4d06-96d8-8a7762be0127">
@@ -102,6 +128,7 @@ LIMIT 10;]]></console>
     <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.guilds" active-filter-id="d21211d1-d22b-48ff-81c7-68928e1c4b77">
       <filter id="d21211d1-d22b-48ff-81c7-68928e1c4b77" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.MESSAGES" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="7c740d92-abaa-4876-920a-1c98f0570ff7" dataset="public.levels" active-filter-id="88cf4665-0ade-465e-98e5-838f0caed0d7">
       <filter id="88cf4665-0ade-465e-98e5-838f0caed0d7" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
@@ -284,14 +311,14 @@ LIMIT 10;]]></console>
           <description value="database for storing /gd levels and records" />
           <database-type value="POSTGRES" />
           <config-type value="BASIC" />
-          <database-version value="18.0" />
+          <database-version value="18.6" />
           <driver-source value="BUNDLED" />
           <driver-library value="" />
           <driver value="" />
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="5432" />
-          <database value="ramblebot" />
+          <database value="glisterbot2" />
           <tns-folder value="" />
           <tns-profile value="" />
           <server-type value="" />

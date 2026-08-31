@@ -29,7 +29,7 @@ public class MGBlacklistChannel implements Command {
                 desc.append(gc.getJumpUrl()).append("\n");
             }
         }
-        desc.delete(desc.length() - 2,  desc.length()); // remove the last \n, theres prolly a cleaner way to do this but whatever
+        desc.deleteCharAt(desc.length() - 1); // remove the last \n, theres prolly a cleaner way to do this but whatever
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(channelAlreadyThere ? "That channel is already blacklisted!" : "Channel successfully blacklisted!");
