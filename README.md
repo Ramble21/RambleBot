@@ -32,4 +32,3 @@ Miscellaneous commands:
 |    /coinflip    |                                                       Flips a coin                                                        |        N/A        |
 |   /rizz-rater   |                            Rates the rizz of one of your server members on a scale of 1 to 10                             |        N/A        |
 | /guess-messages |            Guess which member of your server said a given message (requires an existing message log database)             |        N/A        |
-

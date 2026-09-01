@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -25,13 +26,27 @@ public class MessageGuessr {
         return "<t:" + unixSeconds + ":F>";
     }
 
+    public static HashMap<Long, Long> getMainAccounts(Collection<Long> userIds) {
+        HashMap<Long, Long> altIdsToMainId = getAltMap();
+        HashMap<Long, Long> result = new HashMap<>();
+        for (long id : userIds) {
+            result.put(id, altIdsToMainId.getOrDefault(id, id));
+        }
+        return result;
+    }
+
     public static ArrayList<Long> getBadIds(Guild guild, boolean excludeOldMembers) {
         ArrayList<Long> badIds = new ArrayList<>();
         for (long userId : MessageGuessrDB.getUniqueUserIds(guild.getIdLong())) {
-            User user = guild.getJDA().getUserById(userId);
             boolean isCurrentMember = guild.getMemberById(userId) != null;
 
-            if (user == null || user.isBot() || (excludeOldMembers && !isCurrentMember)) {
+            if (excludeOldMembers && !isCurrentMember) {
+                badIds.add(userId);
+                continue;
+            }
+
+            User user = guild.getJDA().getUserById(userId);
+            if (user != null && user.isBot()) {
                 badIds.add(userId);
             }
         }
