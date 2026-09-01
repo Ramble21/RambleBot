@@ -20,8 +20,23 @@ public class MGPlay implements Command {
 
     private static final Map<Long, Map<Long, User>> validUserCache = new HashMap<>();
     private static final Map<Long, Set<Long>> invalidUserCache = new HashMap<>();
+    private static final Set<Long> loadedServers = new HashSet<>();
+
+    private void loadPersistedCache(long serverId) {
+        if (loadedServers.contains(serverId)) return;
+        loadedServers.add(serverId);
+
+        MessageGuessr.ClassificationCache cache = MessageGuessr.loadClassificationCache(serverId);
+        invalidUserCache.computeIfAbsent(serverId, k -> new HashSet<>()).addAll(cache.invalidIds());
+        // validIds are loaded as known-valid, but we still need live User objects,
+        // so they'll be re-fetched (fast, since we skip the isBot() classification logic)
+        // the first time each is needed -- saves nothing on the User fetch itself,
+        // but permanently skips ever re-checking bot/deleted status for them again.
+    }
 
     private User classify(JDA jda, long serverId, long id) {
+        loadPersistedCache(serverId);
+
         Map<Long, User> validMap = validUserCache.computeIfAbsent(serverId, k -> new HashMap<>());
         Set<Long> invalidSet = invalidUserCache.computeIfAbsent(serverId, k -> new HashSet<>());
 
@@ -32,12 +47,18 @@ public class MGPlay implements Command {
             User user = jda.retrieveUserById(id).complete();
             if (user.isBot()) {
                 invalidSet.add(id);
+                MessageGuessr.saveClassificationCache(serverId,
+                        new MessageGuessr.ClassificationCache(new HashSet<>(validMap.keySet()), new HashSet<>(invalidSet)));
                 return null;
             }
             validMap.put(id, user);
+            MessageGuessr.saveClassificationCache(serverId,
+                    new MessageGuessr.ClassificationCache(new HashSet<>(validMap.keySet()), new HashSet<>(invalidSet)));
             return user;
         } catch (ErrorResponseException e) {
             invalidSet.add(id);
+            MessageGuessr.saveClassificationCache(serverId,
+                    new MessageGuessr.ClassificationCache(new HashSet<>(validMap.keySet()), new HashSet<>(invalidSet)));
             return null;
         }
     }
@@ -49,26 +70,34 @@ public class MGPlay implements Command {
             return;
         }
 
+        event.deferReply().queue();
+
         Member commandMember = Objects.requireNonNull(event.getMember());
         long serverId = Objects.requireNonNull(event.getGuild()).getIdLong();
         MessageGuessrOptions options = MessageGuessr.getMiscOptions();
         ArrayList<Long> badChannelIds = new ArrayList<>(MessageGuessr.getBlacklistedChannels());
         ArrayList<Long> badUserIds = MessageGuessr.getBadIds(event.getGuild(), options.hidesOldMembers());
 
-        Message toGuess = MessageGuessrDB.getMessage(serverId, badUserIds, badChannelIds);
-        if (toGuess == null) {
-            event.reply("Message database is empty!").queue();
-            return;
+        Map<Long, Long> mainAccounts = MessageGuessr.getMainAccounts(MessageGuessrDB.getUniqueUserIds(serverId, 1000));
+
+        ArrayList<Long> goodUserIds = new ArrayList<>();
+        for (Map.Entry<Long, Long> entry : mainAccounts.entrySet()) {
+            long rawUserId = entry.getKey();
+            long mainId = entry.getValue();
+            if (badUserIds.contains(rawUserId)) continue;
+            if (classify(event.getJDA(), serverId, mainId) != null) {
+                goodUserIds.add(rawUserId);
+            }
         }
 
-        Map<Long, Long> mainAccounts = MessageGuessr.getMainAccounts(MessageGuessrDB.getUniqueUserIds(serverId));
+        Message toGuess = MessageGuessrDB.getMessage(serverId, goodUserIds, badChannelIds);
+        if (toGuess == null) {
+            event.getHook().sendMessage("Message database is empty!").queue();
+            return;
+        }
 
         long correctUserId = mainAccounts.getOrDefault(toGuess.userId(), toGuess.userId());
         User correctUser = classify(event.getJDA(), serverId, correctUserId);
-        if (correctUser == null) {
-            event.reply("Something went wrong picking a valid message, please try again.").queue();
-            return;
-        }
 
         Set<Long> candidatePool = new HashSet<>(mainAccounts.values());
         candidatePool.remove(correctUserId);
@@ -91,10 +120,11 @@ public class MGPlay implements Command {
         }
 
         if (finalAnswerIds.size() < options.getNumWrongAnswers() + 1) {
-            event.reply("Not enough valid users to generate answer choices!").queue();
+            event.getHook().sendMessage("Not enough valid users to generate answer choices!").queue();
             return;
         }
         Collections.shuffle(finalAnswerIds);
+        System.out.println("Answer choice IDs: " + finalAnswerIds);
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(Color.YELLOW);
@@ -117,7 +147,7 @@ public class MGPlay implements Command {
         Button jumpButton = Button.link(toGuess.jumpUrl(), "Jump to Message").withEmoji(Emoji.fromUnicode("🔗")).asDisabled();
         rows.add(ActionRow.of(jumpButton));
 
-        event.replyEmbeds(embed.build()).addComponents(rows).queue();
+        event.getHook().sendMessageEmbeds(embed.build()).addComponents(rows).queue();
     }
 
     private String getLabel(User user, MessageGuessrOptions options) {

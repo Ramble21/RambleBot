@@ -26,6 +26,29 @@ public class MessageGuessr {
         return "<t:" + unixSeconds + ":F>";
     }
 
+    public record ClassificationCache(HashSet<Long> validIds, HashSet<Long> invalidIds) {}
+
+    public static void saveClassificationCache(long serverId, ClassificationCache cache) {
+        testDirectories();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter("data/json/messageguessr/classification_" + serverId + ".json")) {
+            gson.toJson(cache, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ClassificationCache loadClassificationCache(long serverId) {
+        testDirectories();
+        Gson gson = new GsonBuilder().create();
+        try (FileReader reader = new FileReader("data/json/messageguessr/classification_" + serverId + ".json")) {
+            ClassificationCache cache = gson.fromJson(reader, ClassificationCache.class);
+            return cache != null ? cache : new ClassificationCache(new HashSet<>(), new HashSet<>());
+        } catch (IOException e) {
+            return new ClassificationCache(new HashSet<>(), new HashSet<>());
+        }
+    }
+
     public static HashMap<Long, Long> getMainAccounts(Collection<Long> userIds) {
         HashMap<Long, Long> altIdsToMainId = getAltMap();
         HashMap<Long, Long> result = new HashMap<>();
@@ -37,7 +60,7 @@ public class MessageGuessr {
 
     public static ArrayList<Long> getBadIds(Guild guild, boolean excludeOldMembers) {
         ArrayList<Long> badIds = new ArrayList<>();
-        for (long userId : MessageGuessrDB.getUniqueUserIds(guild.getIdLong())) {
+        for (long userId : MessageGuessrDB.getUniqueUserIds(guild.getIdLong(), 1000)) {
             boolean isCurrentMember = guild.getMemberById(userId) != null;
 
             if (excludeOldMembers && !isCurrentMember) {

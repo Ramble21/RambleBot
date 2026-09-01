@@ -33,7 +33,7 @@ public class MGConfigAlt implements Command {
 
         StringBuilder desc = new StringBuilder("Configured alt accounts (alt -> main):\n");
         for (long altId : altsMap.keySet()) {
-            if (altId != altsMap.get(altId)) {
+            if (altId != altsMap.get(altId) && altsMap.get(altId) != 1295872060341616640L) {
                 desc.append("<@").append(altId).append("> -> <@").append(altsMap.get(altId)).append(">\n");
             }
         }
