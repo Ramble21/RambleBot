@@ -90,18 +90,17 @@ VALUES
       <console name="ramblebot" type="STANDARD" schema="postgres" session="Main" />
     </connection>
     <connection id="e6428192-2612-4d06-96d8-8a7762be0127">
-      <console name="Prod (Glisterbyte)" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[SELECT * FROM public."MESSAGES"
-ORDER BY id DESC
-LIMIT 10;]]></console>
+      <console name="Prod (Glisterbyte)" type="STANDARD" schema="ramblebot" session="Main"><![CDATA[SELECT *
+FROM public."MESSAGES"
+WHERE "CONTENT" = '!rule-34 shaii';
+';]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="e6428192-2612-4d06-96d8-8a7762be0127" object-ref="schemas/public/tables/MESSAGES" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabasePrerequisiteManager">
     <prerequisites />

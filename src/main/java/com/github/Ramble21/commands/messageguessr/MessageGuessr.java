@@ -4,14 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,12 +27,14 @@ public class MessageGuessr {
         return "<t:" + unixSeconds + ":F>";
     }
 
-    public record ClassificationCache(HashSet<Long> validIds, HashSet<Long> invalidIds) {}
+    public record ClassificationCache(HashSet<Long> invalidIds) {}
 
     public static void saveClassificationCache(long serverId, ClassificationCache cache) {
         testDirectories();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter("data/json/messageguessr/classification_" + serverId + ".json")) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream("data/json/messageguessr/classification_" + serverId + ".json"),
+                StandardCharsets.UTF_8)) {
             gson.toJson(cache, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -41,11 +44,13 @@ public class MessageGuessr {
     public static ClassificationCache loadClassificationCache(long serverId) {
         testDirectories();
         Gson gson = new GsonBuilder().create();
-        try (FileReader reader = new FileReader("data/json/messageguessr/classification_" + serverId + ".json")) {
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream("data/json/messageguessr/classification_" + serverId + ".json"),
+                StandardCharsets.UTF_8)) {
             ClassificationCache cache = gson.fromJson(reader, ClassificationCache.class);
-            return cache != null ? cache : new ClassificationCache(new HashSet<>(), new HashSet<>());
+            return cache != null ? cache : new ClassificationCache(new HashSet<>());
         } catch (IOException e) {
-            return new ClassificationCache(new HashSet<>(), new HashSet<>());
+            return new ClassificationCache(new HashSet<>());
         }
     }
 
@@ -76,13 +81,42 @@ public class MessageGuessr {
         return badIds;
     }
 
-    public static long getMainAccount(long userId) {
-        HashMap<Long, Long> altIdsToMainId = getAltMap();
-        if (altIdsToMainId.containsKey(userId)) {
-            return altIdsToMainId.get(userId);
+    public static void addManualDeletedUser(ArrayList<MGUser> deletedUsers, MGUser user) {
+        testDirectories();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        deletedUsers.add(user);
+
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream("data/json/messageguessr/deletedusers.json"),
+                StandardCharsets.UTF_8)) {
+            gson.toJson(deletedUsers, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        altIdsToMainId.put(userId, userId);
-        return userId;
+    }
+
+    public static ArrayList<MGUser> getManualDeletedUsers() {
+        testDirectories();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        ArrayList<MGUser> deletedUsers;
+
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream("data/json/messageguessr/deletedusers.json"),
+                StandardCharsets.UTF_8)) {
+            Type listType = new TypeToken<ArrayList<MGUser>>() {}.getType();
+            deletedUsers = gson.fromJson(reader, listType);
+
+            if (deletedUsers == null) {
+                deletedUsers = new ArrayList<>();
+            }
+
+        } catch (IOException e) {
+            deletedUsers = new ArrayList<>();
+        }
+
+        return deletedUsers;
     }
 
     private static void testDirectories() {
@@ -106,10 +140,11 @@ public class MessageGuessr {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         altIdsToMainId.put(altId, mainId);
 
-        try (FileWriter writer = new FileWriter("data/json/messageguessr/altmap.json")){
-            gson.toJson(altIdsToMainId,writer);
-        }
-        catch (IOException e){
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream("data/json/messageguessr/altmap.json"),
+                StandardCharsets.UTF_8)) {
+            gson.toJson(altIdsToMainId, writer);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -120,7 +155,9 @@ public class MessageGuessr {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         blacklistedChannels.add(channelId);
 
-        try (FileWriter writer = new FileWriter("data/json/messageguessr/blacklistedchannels.json")) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream("data/json/messageguessr/blacklistedchannels.json"),
+                StandardCharsets.UTF_8)) {
             gson.toJson(blacklistedChannels, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -133,7 +170,9 @@ public class MessageGuessr {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         HashSet<Long> blacklistedChannels;
 
-        try (FileReader reader = new FileReader("data/json/messageguessr/blacklistedchannels.json")) {
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream("data/json/messageguessr/blacklistedchannels.json"),
+                StandardCharsets.UTF_8)) {
             Type listType = new TypeToken<HashSet<Long>>() {}.getType();
             blacklistedChannels = gson.fromJson(reader, listType);
 
@@ -154,7 +193,9 @@ public class MessageGuessr {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         MessageGuessrOptions options;
 
-        try (FileReader reader = new FileReader("data/json/messageguessr/options.json")) {
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream("data/json/messageguessr/options.json"),
+                StandardCharsets.UTF_8)) {
             Type listType = new TypeToken<MessageGuessrOptions>() {}.getType();
             options = gson.fromJson(reader, listType);
 
@@ -173,7 +214,9 @@ public class MessageGuessr {
         testDirectories();
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter("data/json/messageguessr/options.json")) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream("data/json/messageguessr/options.json"),
+                StandardCharsets.UTF_8)) {
             gson.toJson(options, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -186,7 +229,9 @@ public class MessageGuessr {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         HashMap<Long, Long> altIdsToMainId;
 
-        try (FileReader reader = new FileReader("data/json/messageguessr/altmap.json")) {
+        try (InputStreamReader reader = new InputStreamReader(
+                new FileInputStream("data/json/messageguessr/altmap.json"),
+                StandardCharsets.UTF_8)) {
             Type listType = new TypeToken<HashMap<Long, Long>>() {}.getType();
             altIdsToMainId = gson.fromJson(reader, listType);
 

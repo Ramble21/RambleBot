@@ -15,50 +15,56 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MGPlay implements Command {
 
-    private static final Map<Long, Map<Long, User>> validUserCache = new HashMap<>();
-    private static final Map<Long, Set<Long>> invalidUserCache = new HashMap<>();
-    private static final Set<Long> loadedServers = new HashSet<>();
+    // ConcurrentHashMap/newKeySet since these static caches can be hit by multiple slash command invocations on different event threads at once
+    private static final Map<Long, MGUser> validUserCache = new ConcurrentHashMap<>();
+    private static final Set<Long> invalidUserIds = ConcurrentHashMap.newKeySet();
+    private static final AtomicBoolean cacheLoaded = new AtomicBoolean(false);
+    private static final AtomicBoolean cacheDirty = new AtomicBoolean(false);
 
     private void loadPersistedCache(long serverId) {
-        if (loadedServers.contains(serverId)) return;
-        loadedServers.add(serverId);
-
+        if (!cacheLoaded.compareAndSet(false, true)) return;
         MessageGuessr.ClassificationCache cache = MessageGuessr.loadClassificationCache(serverId);
-        invalidUserCache.computeIfAbsent(serverId, k -> new HashSet<>()).addAll(cache.invalidIds());
-        // validIds are loaded as known-valid, but we still need live User objects,
-        // so they'll be re-fetched (fast, since we skip the isBot() classification logic)
-        // the first time each is needed -- saves nothing on the User fetch itself,
-        // but permanently skips ever re-checking bot/deleted status for them again.
+        invalidUserIds.addAll(cache.invalidIds());
     }
 
-    private User classify(JDA jda, long serverId, long id) {
+    private void preloadDeletedUsers(long serverId, ArrayList<MGUser> deletedUsers) {
+        loadPersistedCache(serverId);
+        for (MGUser user : deletedUsers) {
+            validUserCache.put(user.idLong(), user);
+        }
+    }
+
+    private void persistCacheIfDirty(long serverId) {
+        if (!cacheDirty.compareAndSet(true, false)) return;
+        MessageGuessr.saveClassificationCache(serverId,
+                new MessageGuessr.ClassificationCache(new HashSet<>(invalidUserIds)));
+    }
+
+    private MGUser classify(JDA jda, long serverId, long id) {
         loadPersistedCache(serverId);
 
-        Map<Long, User> validMap = validUserCache.computeIfAbsent(serverId, k -> new HashMap<>());
-        Set<Long> invalidSet = invalidUserCache.computeIfAbsent(serverId, k -> new HashSet<>());
-
-        if (validMap.containsKey(id)) return validMap.get(id);
-        if (invalidSet.contains(id)) return null;
+        if (validUserCache.containsKey(id)) return validUserCache.get(id);
+        if (invalidUserIds.contains(id)) return null;
 
         try {
             User user = jda.retrieveUserById(id).complete();
             if (user.isBot()) {
-                invalidSet.add(id);
-                MessageGuessr.saveClassificationCache(serverId,
-                        new MessageGuessr.ClassificationCache(new HashSet<>(validMap.keySet()), new HashSet<>(invalidSet)));
+                invalidUserIds.add(id);
+                cacheDirty.set(true);
                 return null;
             }
-            validMap.put(id, user);
-            MessageGuessr.saveClassificationCache(serverId,
-                    new MessageGuessr.ClassificationCache(new HashSet<>(validMap.keySet()), new HashSet<>(invalidSet)));
-            return user;
+            MGUser mgUser = new MGUser(user.getIdLong(), user.getName(), user.getEffectiveName(), user.getGlobalName());
+            validUserCache.put(id, mgUser);
+            cacheDirty.set(true);
+            return mgUser;
         } catch (ErrorResponseException e) {
-            invalidSet.add(id);
-            MessageGuessr.saveClassificationCache(serverId,
-                    new MessageGuessr.ClassificationCache(new HashSet<>(validMap.keySet()), new HashSet<>(invalidSet)));
+            invalidUserIds.add(id);
+            cacheDirty.set(true);
             return null;
         }
     }
@@ -78,7 +84,14 @@ public class MGPlay implements Command {
         ArrayList<Long> badChannelIds = new ArrayList<>(MessageGuessr.getBlacklistedChannels());
         ArrayList<Long> badUserIds = MessageGuessr.getBadIds(event.getGuild(), options.hidesOldMembers());
 
-        Map<Long, Long> mainAccounts = MessageGuessr.getMainAccounts(MessageGuessrDB.getUniqueUserIds(serverId, 1000));
+        ArrayList<Long> uniqueUserIds = MessageGuessrDB.getUniqueUserIds(serverId, 1000);
+        ArrayList<MGUser> deletedUsers = MessageGuessr.getManualDeletedUsers();
+        for (MGUser user : deletedUsers) {
+            uniqueUserIds.add(user.idLong());
+        }
+        preloadDeletedUsers(serverId, deletedUsers);
+
+        Map<Long, Long> mainAccounts = MessageGuessr.getMainAccounts(uniqueUserIds);
 
         ArrayList<Long> goodUserIds = new ArrayList<>();
         for (Map.Entry<Long, Long> entry : mainAccounts.entrySet()) {
@@ -89,6 +102,7 @@ public class MGPlay implements Command {
                 goodUserIds.add(rawUserId);
             }
         }
+        persistCacheIfDirty(serverId);
 
         Message toGuess = MessageGuessrDB.getMessage(serverId, goodUserIds, badChannelIds);
         if (toGuess == null) {
@@ -97,7 +111,7 @@ public class MGPlay implements Command {
         }
 
         long correctUserId = mainAccounts.getOrDefault(toGuess.userId(), toGuess.userId());
-        User correctUser = classify(event.getJDA(), serverId, correctUserId);
+        MGUser correctUser = classify(event.getJDA(), serverId, correctUserId);
 
         Set<Long> candidatePool = new HashSet<>(mainAccounts.values());
         candidatePool.remove(correctUserId);
@@ -105,19 +119,20 @@ public class MGPlay implements Command {
         Collections.shuffle(shuffledPool);
 
         ArrayList<Long> finalAnswerIds = new ArrayList<>();
-        Map<Long, User> resolvedUsers = new HashMap<>();
+        Map<Long, MGUser> resolvedUsers = new HashMap<>();
         finalAnswerIds.add(correctUserId);
         resolvedUsers.put(correctUserId, correctUser);
 
         for (long candidate : shuffledPool) {
             if (finalAnswerIds.size() >= options.getNumWrongAnswers() + 1) break;
-            User user = classify(event.getJDA(), serverId, candidate);
+            MGUser user = classify(event.getJDA(), serverId, candidate);
             if (user == null) {
                 continue;
             }
             finalAnswerIds.add(candidate);
             resolvedUsers.put(candidate, user);
         }
+        persistCacheIfDirty(serverId);
 
         if (finalAnswerIds.size() < options.getNumWrongAnswers() + 1) {
             event.getHook().sendMessage("Not enough valid users to generate answer choices!").queue();
@@ -134,7 +149,7 @@ public class MGPlay implements Command {
 
         ArrayList<Button> buttons = new ArrayList<>();
         for (long answer : finalAnswerIds) {
-            User user = resolvedUsers.get(answer);
+            MGUser user = resolvedUsers.get(answer);
             String label = getLabel(user, options);
             String buttonId = "mg:" + commandMember.getIdLong() + ":" + correctUserId + ":" + answer;
             buttons.add(Button.secondary(buttonId, label));
@@ -150,13 +165,13 @@ public class MGPlay implements Command {
         event.getHook().sendMessageEmbeds(embed.build()).addComponents(rows).queue();
     }
 
-    private String getLabel(User user, MessageGuessrOptions options) {
+    private String getLabel(MGUser user, MessageGuessrOptions options) {
         if (user == null) {
             return "Unknown User";
         } else if (options.usesNicknames()) {
-            return user.getEffectiveName() + " (" + user.getName() + ")";
+            return user.effectiveName() + " (" + user.username() + ")";
         } else {
-            return user.getGlobalName() + " (" + user.getName() + ")";
+            return user.globalName() + " (" + user.username() + ")";
         }
     }
 }

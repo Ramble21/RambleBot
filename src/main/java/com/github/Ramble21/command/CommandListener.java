@@ -63,6 +63,11 @@ public class CommandListener extends ListenerAdapter {
                         new SubcommandData("configure-alt", "[ADMIN] Add an alt account to be counted under a main account").addOptions(
                                 (new OptionData(OptionType.STRING, "alt-userid", "The user ID of the alt account to hide").setRequired(true)),
                                 (new OptionData(OptionType.USER, "main", "The main account in which the alt's messages will appear under").setRequired(true))
+                        ),
+                        new SubcommandData("add-deleted-acc", "Manually add a deleted account to be allowed in queries").addOptions(
+                                (new OptionData(OptionType.STRING, "user-id", "The saved user ID of the deleted account")),
+                                (new OptionData(OptionType.STRING, "username", "The displayed username for the deleted account")),
+                                (new OptionData(OptionType.STRING, "effective-name", "The displayed nickname/global name for the deleted account"))
                         )
                 )
         );

@@ -2,10 +2,7 @@ package com.github.Ramble21.command;
 
 import com.github.Ramble21.RambleBot;
 import com.github.Ramble21.commands.*;
-import com.github.Ramble21.commands.messageguessr.MGBlacklistChannel;
-import com.github.Ramble21.commands.messageguessr.MGConfigAlt;
-import com.github.Ramble21.commands.messageguessr.MGConfigMisc;
-import com.github.Ramble21.commands.messageguessr.MGPlay;
+import com.github.Ramble21.commands.messageguessr.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -23,6 +20,7 @@ public class MessageGuessrManager implements Command {
         subcommands.put("configure-misc", new MGConfigMisc());
         subcommands.put("configure-alt", new MGConfigAlt());
         subcommands.put("blacklist-channel", new MGBlacklistChannel());
+        subcommands.put("add-deleted-acc", new MGAddDeleted());
     }
 
     @Override
